@@ -1,6 +1,6 @@
 ### REDCap to NDA
 
-
+![Web Interface](/img/screenshot.png "Application Interface")
 
 ```
 npm start
