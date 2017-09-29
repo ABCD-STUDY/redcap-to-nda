@@ -1,5 +1,7 @@
 ### REDCap to NDA
 
+Export REDCap's data dictionaries to NIMH National Data Archive data dictionaries.
+
 ![Web Interface](/img/screenshot.png "Application Interface")
 
 ```
