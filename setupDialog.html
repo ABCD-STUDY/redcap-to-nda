@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Setup</title>
+    <link rel="stylesheet" href="css/photon.css">
+  </head>
+  <body>
+        <div class="window">
+            <header class="toolbar toolbar-header">
+                <h1 class="title">Setup</h1>
+            </header>
+            <div class="window-content">
+                <div class="padded-more">
+                    <form>
+                        <div class="form-group">
+                          <label>REDCap Access Token</label>
+                          <button class="btn btn-form btn-default pull-right" id="setup-dialog-update">Update</button>                                
+                          <input type="text" class="form-control" id="redcap-access-token" placeholder="REDCap Access Token">
+                        </div>
+                        <label>Events (use Update to populate)</label>
+                        <select class="form-control" id="setup-events-list"></select>
+                        <hr>
+                        <div class="form-actions">
+                          <button class="btn btn-form btn-default" id="setup-dialog-cancel">Cancel</button>
+                          <button class="btn btn-form btn-primary" id="setup-dialog-ok">OK</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+         <script>
+                // You can also require other files to run in this process
+                require('./setupDialog.js')
+        </script>
+  </body>
+</html>

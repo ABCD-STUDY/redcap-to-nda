@@ -1,0 +1,24 @@
+{
+  "name": "redcap2ndar",
+  "version": "1.0.0",
+  "description": "Convert REDCap data dictionaries and data to NDA spreadsheets",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "pack": "./node-modules/.bin/electron-builder --dir",
+    "dist": "./node-modules/.bin/electron-builder"
+  },
+  "author": "Hauke Bartsch",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "1.7.8"
+  },
+  "build": {
+    "appId": "com.electron.redcap2nda",
+    "mac": {
+      "category": "Office"
+    }
+  },
+  "postinstall": "./node-modules/.bin/electron-builder install-app-deps"
+}
