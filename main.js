@@ -1,6 +1,8 @@
 const {app, BrowserWindow, ipcMain, Menu} = require('electron')
 const path = require('path')
 const url = require('url')
+const Store = require('electron-store');
+const store = new Store();
 
 module.paths.push(path.resolve('node_modules'));
 module.paths.push(path.resolve('../node_modules'));
@@ -153,6 +155,69 @@ ipcMain.on('getItemsForForm', function (event, form) {
     win.send('updateItems', items);
 });
 
+// save a list of tags for this item [ { 'item': "some_item", 'tags': [ "dont-save" ] } ]
+ipcMain.on('setTags', function(event, data) {
+
+    console.log("setTags with: " + JSON.stringify(data));
+    // save the tags for this item as
+    for (var i = 0; i < data.length; i++) {
+        var item = data[i]['item'];
+        var tags = store.get('tag-' + item); // existing tags
+        if (typeof tags === 'undefined') {
+            tags = [];
+        }
+        for (var j = 0; j < data[i]['tags'].length; j++) {
+            var found = false;
+            for (var k = 0; k < tags.length; k++) {
+                if (tags[k] == data[i]['tags'][j]) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                tags.push(data[i]['tags'][j]);
+            }
+        }
+        // save them again
+        store.set('tag-' + item, tags);
+    }
+});
+
+// delete one tag per entry [ { 'item': "some_item", 'tag': "dont-save" } ]
+ipcMain.on('deleteTags', function(event, data) {
+    // save the tags for this item as
+    for (var i = 0; i < data.length; i++) {
+       var item = data[i]['item'];
+       var current_tags = store.get('tag-' + item);
+       var tags = [];
+       if (typeof current_tags === 'undefined') {
+           console.log("Error: there are no tags for item " + item + ", nothing is removed.");
+           return; // we are done, nothing to remove
+       }
+       for (var j = 0; j < current_tags.length; j++) {
+           if (data[i]['tags'].indexOf(current_tags[j]) === -1) {
+               tags.push(current_tags[j]);
+           }
+       }
+       store.set('tag-' + item, tags); // store what is left after removing the tags that should be deleted
+    }
+});
+
+// returns tags for list of items [ { 'item': "some_item", 'some_other_key': "some other value" } ]
+// the input will also be part of the returned array of structures (key 'data')
+ipcMain.on('getTags', function(event,data) {
+    var results = [];
+    console.log("getTags: " + JSON.stringify(data));
+    for (var i = 0; i < data.length; i++) {
+        console.log("called getTags for this item: " + data[i]['item']);
+        var tags = store.get( 'tag-' + data[i]['item'] );
+        if (typeof tags !== 'undefined') {
+            results.push( { 'tags': tags, 'item': data[i]['item'] } );
+        }
+    }
+    win.send('updateTagValues', results);   
+});
+
 ipcMain.on('checkData', function(event, data) {
     var form = data['form'];
     console.log("check the data for this form: " + form);
@@ -238,6 +303,7 @@ ipcMain.on('checkItem', function(event, data) {
         if (error || response.statusCode !== 200) {
             // error case
             process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
+            win.send('alert', "Error: no response from REDCap");
             return;
         }
         checkItem( item, form, data, function(result, status) {
@@ -258,7 +324,7 @@ function checkEntryLength( item, l, data, callback ) {
     if (result.length > 0) {
         status = "bad";
     } else {
-        result = "no data longer than 30";
+        result = "no data longer than " + l;
     }
 
     (callback)( status + " " + result, status );
@@ -288,7 +354,16 @@ function checkItem( item, form, data, callback ) {
         var d = datadictionary[i];
         if (item == d['field_name']) {
             if (d['field_type'] == "text" && d['text_validation_min'] === '' && d['text_validation_max'] === '') { // text field without validation
-                checkEntryLength(item, 30, data, function(result, status) {
+                // get the length for this entry
+                allowedLength = 30;
+                var flags = store.get('tag-' + d['field_name'])
+                if (typeof flags !== 'undefined') {
+                    if (flags.indexOf('long') !== -1)
+                       allowedLength = 60;
+                    if (flags.indexOf('huge') !== -1)
+                       allowedLength = 200;
+                }
+                checkEntryLength(item, allowedLength, data, function(result, status) {
                     (callback)( result, status );
                     return;                    
                 }); // default entry length
@@ -385,12 +460,21 @@ ipcMain.on('exportData', function(event,data) {
         str = "";
         // add the header
         var keys = Object.keys(data[0]);
+        var skipkeys = [];
         for ( var j = 0; j < keys.length; j++) {
             var k = keys[j];
             if (k == 'id_redcap')
                 k = 'subjectkey,eventname';
             if (k == 'redcap_event_name' || k == "nda_year_1_inclusion___1" || k == (form + "_complete"))
                 continue; // don't export, is grouped with id_redcap
+            var flags = store.get('tag-' + k);
+            if (typeof flags !== 'undefined') {
+                if (flags.indexOf('remove') !== -1) {
+                    skipkeys.push(k);
+                    continue; // don't export this key
+                }
+            }
+            
             str = str + k;
             if (j < keys.length-1) 
                 str = str + ",";
@@ -404,6 +488,11 @@ ipcMain.on('exportData', function(event,data) {
                     var name = keys[j];
                     if (name == "redcap_event_name" || name == "nda_year_1_inclusion___1" || name == (form + "_complete"))
                         continue; // skip, is exported next to id_redcap
+                    // skip this key if its not needed
+                    if (skipkeys.indexOf(name) !== -1) {
+                        continue; // don't export this key
+                    }
+
                     var label = data[i][name];
                     label = mapValueToString(name, label);
                     label = label.replace(/\"/g, "\"\"\"");
@@ -479,12 +568,12 @@ ipcMain.on('exportForm', function(event, data) {
         var d = datadictionary[i];
         if (d['form_name'] == data['form']) {
             //console.log("item is: " + Object.keys(d));
-            var size = "30";
+            var size = "30"; // default, could be 60 or 200 as well
             var type = "String";
             var range = "";
             var notes = d['field_note'];
             if (typeof d['branching_logic'] !== 'undefined' && d['branching_logic'] !== '') {
-                notes = notes + "\nBranching Logic: " + d['branching_logic'];
+                notes = JSON.stringify( { "notes": notes, "branching_logic": d['branching_logic'] } );
             }
             var aliases = "";
             if (typeof d['text_validation_type_or_show_slider_number'] !== 'undefined') {
@@ -553,10 +642,23 @@ ipcMain.on('exportForm', function(event, data) {
             if (type == "String" && size == '') {
                 size = "30"; // default value
             }
+            // check if we have a longer flag for this field_name
+            var flags = store.get('tag-' + d['field_name']);
+            if (typeof flags !== 'undefined') {
+                if (flags.indexOf('remove') !== -1)
+                    continue; // ignore this entry in the data dictionary
+                if (flags.indexOf('long') !== -1)
+                    size = "60"
+                if (flags.indexOf('huge') !== -1)
+                    size = "200"
+            }
+
             var label = d['field_label'];
-            label = label.replace(/\"/g, "\"\"\"");
+            label = label.replace(/\"/g, "\"\"");
+            label = label.replace(/\r\n/g, "\n");
             //label = label.replace(/,/g,"\",\"");
-            notes = notes.replace(/\"/g, "\"\"\"");
+            notes = notes.replace(/\"/g, "\"\"");
+            notes = notes.replace(/\r\n/g, "\n");
             //notes = notes.replace(/,/g,"\",\"");
             
             str = str + d['field_name'] + "," + 

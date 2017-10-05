@@ -13,7 +13,7 @@ npm start
 ### Setup
 
 ```
-npm install request async electron jquery
+npm install request async electron jquery electron-store
 ```
 
 Install electron-builder on your system - not inside the application and run 
