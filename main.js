@@ -26,7 +26,7 @@ let instrumentEventMapping
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 1100, height: 650, "webPreferences" : { devTools: false } });
+  win = new BrowserWindow({width: 1100, height: 650, "webPreferences" : { devTools: true } });
 
   // and load the index.html of the app.
   win.loadURL(url.format({
@@ -54,10 +54,10 @@ function createWindow () {
     ]}
   ];
 
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  //Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   // Open the DevTools.
-  //win.webContents.openDevTools()
+  win.webContents.openDevTools()
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -222,7 +222,12 @@ Array.prototype.chunk = function ( n ) {
     if ( !this.length ) {
         return [];
     }
-    return [ this.slice( 0, n ) ].concat( this.slice(n).chunk(n) );
+    var newar = [];
+    while (this.length > 0) {
+        newar.push(this.splice(0,n));
+    }
+
+    return newar;
 };
 
 ipcMain.on('checkData', function(event, data) {
@@ -239,6 +244,7 @@ ipcMain.on('checkData', function(event, data) {
         }
     }
 
+    var itemsForForm = [];
     var queue = async.queue(function(chunk, callback) {    
         // get data for all item in this form
         var data = {
@@ -275,33 +281,38 @@ ipcMain.on('checkData', function(event, data) {
                 // error case
                 process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
                 win.send('alert', JSON.stringify(response));
+                callback("error");
                 return;
             }
             //console.log("getting data from REDCap done");
             data = body;
+
             for (var i = 0; i < datadictionary.length; i++) {
                 var d = datadictionary[i];
-                if (d['form_name'] == form) {
+                // only call checkItem for items that we have in the current body
+                if (d['form_name'] == form && chunk.indexOf(d['field_name']) !== -1)  {
                     checkItem(d['field_name'], form, data, function(result, status) {
                         win.send('showItemCheck', { item: d['field_name'], form: form, result: result, status: status });
                     });
                 }
             }
+            callback("something");
         });
     }, 1);
 
     queue.drain = function() {
-        process.stdout.write("finished getting data from redcap\n");
+        process.stdout.write("finished getting data from redcap for checkData\n");
         // findProblems( tokens );
     };
     var chunks = items.chunk(20); // get 20 items at the same time from REDCap
 
     for (var i = 0; i < chunks.length; i++) {
-        queue.push(chunks[i], (function(chunk) {
+        console.log('get chunk ' + i + " of " + chunks.length);
+        queue.push([chunks[i]], (function(counter) {
             return function(err) {
-                console.log("finished getting data for chunk: " + i );
+                console.log("finished getting data for chunk: " + counter );
             };
-        })(chunks[i]));
+        })(i));
     }    
 
 });
@@ -353,7 +364,7 @@ ipcMain.on('checkItem', function(event, data) {
 function checkEntryLength( item, l, data, callback ) {
     var result = "";
     for (var i = 0; i < data.length; i++) {
-        if (data[i][item].length > l) {
+        if (typeof data[i][item] !== 'undefined' && data[i][item].length > l) {
             result = result + "max-length-validation [" + data[i][item].length + "/" + l + "], ";
         }
     }
@@ -414,7 +425,7 @@ function checkItem( item, form, data, callback ) {
                 var maxLength = 0;
                 var example = '';
                 for (var j = 0; j < data.length; j++) {
-                    if (data[j][item].length > maxLength) {
+                    if (typeof data[j][item] !== 'undefined' && data[j][item].length > maxLength) {
                         maxLength =  data[j][item].length;
                         example = data[j][item];
                     }
@@ -424,9 +435,9 @@ function checkItem( item, form, data, callback ) {
                     result = result + "max-length validations " + maxLength + "/"+ ma + " [" + example + "], ";
                 }
                 for (var j = 0; j < data.length; j++) { 
-                    if (data[j][item] < mi || data[j][item] > ma) {
+                    if (typeof data[j][item] !== 'undefined' && data[j][item] !== '' && (data[j][item] < mi || data[j][item] > ma)) {
                         status = "bad";
-                        result = result + "range validation error [" + mi + "-" + ma + "],";
+                        result = result + "range validation error \"" + data[j][item] + "\" [" + mi + "-" + ma + "],";
                     }
                 }
                 (callback) ( result, status );
@@ -451,10 +462,10 @@ function checkItem( item, form, data, callback ) {
 }
 
 ipcMain.on('exportData', function(event,data) {
-    console.log("write the data to disk");
     var filename = data['filename'];
     var form = data['form'];
-
+    console.log("start writing data to disk " + filename + " ...");
+    
     var items = [];
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
@@ -462,10 +473,11 @@ ipcMain.on('exportData', function(event,data) {
             items.push(d['field_name']);
         }
     }
-
+    console.log("total number of items to pull from REDCap: " + items.length);
+    //console.log("erstes Element is: " + items[0]);
     var itemsPerRecord = [];
     var queue = async.queue(function(chunk, callback) {
-        // get participants for baseline event and chunk over those to get the data?
+        //console.log("chunk is: " + JSON.stringify(chunk));
         var data = {
             'token': token,
             'content': 'record',
@@ -486,7 +498,8 @@ ipcMain.on('exportData', function(event,data) {
         for (var i = 0; i < chunk.length; i++) {
             data['fields[' + (i + 3) + ']'] = chunk[i];
         }
-
+        //console.log("got chunk of size " + chunk.length + " call: " + JSON.stringify(data));
+        
         var headers = {
             'User-Agent':       'Super Agent/0.0.1',
             'Content-Type':     'application/x-www-form-urlencoded'
@@ -504,9 +517,11 @@ ipcMain.on('exportData', function(event,data) {
                 // error case
                 process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
                 win.send('alert', JSON.stringify(response));
+                callback("error");
                 return;
             }
-            console.log("getting data from REDCap done once");
+            //console.log("getting data from REDCap done once");
+            win.send('message', "preparing data for save...");
             data = body;
             // we have to merge these (items for each user) every time before we can export them
             for (var i = 0; i < data.length; i++) {
@@ -523,8 +538,19 @@ ipcMain.on('exportData', function(event,data) {
                     itemsPerRecord.push(data[i]);
                 }
             }
+            callback("ok");
+        });
+    }, 3);
 
-            /* str = "";
+    // could be called several times, should check if all chunks have been added
+    var allChunksSend = false;
+    queue.drain = function() {
+        console.log("drain called...");
+        if (allChunksSend) {
+            console.log("finished getting data from redcap at this point, save itemsPerRecord to file");
+            win.send('message', "done with save...");
+            data = itemsPerRecord;
+            str = "";
             // add the header
             var keys = Object.keys(data[0]);
             var skipkeys = [];
@@ -579,24 +605,18 @@ ipcMain.on('exportData', function(event,data) {
                     return console.log(err);
                 }
                 console.log("The file was saved...");
-            });    */ 
-        });
-    }, 1);
-
-    queue.drain = function() {
-        console.log("finished getting data from redcap at this point");
-        // findProblems( tokens );
+            });
+        }
     };
     var chunks = items.chunk(20); // get 20 items at the same time from REDCap
-
+    //console.log("chunks has : " + chunks.length + " elements. -> " + JSON.stringify(chunks));
     for (var i = 0; i < chunks.length; i++) {
-        queue.push(chunks[i], (function(chunk) {
-            return function(err) {
-                console.log("finished getting data for chunk: " + i );
-            };
-        })(chunks[i]));
+        //console.log("push chunk " + i + " into the queue with: " + chunks[i].length + " elements in it -> " + JSON.stringify(chunks[i]));
+        queue.push([chunks[i]], function(error) {
+                console.log("finished getting data for chunk with " + error);
+        });
     }
-    
+    allChunksSend = true;   
 });
 
 // lookup an items code and return the string that represents the value

@@ -115,6 +115,10 @@ ipcRenderer.on('alert', function(event, data) {
     alert("Your request for checking form data failed. Most likely there is not enough memory in the server to request all the data for this form at once. Please test again using single items.\n\n\n" + data);
 });
 
+ipcRenderer.on('message', function(event, data) {
+    jQuery('footer h1').text(data); 
+});
+
 //
 jQuery(document).ready(function() {
 
