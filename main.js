@@ -158,7 +158,7 @@ ipcMain.on('getItemsForForm', function (event, form) {
 // save a list of tags for this item [ { 'item': "some_item", 'tags': [ "dont-save" ] } ]
 ipcMain.on('setTags', function(event, data) {
 
-    console.log("setTags with: " + JSON.stringify(data));
+    //console.log("setTags with: " + JSON.stringify(data));
     // save the tags for this item as
     for (var i = 0; i < data.length; i++) {
         var item = data[i]['item'];
@@ -191,7 +191,7 @@ ipcMain.on('deleteTags', function(event, data) {
        var current_tags = store.get('tag-' + item);
        var tags = [];
        if (typeof current_tags === 'undefined') {
-           console.log("Error: there are no tags for item " + item + ", nothing is removed.");
+           //console.log("Error: there are no tags for item " + item + ", nothing is removed.");
            return; // we are done, nothing to remove
        }
        for (var j = 0; j < current_tags.length; j++) {
@@ -207,9 +207,9 @@ ipcMain.on('deleteTags', function(event, data) {
 // the input will also be part of the returned array of structures (key 'data')
 ipcMain.on('getTags', function(event,data) {
     var results = [];
-    console.log("getTags: " + JSON.stringify(data));
+    //console.log("getTags: " + JSON.stringify(data));
     for (var i = 0; i < data.length; i++) {
-        console.log("called getTags for this item: " + data[i]['item']);
+        //console.log("called getTags for this item: " + data[i]['item']);
         var tags = store.get( 'tag-' + data[i]['item'] );
         if (typeof tags !== 'undefined') {
             results.push( { 'tags': tags, 'item': data[i]['item'] } );
@@ -218,55 +218,92 @@ ipcMain.on('getTags', function(event,data) {
     win.send('updateTagValues', results);   
 });
 
+Array.prototype.chunk = function ( n ) {
+    if ( !this.length ) {
+        return [];
+    }
+    return [ this.slice( 0, n ) ].concat( this.slice(n).chunk(n) );
+};
+
 ipcMain.on('checkData', function(event, data) {
     var form = data['form'];
-    console.log("check the data for this form: " + form);
+    //console.log("check the data for this form: " + form);
 
-    // get data for all item in this form
-    var data = {
-        'token': token,
-        'content': 'record',
-        'forms[0]': form,
-        'format': 'json',
-        'type': 'flat',
-        'rawOrLabel': 'raw',
-        'rawOrLabelHeader': 'raw',
-        'exportCheckboxLabel': 'false',
-        'exportSurveyFields': 'false',
-        'exportDataAccessGroups': false,
-        'returnFormat': 'json'
-    }
-    
-    var headers = {
-        'User-Agent':       'Super Agent/0.0.1',
-        'Content-Type':     'application/x-www-form-urlencoded'
-    }
-    
-    var url = "https://abcd-rc.ucsd.edu/redcap/api/";
-    request({
-        method: 'POST',
-        url: url,
-        form: data,
-        headers: headers,
-        json: true
-    }, function( error, response, body) {
-        if (error || response.statusCode !== 200) {
-            // error case
-            process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
-            win.send('alert', JSON.stringify(response));
-            return;
+    // we cannot ask for all items at the same time, we don't have enough memory on the server to get those back
+    // lets chunk the items in the form
+    var items = [];
+    for (var i = 0; i < datadictionary.length; i++) {
+        var d = datadictionary[i];
+        if (d['form_name'] == form) {
+            items.push(d['field_name']);
         }
-        console.log("getting data from REDCap done");
-        data = body;
-        for (var i = 0; i < datadictionary.length; i++) {
-            var d = datadictionary[i];
-            if (d['form_name'] == form) {
-                checkItem(d['field_name'], form, data, function(result, status) {
-                    win.send('showItemCheck', { item: d['field_name'], form: form, result: result, status: status });
-                });
+    }
+
+    var queue = async.queue(function(chunk, callback) {    
+        // get data for all item in this form
+        var data = {
+            'token': token,
+            'content': 'record',
+            //'forms[0]': form,
+            'format': 'json',
+            'type': 'flat',
+            'rawOrLabel': 'raw',
+            'rawOrLabelHeader': 'raw',
+            'exportCheckboxLabel': 'false',
+            'exportSurveyFields': 'false',
+            'exportDataAccessGroups': false,
+            'returnFormat': 'json'
+        }
+        for (var i = 0; i < chunk.length; i++) {
+            data['fields[' +  i + ']'] = chunk[i];
+        }
+        
+        var headers = {
+            'User-Agent':       'Super Agent/0.0.1',
+            'Content-Type':     'application/x-www-form-urlencoded'
+        }
+        
+        var url = "https://abcd-rc.ucsd.edu/redcap/api/";
+        request({
+            method: 'POST',
+            url: url,
+            form: data,
+            headers: headers,
+            json: true
+        }, function( error, response, body) {
+            if (error || response.statusCode !== 200) {
+                // error case
+                process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
+                win.send('alert', JSON.stringify(response));
+                return;
             }
-        }
-    });
+            //console.log("getting data from REDCap done");
+            data = body;
+            for (var i = 0; i < datadictionary.length; i++) {
+                var d = datadictionary[i];
+                if (d['form_name'] == form) {
+                    checkItem(d['field_name'], form, data, function(result, status) {
+                        win.send('showItemCheck', { item: d['field_name'], form: form, result: result, status: status });
+                    });
+                }
+            }
+        });
+    }, 1);
+
+    queue.drain = function() {
+        process.stdout.write("finished getting data from redcap\n");
+        // findProblems( tokens );
+    };
+    var chunks = items.chunk(20); // get 20 items at the same time from REDCap
+
+    for (var i = 0; i < chunks.length; i++) {
+        queue.push(chunks[i], (function(chunk) {
+            return function(err) {
+                console.log("finished getting data for chunk: " + i );
+            };
+        })(chunks[i]));
+    }    
+
 });
 
 ipcMain.on('checkItem', function(event, data) {
@@ -418,103 +455,148 @@ ipcMain.on('exportData', function(event,data) {
     var filename = data['filename'];
     var form = data['form'];
 
-    // get participants for baseline event and chunk over those to get the data?
-    var data = {
-        'token': token,
-        'content': 'record',
-        'forms[0]': form,
-        'fields[0]': 'id_redcap',
-        'fields[1]': 'redcap_event_name',
-        'fields[2]': 'nda_year_1_inclusion',
-        'format': 'json',
-        'type': 'flat',
-        'rawOrLabel': 'raw',
-        'rawOrLabelHeader': 'raw',
-        'exportCheckboxLabel': 'false',
-        'exportSurveyFields': 'false',
-        'exportDataAccessGroups': false,
-        'returnFormat': 'json'
-    }
-    
-    var headers = {
-        'User-Agent':       'Super Agent/0.0.1',
-        'Content-Type':     'application/x-www-form-urlencoded'
-    }
-    
-    var url = "https://abcd-rc.ucsd.edu/redcap/api/";
-    request({
-        method: 'POST',
-        url: url,
-        form: data,
-        headers: headers,
-        json: true
-    }, function( error, response, body) {
-        if (error || response.statusCode !== 200) {
-            // error case
-            process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
-            win.send('alert', JSON.stringify(response));
-            return;
+    var items = [];
+    for (var i = 0; i < datadictionary.length; i++) {
+        var d = datadictionary[i];
+        if (d['form_name'] == form) {
+            items.push(d['field_name']);
         }
-        console.log("getting data from REDCap done");
-        data = body;
-        str = "";
-        // add the header
-        var keys = Object.keys(data[0]);
-        var skipkeys = [];
-        for ( var j = 0; j < keys.length; j++) {
-            var k = keys[j];
-            if (k == 'id_redcap')
-                k = 'subjectkey,eventname';
-            if (k == 'redcap_event_name' || k == "nda_year_1_inclusion___1" || k == (form + "_complete"))
-                continue; // don't export, is grouped with id_redcap
-            var flags = store.get('tag-' + k);
-            if (typeof flags !== 'undefined') {
-                if (flags.indexOf('remove') !== -1) {
-                    skipkeys.push(k);
-                    continue; // don't export this key
+    }
+
+    var itemsPerRecord = [];
+    var queue = async.queue(function(chunk, callback) {
+        // get participants for baseline event and chunk over those to get the data?
+        var data = {
+            'token': token,
+            'content': 'record',
+            //'forms[0]': form,
+            'fields[0]': 'id_redcap',
+            'fields[1]': 'redcap_event_name',
+            'fields[2]': 'nda_year_1_inclusion',
+            'format': 'json',
+            'type': 'flat',
+            'rawOrLabel': 'raw',
+            'rawOrLabelHeader': 'raw',
+            'exportCheckboxLabel': 'false',
+            'exportSurveyFields': 'false',
+            'exportDataAccessGroups': false,
+            'returnFormat': 'json'
+        }
+        
+        for (var i = 0; i < chunk.length; i++) {
+            data['fields[' + (i + 3) + ']'] = chunk[i];
+        }
+
+        var headers = {
+            'User-Agent':       'Super Agent/0.0.1',
+            'Content-Type':     'application/x-www-form-urlencoded'
+        }
+        
+        var url = "https://abcd-rc.ucsd.edu/redcap/api/";
+        request({
+            method: 'POST',
+            url: url,
+            form: data,
+            headers: headers,
+            json: true
+        }, function( error, response, body) {
+            if (error || response.statusCode !== 200) {
+                // error case
+                process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
+                win.send('alert', JSON.stringify(response));
+                return;
+            }
+            console.log("getting data from REDCap done once");
+            data = body;
+            // we have to merge these (items for each user) every time before we can export them
+            for (var i = 0; i < data.length; i++) {
+                // find this participant and event in itemsPerRecord
+                var found = false;
+                for (var j = 0; j < itemsPerRecord.length; j++) {
+                    var item = itemsPerRecord[j];
+                    if (item['id_redcap'] == data[i]['id_redcap'] && item['redcap_event_name'] == data[i]['redcap_event_name']) {
+                        itemsPerRecord[j] = Object.assign({}, itemsPerRecord[j], data[i]); // copy the key/values from both into one
+                        found = true; 
+                    }
+                }
+                if (!found) {
+                    itemsPerRecord.push(data[i]);
                 }
             }
-            
-            str = str + k;
-            if (j < keys.length-1) 
-                str = str + ",";
-        }
-        str = str + "\n";
-        for ( var i = 0; i < data.length; i++) {
-            if (data[i]['nda_year_1_inclusion___1'] == "1") {
-                // export this participants data
-                var keys = Object.keys(data[i]);
-                for ( var j = 0; j < keys.length; j++) {
-                    var name = keys[j];
-                    if (name == "redcap_event_name" || name == "nda_year_1_inclusion___1" || name == (form + "_complete"))
-                        continue; // skip, is exported next to id_redcap
-                    // skip this key if its not needed
-                    if (skipkeys.indexOf(name) !== -1) {
+
+            /* str = "";
+            // add the header
+            var keys = Object.keys(data[0]);
+            var skipkeys = [];
+            for ( var j = 0; j < keys.length; j++) {
+                var k = keys[j];
+                if (k == 'id_redcap')
+                    k = 'subjectkey,eventname';
+                if (k == 'redcap_event_name' || k == "nda_year_1_inclusion___1" || k == (form + "_complete"))
+                    continue; // don't export, is grouped with id_redcap
+                var flags = store.get('tag-' + k);
+                if (typeof flags !== 'undefined') {
+                    if (flags.indexOf('remove') !== -1) {
+                        skipkeys.push(k);
                         continue; // don't export this key
                     }
-
-                    var label = data[i][name];
-                    label = mapValueToString(name, label);
-                    label = label.replace(/\"/g, "\"\"\"");
-                    if (name == "id_redcap") {
-                        str = str + data[i][name] + "," + data[i]['redcap_event_name'];
-                    } else {
-                        str = str + "\"" + label + "\"";
-                    }
-                    if (j < keys.length -1)
-                        str = str + ",";
                 }
-                str = str + "\n";
+                
+                str = str + k;
+                if (j < keys.length-1) 
+                    str = str + ",";
             }
-        }
-        fs.writeFile(filename, str, function(err) {
-            if (err) {
-                return console.log(err);
+            str = str + "\n";
+            for ( var i = 0; i < data.length; i++) {
+                if (data[i]['nda_year_1_inclusion___1'] == "1") {
+                    // export this participants data
+                    var keys = Object.keys(data[i]);
+                    for ( var j = 0; j < keys.length; j++) {
+                        var name = keys[j];
+                        if (name == "redcap_event_name" || name == "nda_year_1_inclusion___1" || name == (form + "_complete"))
+                            continue; // skip, is exported next to id_redcap
+                        // skip this key if its not needed
+                        if (skipkeys.indexOf(name) !== -1) {
+                            continue; // don't export this key
+                        }
+    
+                        var label = data[i][name];
+                        label = mapValueToString(name, label);
+                        label = label.replace(/\"/g, "\"\"\"");
+                        if (name == "id_redcap") {
+                            str = str + data[i][name] + "," + data[i]['redcap_event_name'];
+                        } else {
+                            str = str + "\"" + label + "\"";
+                        }
+                        if (j < keys.length -1)
+                            str = str + ",";
+                    }
+                    str = str + "\n";
+                }
             }
-            console.log("The file was saved...");
-        });    
-    });
+            fs.writeFile(filename, str, function(err) {
+                if (err) {
+                    return console.log(err);
+                }
+                console.log("The file was saved...");
+            });    */ 
+        });
+    }, 1);
 
+    queue.drain = function() {
+        console.log("finished getting data from redcap at this point");
+        // findProblems( tokens );
+    };
+    var chunks = items.chunk(20); // get 20 items at the same time from REDCap
+
+    for (var i = 0; i < chunks.length; i++) {
+        queue.push(chunks[i], (function(chunk) {
+            return function(err) {
+                console.log("finished getting data for chunk: " + i );
+            };
+        })(chunks[i]));
+    }
+    
 });
 
 // lookup an items code and return the string that represents the value
@@ -802,13 +884,16 @@ function getDataDictionary( token ) {
                 continue;
             if (datadictionary[entry]['field_type'] == 'notes')
                 continue;
-            // find out if we have a date attached to the HIDEFROMCOMPLETION field
-            var matches = datadictionary[entry]['field_annotation'].match(/HIDEFROMCOMPLETION(\d{4})(\d{2})(\d{2})/);
-            if (matches !== null) {
-                console.log(" HIDEFROMCOMPLETION FOUND WITH DATE! " + JSON.stringify(matches) + " for " + datadictionary[entry]['field_annotation'] + " " + JSON.stringify(datadictionary[entry]));
-            } else { // we could still have a HIDEFROMCOMPLETION without a date here
-                if (datadictionary[entry]['field_annotation'].indexOf("HIDEFROMCOMPLETION") !== -1)
-                    continue;
+            var matches = null;
+            if (typeof datadictionary[entry]['field_annotation'] !== 'undefined') {
+                // find out if we have a date attached to the HIDEFROMCOMPLETION field
+                matches = datadictionary[entry]['field_annotation'].match(/HIDEFROMCOMPLETION(\d{4})(\d{2})(\d{2})/);
+                if (matches !== null) {
+                    console.log(" HIDEFROMCOMPLETION FOUND WITH DATE! " + JSON.stringify(matches) + " for " + datadictionary[entry]['field_annotation'] + " " + JSON.stringify(datadictionary[entry]));
+                } else { // we could still have a HIDEFROMCOMPLETION without a date here
+                    if (datadictionary[entry]['field_annotation'].indexOf("HIDEFROMCOMPLETION") !== -1)
+                        continue;
+                }
             }
             if (datadictionary[entry]['field_name'] == "permission_school_records" || datadictionary[entry]['field_name'] == "permission_teacher_contact")
                 continue;
@@ -926,3 +1011,4 @@ function filterDataDictionary( token ) {
         console.log("number of instruments left: " + Object.keys(instruments).length);
     });
 }
+
