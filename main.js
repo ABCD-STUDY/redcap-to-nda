@@ -547,7 +547,7 @@ ipcMain.on('exportData', function(event,data) {
     queue.drain = function() {
         console.log("drain called...");
         if (allChunksSend) {
-            console.log("finished getting data from redcap at this point, save itemsPerRecord to file");
+            console.log("finished getting data from redcap at this point, save itemsPerRecord to file: " + filename);
             win.send('message', "done with save...");
             data = itemsPerRecord;
             str = "";
@@ -600,12 +600,16 @@ ipcMain.on('exportData', function(event,data) {
                     str = str + "\n";
                 }
             }
-            fs.writeFile(filename, str, function(err) {
-                if (err) {
-                    return console.log(err);
-                }
-                console.log("The file was saved...");
-            });
+            try { 
+                fs.writeFile(filename, str, function(err) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    console.log("The file was saved...");
+                });
+            } catch(e) {
+                win.send('alert', 'Could not save to file: ' + filename);
+            }
         }
     };
     var chunks = items.chunk(20); // get 20 items at the same time from REDCap
