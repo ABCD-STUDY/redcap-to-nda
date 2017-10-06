@@ -26,7 +26,7 @@ let instrumentEventMapping
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 1100, height: 650, "webPreferences" : { devTools: true } });
+  win = new BrowserWindow({width: 1100, height: 700, "webPreferences" : { devTools: false } });
 
   // and load the index.html of the app.
   win.loadURL(url.format({
@@ -54,7 +54,7 @@ function createWindow () {
     ]}
   ];
 
-  //Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   // Open the DevTools.
   win.webContents.openDevTools()
@@ -268,7 +268,7 @@ ipcMain.on('checkData', function(event, data) {
             'User-Agent':       'Super Agent/0.0.1',
             'Content-Type':     'application/x-www-form-urlencoded'
         }
-        
+        console.log("run request now...");
         var url = "https://abcd-rc.ucsd.edu/redcap/api/";
         request({
             method: 'POST',
@@ -279,12 +279,12 @@ ipcMain.on('checkData', function(event, data) {
         }, function( error, response, body) {
             if (error || response.statusCode !== 200) {
                 // error case
-                process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
+                //process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
                 win.send('alert', JSON.stringify(response));
                 callback("error");
                 return;
             }
-            //console.log("getting data from REDCap done");
+            //console.log("data from REDCAP: " + JSON.stringify(response));
             data = body;
 
             for (var i = 0; i < datadictionary.length; i++) {
@@ -297,6 +297,10 @@ ipcMain.on('checkData', function(event, data) {
                 }
             }
             callback("something");
+        }).on('data', function(data) {
+            //console.log("request got DATA");
+        }).on('response', function(data) {
+            //console.log('on response....');
         });
     }, 1);
 
@@ -304,13 +308,13 @@ ipcMain.on('checkData', function(event, data) {
         process.stdout.write("finished getting data from redcap for checkData\n");
         // findProblems( tokens );
     };
-    var chunks = items.chunk(20); // get 20 items at the same time from REDCap
+    var chunks = items.chunk(40); // get 20 items at the same time from REDCap
 
     for (var i = 0; i < chunks.length; i++) {
         console.log('get chunk ' + i + " of " + chunks.length);
         queue.push([chunks[i]], (function(counter) {
             return function(err) {
-                console.log("finished getting data for chunk: " + counter );
+                console.log("finished getting data for chunk: " + counter + " with " + err );
             };
         })(i));
     }    
@@ -585,7 +589,7 @@ ipcMain.on('exportData', function(event,data) {
                         if (skipkeys.indexOf(name) !== -1) {
                             continue; // don't export this key
                         }
-    
+                        // we could have a key here that contains '___'    
                         var label = data[i][name];
                         label = mapValueToString(name, label);
                         label = label.replace(/\"/g, "\"\"\"");
@@ -616,9 +620,13 @@ ipcMain.on('exportData', function(event,data) {
     //console.log("chunks has : " + chunks.length + " elements. -> " + JSON.stringify(chunks));
     for (var i = 0; i < chunks.length; i++) {
         //console.log("push chunk " + i + " into the queue with: " + chunks[i].length + " elements in it -> " + JSON.stringify(chunks[i]));
-        queue.push([chunks[i]], function(error) {
-                console.log("finished getting data for chunk with " + error);
-        });
+        queue.push([chunks[i]], 
+            (function(counter) {
+                return function(err) {
+                    console.log("finished getting data for chunk: " + counter );
+                };
+            })(i)
+        );
     }
     allChunksSend = true;   
 });
@@ -637,7 +645,7 @@ function mapValueToString(item, value) {
                 var k = choices[j].split(",")[0].trim();
                 var val = choices[j].split(",")[1].trim();
                 m[k] = val;
-            } 
+            }
             // now apply this map
             if (typeof m[value] !== 'undefined') {
                 ret = m[value];
@@ -669,7 +677,7 @@ ipcMain.on('exportForm', function(event, data) {
     str = ""; //data['form'] + ",01";
     str = str + "ElementName,DataType,Size,Required,ElementDescription,ValueRange,Notes,Aliases\n";
     str = str + "subjectkey,GUID,,Required,The NDAR Global Unique Identifier (GUID) for research subject,NDAR*,,\n";
-    str = str + "eventname,String,200,Required,The event name for which the data was collected,,,\n";
+    str = str + "eventname,String,60,Required,The event name for which the data was collected,,,\n";
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
         if (d['form_name'] == data['form']) {
@@ -682,6 +690,7 @@ ipcMain.on('exportForm', function(event, data) {
                 notes = JSON.stringify( { "notes": notes, "branching_logic": d['branching_logic'] } );
             }
             var aliases = "";
+            var foundIntegerRange = false;
             if (typeof d['text_validation_type_or_show_slider_number'] !== 'undefined') {
                 if (d['text_validation_type_or_show_slider_number'] == "integer") {
                     type = "Integer";
@@ -696,22 +705,12 @@ ipcMain.on('exportForm', function(event, data) {
                     }
                     if (mi !== "" && ma !== "") {
                         range = mi + " :: " + ma;
+                        foundIntegerRange = true;
                     }
                 }
                 if (d['text_validation_type_or_show_slider_number'] == "datetime_dmy") {
                     type = "Date";
                 }
-            }
-            if (d['field_type'] == "checkbox") {
-                var choices = d['select_choices_or_calculations'].split("|");
-                range = "";
-                type = "String";
-                for (var j = 0; j < choices.length; j++) {
-                    range = range + choices[j].split(",")[1].trim(); // ok, save out the string instead of the value???
-                    if (j < choices.length-1)
-                        range = range + "; ";
-                } 
-                range = "\"" + range + "\"";
             }
             if (d['field_type'] == "radio") {
                 var choices = d['select_choices_or_calculations'].split("|");
@@ -734,7 +733,7 @@ ipcMain.on('exportForm', function(event, data) {
                 range = "\"yes; no\"";
                 type = "String";
             }
-            if (d['field_type'] == "text") {
+            if (d['field_type'] == "text" && !foundIntegerRange) {
                 type = "String";
             }
             if (d['field_type'] == "descriptive") {
@@ -767,14 +766,34 @@ ipcMain.on('exportForm', function(event, data) {
             notes = notes.replace(/\r\n/g, "\n");
             //notes = notes.replace(/,/g,"\",\"");
             
-            str = str + d['field_name'] + "," + 
-                type + "," + 
-                size + "," + 
-                "Recommended" + "," + 
-                "\"" + label + "\"," + 
-                range + "," + 
-                "\"" + notes + "\"," + 
-                aliases + "\n";
+            if (d['field_type'] == "checkbox") { // create separate entries for each of these
+                var choices = d['select_choices_or_calculations'].split("|");
+                range = "0 :: 1";
+                type = "Integer";
+                size = '';
+                for (var j = 0; j < choices.length; j++) {
+                    str = str + d['field_name'] + "___" + (j+1) + "," + 
+                        type + "," + 
+                        size + "," + 
+                        "Recommended" + "," + 
+                        "\"" + label + " (" + choices[j].trim() + ")\"," + 
+                        range + "," + 
+                        "\"" + notes + "\"," + 
+                        aliases + "\n";    
+                } 
+            } else {
+                if (range == "0 :: 1") {
+                    console.log("0::1: with " + type + d['field_type']);
+                }
+                str = str + d['field_name'] + "," + 
+                   type + "," + 
+                   size + "," + 
+                   "Recommended" + "," + 
+                   "\"" + label + "\"," + 
+                   range + "," + 
+                   "\"" + notes + "\"," + 
+                   aliases + "\n";
+            }
         }
     }
 

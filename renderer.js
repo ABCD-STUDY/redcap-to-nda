@@ -60,9 +60,9 @@ ipcRenderer.on('updateItems', function(event, data) {
     jQuery('#clear-messages').prop('disabled','');
     jQuery('#export-current-form-data-button').prop('disabled','');
     jQuery('#current-items-list div.tag-group').append(
-        '<button class="btn btn-default tag" value="remove" title="remove this item from the export">D</button>' + 
-        '<button class="btn btn-default tag" value="long" title="String length <= 60">L</button>' +
-        '<button class="btn btn-default tag" value="huge" title="String length <= 200">H</button>'
+        '<button class="btn btn-default tag" value="remove" title="Disable this item, do not export">D</button>' + 
+        '<button class="btn btn-default tag" value="long" title="Increase max string length to 60">L</button>' +
+        '<button class="btn btn-default tag" value="huge" title="Increase max string length to 200">H</button>'
     );
     jQuery('#current-items-list div.tag-group').each(function() {
         // try to get the tags for this item
