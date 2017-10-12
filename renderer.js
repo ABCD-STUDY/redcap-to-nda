@@ -210,7 +210,7 @@ jQuery(document).ready(function() {
 
     jQuery('#export-current-form-button').on('click', function() {
         //var dialog = remote.require('dialog');
-        dialog.showSaveDialog({ defaultPath: current_form + ".csv" }, function (filename) {
+        dialog.showSaveDialog({ defaultPath: current_form + "_dictionary.csv" }, function (filename) {
             ipcRenderer.send('exportForm', { form: current_form, filename: filename });
         });
     });
