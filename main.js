@@ -18,6 +18,7 @@ var async = require("async");
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 let setupDialog
+let changeLabelDialog
 let datadicationary
 let instrumentLabels
 let token
@@ -26,7 +27,7 @@ let instrumentEventMapping
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 1100, height: 700, "webPreferences" : { devTools: false } });
+  win = new BrowserWindow({width: 1100, height: 700, "webPreferences" : { devTools: true } });
 
   // and load the index.html of the app.
   win.loadURL(url.format({
@@ -54,7 +55,7 @@ function createWindow () {
     ]}
   ];
 
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  //Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   // Open the DevTools.
   win.webContents.openDevTools()
@@ -131,6 +132,56 @@ ipcMain.on('closeSetupDialogOk', function(event, arg) {
     }
 });
 
+
+ipcMain.on('openChangeLabelDialog', function (event, arg) {
+    console.log("start openChangeLabelDialog... with argument: " + arg);
+    if (changeLabelDialog) {
+        changeLabelDialog.show();
+        return;
+    }
+    changeLabelDialog = new BrowserWindow({ parent: win, modal: true, show: false, titleBarStyle: 'hidden', frame: false });
+    changeLabelDialog.loadURL(url.format({
+        pathname: path.join(__dirname, 'changeLabelDialog.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+    changeLabelDialog.once('ready-to-show', function() { 
+        changeLabelDialog.show(); 
+        changeLabelDialog.send('changeLabelCurrentName', { name: arg['name'], instrument: arg['instrument'] }); 
+    });
+    console.log("done with openChangeLabelDialog...");
+    changeLabelDialog.on('closed', function() {
+        console.log("openChangeLabelDialog was closed");
+    });
+    // win.send('changeLabelCurrentName', arg);
+    //setTimeout(function() { jQuery('#change-label-dialog-name').val( jQuery(this).text() ); }, 200);
+
+});
+
+ipcMain.on('closeChangeLabelDialogCancel', function(event, arg) {
+    if (changeLabelDialog) {
+        changeLabelDialog.hide();
+        console.log("closed setup DIALOG after cancel");
+    }
+});
+ipcMain.on('closeChangeLabelDialogOk', function(event, arg) {
+    if (changeLabelDialog) {
+        changeLabelDialog.hide();
+        name = arg.name.trim();
+        instrument = arg.instrument;
+        console.log("closed setup DIALOG after ok, new name is: " + name + " for instrument: " + instrument);
+
+        console.log("Store now: " + instrument + " with value: " + name);
+        store.set('instrument-' + instrument, [name]);
+
+        // now populate the list with the instruments
+        // updateInstrumentList( event );
+    }
+});
+
+
+
+
 ipcMain.on('getEventsFromREDCap', function(event, arg) {
     var token = arg;
     console.log("get event data from REDCap...");
@@ -157,8 +208,11 @@ ipcMain.on('getItemsForForm', function (event, form) {
 
 // save a list of tags for this item [ { 'item': "some_item", 'tags': [ "dont-save" ] } ]
 ipcMain.on('setTags', function(event, data) {
+    var tag_prefix = 'tag-';
+    if (typeof data['prefix'] !== 'undefined')
+        tag_prefix = data['prefix'];
 
-    //console.log("setTags with: " + JSON.stringify(data));
+    console.log("setTags with: " + JSON.stringify(data));
     // save the tags for this item as
     for (var i = 0; i < data.length; i++) {
         var item = data[i]['item'];
@@ -179,16 +233,21 @@ ipcMain.on('setTags', function(event, data) {
             }
         }
         // save them again
-        store.set('tag-' + item, tags);
+        store.set(tag_prefix + item, tags);
     }
 });
 
 // delete one tag per entry [ { 'item': "some_item", 'tag': "dont-save" } ]
 ipcMain.on('deleteTags', function(event, data) {
     // save the tags for this item as
+    var tag_prefix = 'tag-';
+    if (typeof data['prefix'] !== 'undefined') {
+        tag_prefix = data['prefix'];
+    }
+
     for (var i = 0; i < data.length; i++) {
        var item = data[i]['item'];
-       var current_tags = store.get('tag-' + item);
+       var current_tags = store.get(tag_prefix + item);
        var tags = [];
        if (typeof current_tags === 'undefined') {
            //console.log("Error: there are no tags for item " + item + ", nothing is removed.");
@@ -199,7 +258,7 @@ ipcMain.on('deleteTags', function(event, data) {
                tags.push(current_tags[j]);
            }
        }
-       store.set('tag-' + item, tags); // store what is left after removing the tags that should be deleted
+       store.set(tag_prefix + item, tags); // store what is left after removing the tags that should be deleted
     }
 });
 
@@ -207,15 +266,18 @@ ipcMain.on('deleteTags', function(event, data) {
 // the input will also be part of the returned array of structures (key 'data')
 ipcMain.on('getTags', function(event,data) {
     var results = [];
-    //console.log("getTags: " + JSON.stringify(data));
     for (var i = 0; i < data.length; i++) {
         //console.log("called getTags for this item: " + data[i]['item']);
-        var tags = store.get( 'tag-' + data[i]['item'] );
+        var tag_prefix = 'tag-';
+        if (typeof data[i]['prefix'] !== 'undefined')
+            tag_prefix = data[i]['prefix']
+        var tags = store.get( tag_prefix + data[i]['item'] );
         if (typeof tags !== 'undefined') {
-            results.push( { 'tags': tags, 'item': data[i]['item'] } );
+            results.push( { 'tags': tags, 'item': data[i]['item'], 'prefix': tag_prefix } );
         }
     }
-    win.send('updateTagValues', results);   
+    console.log("getTags: " + JSON.stringify(data) + " " + JSON.stringify(results));
+    win.send('updateTagValues', results);
 });
 
 Array.prototype.chunk = function ( n ) {
@@ -237,6 +299,7 @@ ipcMain.on('checkData', function(event, data) {
     // we cannot ask for all items at the same time, we don't have enough memory on the server to get those back
     // lets chunk the items in the form
     var items = [];
+    // lets stick with the order of these items in the data dictionary
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
         if (d['form_name'] == form) {
@@ -292,7 +355,7 @@ ipcMain.on('checkData', function(event, data) {
                 // only call checkItem for items that we have in the current body
                 if (d['form_name'] == form && chunk.indexOf(d['field_name']) !== -1)  {
                     checkItem(d['field_name'], form, data, function(result, status) {
-                        win.send('showItemCheck', { item: d['field_name'], form: form, result: result, status: status });
+                        win.send('showItemCheck', { item: d['field_name'], form: form, result: result, status: status, order: i });
                     });
                 }
             }
