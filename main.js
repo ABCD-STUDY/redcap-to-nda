@@ -134,9 +134,10 @@ ipcMain.on('closeSetupDialogOk', function(event, arg) {
 
 
 ipcMain.on('openChangeLabelDialog', function (event, arg) {
-    console.log("start openChangeLabelDialog... with argument: " + arg);
+    console.log("start openChangeLabelDialog... with argument: " + JSON.stringify(arg));
     if (changeLabelDialog) {
         changeLabelDialog.show();
+        changeLabelDialog.send('changeLabelCurrentName', { name: arg['name'], instrument: arg['instrument'] });         
         return;
     }
     changeLabelDialog = new BrowserWindow({ parent: win, modal: true, show: false, titleBarStyle: 'hidden', frame: false });

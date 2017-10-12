@@ -256,13 +256,9 @@ jQuery(document).ready(function() {
         var instrument = jQuery(this).parent().parent().parent().attr('value'); // unique name of this instrument
         // maybe we have a value for this instrument as a tag?
         // no, we will only show descriptions that are current (default or tag value)
+        //console.log("Open change label dialog with: " + default_text + " " + instrument);
         ipcRenderer.send('openChangeLabelDialog', { 'name': default_text, 'instrument': instrument });
         console.log("open another dialog finished");
-        //jQuery("#redcap-access-token").value( "BLABLABLA" );
-        setTimeout(function() {
-            ipcRenderer.send('my-msg', 'hi');
-        }, 3000);
-        
         return false;
     });
 
