@@ -121,7 +121,7 @@ ipcRenderer.on('showItemCheck', function(event, data) {
         jQuery(previous_item).children().remove();
         jQuery(previous_item).append('<img class="img-circle media-object pull-left" src="img/' + status + '.png" width="32" height="32">' +
             '<div class="media-body">' +  
-            '  <strong>' + item + " [" + form + '] ' + order + ' </strong>' + 
+            '  <strong>' + item + " [" + form + ']</strong>' + 
             '  <p>' + result + '</p>' +
             '</div>');
     } else {
@@ -131,7 +131,7 @@ ipcRenderer.on('showItemCheck', function(event, data) {
         var it = jQuery('<li class="list-group-item" value="'+ item +'" form="' + form + '" order="' + order + '">' + 
             '<img class="img-circle media-object pull-left" src="img/' + status + '.png" width="32" height="32">' +
             '<div class="media-body">' +  
-            '  <strong>' + item + " [" + form + '] ' + order + ' </strong>' + 
+            '  <strong>' + item + " [" + form + ']</strong>' + 
             '  <p>' + result + '</p>' +
             '</div></li>');
         jQuery('#message-list').append(it);
