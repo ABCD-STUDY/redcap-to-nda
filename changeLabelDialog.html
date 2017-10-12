@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Instrument Label</title>
+    <link rel="stylesheet" href="css/photon.css">
+  </head>
+  <body>
+        <div class="window">
+            <header class="toolbar toolbar-header">
+                <h1 class="title">Instrument Label</h1>
+            </header>
+            <div class="window-content">
+                <div class="padded-more">
+                    <form>
+                        <div class="form-group">
+                          <label>Instrument Name</label>
+                          <input type="text" class="form-control" id="change-label-dialog-name" placeholder="Name">
+                        </div>
+                        <hr>
+                        <div class="form-actions">
+                            <button class="btn btn-form btn-default" id="change-label-dialog-cancel">Cancel</button>
+                            <button class="btn btn-form btn-default" id="change-label-dialog-reset">Reset</button>
+                            <button class="btn btn-form btn-primary" id="change-label-dialog-ok">OK</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+         <script>
+                // You can also require other files to run in this process
+                require('./changeLabelDialog.js')
+        </script>
+  </body>
+</html>
