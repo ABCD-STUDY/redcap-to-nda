@@ -158,6 +158,21 @@ ipcMain.on('openChangeLabelDialog', function (event, arg) {
 
 });
 
+ipcMain.on('closeChangeLabelDialogReset', function(event, arg) {
+    if (changeLabelDialog) {
+        changeLabelDialog.hide();
+        var name = arg.name.trim();
+        var instrument = arg.instrument;
+
+        console.log("closed setup DIALOG after reset");
+        // what is the default value?
+        name = instrumentLabels[instrument];
+
+        // here we should delete the tag instead of setting it to the default
+        results = [ { 'tags': [ name ], 'item': instrument, 'prefix': 'instrument-', 'additional-action': 'delete' } ];
+        win.send('updateTagValues', results);
+    }
+});
 ipcMain.on('closeChangeLabelDialogCancel', function(event, arg) {
     if (changeLabelDialog) {
         changeLabelDialog.hide();
@@ -173,6 +188,10 @@ ipcMain.on('closeChangeLabelDialogOk', function(event, arg) {
 
         console.log("Store now: " + instrument + " with value: " + name);
         store.set('instrument-' + instrument, [name]);
+
+        // now update the interface with the new values
+        results = [ { 'tags': [ name ], 'item': instrument, 'prefix': 'instrument-' } ];
+        win.send('updateTagValues', results);
 
         // now populate the list with the instruments
         // updateInstrumentList( event );
@@ -208,13 +227,13 @@ ipcMain.on('getItemsForForm', function (event, form) {
 
 // save a list of tags for this item [ { 'item': "some_item", 'tags': [ "dont-save" ] } ]
 ipcMain.on('setTags', function(event, data) {
-    var tag_prefix = 'tag-';
-    if (typeof data['prefix'] !== 'undefined')
-        tag_prefix = data['prefix'];
-
     console.log("setTags with: " + JSON.stringify(data));
     // save the tags for this item as
     for (var i = 0; i < data.length; i++) {
+        var tag_prefix = 'tag-';
+        if (typeof data[i]['prefix'] !== 'undefined')
+            tag_prefix = data[i]['prefix'];
+
         var item = data[i]['item'];
         var tags = store.get('tag-' + item); // existing tags
         if (typeof tags === 'undefined') {
@@ -240,25 +259,35 @@ ipcMain.on('setTags', function(event, data) {
 // delete one tag per entry [ { 'item': "some_item", 'tag': "dont-save" } ]
 ipcMain.on('deleteTags', function(event, data) {
     // save the tags for this item as
-    var tag_prefix = 'tag-';
-    if (typeof data['prefix'] !== 'undefined') {
-        tag_prefix = data['prefix'];
-    }
 
     for (var i = 0; i < data.length; i++) {
-       var item = data[i]['item'];
-       var current_tags = store.get(tag_prefix + item);
-       var tags = [];
-       if (typeof current_tags === 'undefined') {
-           //console.log("Error: there are no tags for item " + item + ", nothing is removed.");
+        var tag_prefix = 'tag-';
+        if (typeof data[i]['prefix'] !== 'undefined') {
+            tag_prefix = data[i]['prefix'];
+        }
+        var item = data[i]['item']; 
+        var current_tags = store.get(tag_prefix + item);
+        var tags = [];
+        if (typeof current_tags === 'undefined') {
+           //console.log("Error: there are no tags for item " + tag_prefix + " " + item + ", nothing is removed." + JSON.stringify(data));
            return; // we are done, nothing to remove
-       }
-       for (var j = 0; j < current_tags.length; j++) {
-           if (data[i]['tags'].indexOf(current_tags[j]) === -1) {
-               tags.push(current_tags[j]);
+        }
+        if (tag_prefix == 'instrument-') { // delete all tags for this entry
+             store.delete(tag_prefix + item);
+             console.log("delete " + tag_prefix + " " + item + " from store");
+        } else {
+           for (var j = 0; j < current_tags.length; j++) {
+               if (data[i]['tags'].indexOf(current_tags[j]) === -1) {
+                   tags.push(current_tags[j]);
+               }
            }
-       }
-       store.set(tag_prefix + item, tags); // store what is left after removing the tags that should be deleted
+           if (tags.length == 0) {
+               // nothing to save again, remove this tag
+               store.delete(tag_prefix + item);
+           } else {
+               store.set(tag_prefix + item, tags); // store what is left after removing the tags that should be deleted
+           }
+        }
     }
 });
 
@@ -533,6 +562,13 @@ ipcMain.on('exportData', function(event,data) {
     var form = data['form'];
     console.log("start writing data to disk " + filename + " ...");
     
+    // what is the name of this instrument?
+    var form_name = instrumentLabels[form];
+    var v = store.get('instrument-' + form);
+    if (typeof v !== 'undefined') {
+        form_name = v;
+    }
+
     var items = [];
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
@@ -617,7 +653,7 @@ ipcMain.on('exportData', function(event,data) {
             console.log("finished getting data from redcap at this point, save itemsPerRecord to file: " + filename);
             win.send('message', "done with save...");
             data = itemsPerRecord;
-            str = "";
+            str = form_name + "\n";
             // add the header
             var keys = Object.keys(data[0]);
             var skipkeys = [];
@@ -724,8 +760,15 @@ function mapValueToString(item, value) {
 ipcMain.on('exportForm', function(event, data) {
     console.log("save now form : " + data['form'] + " " + data['filename']);
     var filename = data['filename'];
+    var form = data['form'];
     if (typeof filename == 'undefined' || filename == '') {
         return; // ignore this request if we don't have a filename to save to
+    }
+    // what is the name of this instrument?
+    var form_name = instrumentLabels[form];
+    var v = store.get('instrument-' + form);
+    if (typeof v !== 'undefined') {
+        form_name = v;
     }
 
     // structure of the data dictionary is:
@@ -737,7 +780,7 @@ ipcMain.on('exportForm', function(event, data) {
     // ValueRange NDAR*, 0 :: 1260, Asian; Hawaiian or Pacitic Islander; Black, 0::174, 0::20; 999 1;2
     // Notes
     // Aliases
-    str = ""; //data['form'] + ",01";
+    str = form_name + "\n"; //data['form'] + ",01";
     str = str + "ElementName,DataType,Size,Required,ElementDescription,ValueRange,Notes,Aliases\n";
     str = str + "subjectkey,GUID,,Required,The NDAR Global Unique Identifier (GUID) for research subject,NDAR*,,\n";
     str = str + "eventname,String,60,Required,The event name for which the data was collected,,,\n";

@@ -38,7 +38,7 @@ ipcRenderer.on('updateInstrumentList', function(event, data) {
             '<img class="img-circle media-object pull-left" src="img/instrument.png" width="32" height="32">' +
             '<div class="media-body">' +  
             '  <strong>' + data[i][0] + '</strong>' + 
-            '  <p class="description"><button class="btn btn-default edit"><span class="icon icon-feather"></span></button> ' + data[i][1] + '</p>' +
+            '  <div><button class="btn btn-default edit"><span class="icon icon-feather"></span></button> <span class="description">' + data[i][1] + '</span></div>' +
             '</div></li>' );
     }
 });
@@ -76,7 +76,7 @@ ipcRenderer.on('updateItems', function(event, data) {
 
 ipcRenderer.on('updateTagValues', function(event, data) {
     // if the prefix in data is not 'tag-'
-
+    
     // 'tags': store.get( 'tag-' + data[i]['item'] ), 'data': data
     for (var i = 0; i < data.length; i++) {
         if (typeof data[i]['prefix'] !== 'undefined' && data[i]['prefix'] == 'instrument-') {
@@ -85,8 +85,19 @@ ipcRenderer.on('updateTagValues', function(event, data) {
             jQuery('#current-instrument-list li').each(function() {
                 if (jQuery(this).attr('value') == instr) {
                     jQuery(this).find('.description').text(" " + data[i]['tags'][0]);
+                    jQuery(this).find('.edit span').addClass('from-store');
                 }
-            });    
+            });
+            if (typeof data[i]['additional-action'] !== 'undefined' && data[i]['additional-action'] == 'delete') {
+                console.log("Do we have additional-action? " + JSON.stringify(data[i]));
+                ipcRenderer.send('deleteTags', [ { 'prefix': data[i]['prefix'], 'item': instr, 'tags': [ instr ] }]);
+                // also remove the class from this edit span again
+                jQuery('#current-instrument-list li').each(function() {
+                    if (jQuery(this).attr('value') == instr) {
+                        jQuery(this).find('.edit span').removeClass('from-store');
+                    }
+                });
+            }
         } else {
             //console.log("need to update the tag for " + data[i]['item'] + " tag: " + data[i]['tags'] );
             var itemEntry = jQuery('#current-items-list').find('[value="' + data[i]['item'] + '"]');
