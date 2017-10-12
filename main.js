@@ -18,6 +18,7 @@ var async = require("async");
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 let setupDialog
+let changeLabelDialog
 let datadicationary
 let instrumentLabels
 let token
@@ -57,7 +58,7 @@ function createWindow () {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  //win.webContents.openDevTools()
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -131,6 +132,75 @@ ipcMain.on('closeSetupDialogOk', function(event, arg) {
     }
 });
 
+
+ipcMain.on('openChangeLabelDialog', function (event, arg) {
+    console.log("start openChangeLabelDialog... with argument: " + arg);
+    if (changeLabelDialog) {
+        changeLabelDialog.show();
+        return;
+    }
+    changeLabelDialog = new BrowserWindow({ parent: win, modal: true, show: false, titleBarStyle: 'hidden', frame: false });
+    changeLabelDialog.loadURL(url.format({
+        pathname: path.join(__dirname, 'changeLabelDialog.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+    changeLabelDialog.once('ready-to-show', function() { 
+        changeLabelDialog.show(); 
+        changeLabelDialog.send('changeLabelCurrentName', { name: arg['name'], instrument: arg['instrument'] }); 
+    });
+    console.log("done with openChangeLabelDialog...");
+    changeLabelDialog.on('closed', function() {
+        console.log("openChangeLabelDialog was closed");
+    });
+    // win.send('changeLabelCurrentName', arg);
+    //setTimeout(function() { jQuery('#change-label-dialog-name').val( jQuery(this).text() ); }, 200);
+
+});
+
+ipcMain.on('closeChangeLabelDialogReset', function(event, arg) {
+    if (changeLabelDialog) {
+        changeLabelDialog.hide();
+        var name = arg.name.trim();
+        var instrument = arg.instrument;
+
+        console.log("closed setup DIALOG after reset");
+        // what is the default value?
+        name = instrumentLabels[instrument];
+
+        // here we should delete the tag instead of setting it to the default
+        results = [ { 'tags': [ name ], 'item': instrument, 'prefix': 'instrument-', 'additional-action': 'delete' } ];
+        win.send('updateTagValues', results);
+    }
+});
+ipcMain.on('closeChangeLabelDialogCancel', function(event, arg) {
+    if (changeLabelDialog) {
+        changeLabelDialog.hide();
+        console.log("closed setup DIALOG after cancel");
+    }
+});
+ipcMain.on('closeChangeLabelDialogOk', function(event, arg) {
+    if (changeLabelDialog) {
+        changeLabelDialog.hide();
+        name = arg.name.trim();
+        instrument = arg.instrument;
+        console.log("closed setup DIALOG after ok, new name is: " + name + " for instrument: " + instrument);
+
+        console.log("Store now: " + instrument + " with value: " + name);
+        store.set('instrument-' + instrument, [name]);
+
+        // now update the interface with the new values
+        results = [ { 'tags': [ name ], 'item': instrument, 'prefix': 'instrument-' } ];
+        win.send('updateTagValues', results);
+
+        // now populate the list with the instruments
+        // updateInstrumentList( event );
+    }
+});
+
+
+
+
 ipcMain.on('getEventsFromREDCap', function(event, arg) {
     var token = arg;
     console.log("get event data from REDCap...");
@@ -157,10 +227,13 @@ ipcMain.on('getItemsForForm', function (event, form) {
 
 // save a list of tags for this item [ { 'item': "some_item", 'tags': [ "dont-save" ] } ]
 ipcMain.on('setTags', function(event, data) {
-
-    //console.log("setTags with: " + JSON.stringify(data));
+    console.log("setTags with: " + JSON.stringify(data));
     // save the tags for this item as
     for (var i = 0; i < data.length; i++) {
+        var tag_prefix = 'tag-';
+        if (typeof data[i]['prefix'] !== 'undefined')
+            tag_prefix = data[i]['prefix'];
+
         var item = data[i]['item'];
         var tags = store.get('tag-' + item); // existing tags
         if (typeof tags === 'undefined') {
@@ -179,27 +252,42 @@ ipcMain.on('setTags', function(event, data) {
             }
         }
         // save them again
-        store.set('tag-' + item, tags);
+        store.set(tag_prefix + item, tags);
     }
 });
 
 // delete one tag per entry [ { 'item': "some_item", 'tag': "dont-save" } ]
 ipcMain.on('deleteTags', function(event, data) {
     // save the tags for this item as
+
     for (var i = 0; i < data.length; i++) {
-       var item = data[i]['item'];
-       var current_tags = store.get('tag-' + item);
-       var tags = [];
-       if (typeof current_tags === 'undefined') {
-           //console.log("Error: there are no tags for item " + item + ", nothing is removed.");
+        var tag_prefix = 'tag-';
+        if (typeof data[i]['prefix'] !== 'undefined') {
+            tag_prefix = data[i]['prefix'];
+        }
+        var item = data[i]['item']; 
+        var current_tags = store.get(tag_prefix + item);
+        var tags = [];
+        if (typeof current_tags === 'undefined') {
+           //console.log("Error: there are no tags for item " + tag_prefix + " " + item + ", nothing is removed." + JSON.stringify(data));
            return; // we are done, nothing to remove
-       }
-       for (var j = 0; j < current_tags.length; j++) {
-           if (data[i]['tags'].indexOf(current_tags[j]) === -1) {
-               tags.push(current_tags[j]);
+        }
+        if (tag_prefix == 'instrument-') { // delete all tags for this entry
+             store.delete(tag_prefix + item);
+             console.log("delete " + tag_prefix + " " + item + " from store");
+        } else {
+           for (var j = 0; j < current_tags.length; j++) {
+               if (data[i]['tags'].indexOf(current_tags[j]) === -1) {
+                   tags.push(current_tags[j]);
+               }
            }
-       }
-       store.set('tag-' + item, tags); // store what is left after removing the tags that should be deleted
+           if (tags.length == 0) {
+               // nothing to save again, remove this tag
+               store.delete(tag_prefix + item);
+           } else {
+               store.set(tag_prefix + item, tags); // store what is left after removing the tags that should be deleted
+           }
+        }
     }
 });
 
@@ -207,15 +295,18 @@ ipcMain.on('deleteTags', function(event, data) {
 // the input will also be part of the returned array of structures (key 'data')
 ipcMain.on('getTags', function(event,data) {
     var results = [];
-    //console.log("getTags: " + JSON.stringify(data));
     for (var i = 0; i < data.length; i++) {
         //console.log("called getTags for this item: " + data[i]['item']);
-        var tags = store.get( 'tag-' + data[i]['item'] );
+        var tag_prefix = 'tag-';
+        if (typeof data[i]['prefix'] !== 'undefined')
+            tag_prefix = data[i]['prefix']
+        var tags = store.get( tag_prefix + data[i]['item'] );
         if (typeof tags !== 'undefined') {
-            results.push( { 'tags': tags, 'item': data[i]['item'] } );
+            results.push( { 'tags': tags, 'item': data[i]['item'], 'prefix': tag_prefix } );
         }
     }
-    win.send('updateTagValues', results);   
+    console.log("getTags: " + JSON.stringify(data) + " " + JSON.stringify(results));
+    win.send('updateTagValues', results);
 });
 
 Array.prototype.chunk = function ( n ) {
@@ -237,6 +328,7 @@ ipcMain.on('checkData', function(event, data) {
     // we cannot ask for all items at the same time, we don't have enough memory on the server to get those back
     // lets chunk the items in the form
     var items = [];
+    // lets stick with the order of these items in the data dictionary
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
         if (d['form_name'] == form) {
@@ -292,7 +384,7 @@ ipcMain.on('checkData', function(event, data) {
                 // only call checkItem for items that we have in the current body
                 if (d['form_name'] == form && chunk.indexOf(d['field_name']) !== -1)  {
                     checkItem(d['field_name'], form, data, function(result, status) {
-                        win.send('showItemCheck', { item: d['field_name'], form: form, result: result, status: status });
+                        win.send('showItemCheck', { item: d['field_name'], form: form, result: result, status: status, order: i });
                     });
                 }
             }
@@ -470,6 +562,13 @@ ipcMain.on('exportData', function(event,data) {
     var form = data['form'];
     console.log("start writing data to disk " + filename + " ...");
     
+    // what is the name of this instrument?
+    var form_name = instrumentLabels[form];
+    var v = store.get('instrument-' + form);
+    if (typeof v !== 'undefined') {
+        form_name = v;
+    }
+
     var items = [];
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
@@ -554,7 +653,7 @@ ipcMain.on('exportData', function(event,data) {
             console.log("finished getting data from redcap at this point, save itemsPerRecord to file: " + filename);
             win.send('message', "done with save...");
             data = itemsPerRecord;
-            str = "";
+            str = form_name + "\n";
             // add the header
             var keys = Object.keys(data[0]);
             var skipkeys = [];
@@ -661,8 +760,15 @@ function mapValueToString(item, value) {
 ipcMain.on('exportForm', function(event, data) {
     console.log("save now form : " + data['form'] + " " + data['filename']);
     var filename = data['filename'];
+    var form = data['form'];
     if (typeof filename == 'undefined' || filename == '') {
         return; // ignore this request if we don't have a filename to save to
+    }
+    // what is the name of this instrument?
+    var form_name = instrumentLabels[form];
+    var v = store.get('instrument-' + form);
+    if (typeof v !== 'undefined') {
+        form_name = v;
     }
 
     // structure of the data dictionary is:
@@ -674,7 +780,7 @@ ipcMain.on('exportForm', function(event, data) {
     // ValueRange NDAR*, 0 :: 1260, Asian; Hawaiian or Pacitic Islander; Black, 0::174, 0::20; 999 1;2
     // Notes
     // Aliases
-    str = ""; //data['form'] + ",01";
+    str = form_name + "\n"; //data['form'] + ",01";
     str = str + "ElementName,DataType,Size,Required,ElementDescription,ValueRange,Notes,Aliases\n";
     str = str + "subjectkey,GUID,,Required,The NDAR Global Unique Identifier (GUID) for research subject,NDAR*,,\n";
     str = str + "eventname,String,60,Required,The event name for which the data was collected,,,\n";

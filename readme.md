@@ -6,10 +6,11 @@ Export REDCap's data dictionaries to NIMH National Data Archive data dictionarie
 
 In order to be able to connect to REDCap using REDCap's API this program requires the user to enter a REDCap data access token. These tokens need to be created by your REDCap administrator for the REDCap project. The program will not save this token but request it every time it is started. 
  
-Some information required by NDA is not available in the REDCap data dictionary. For example the length of a character string is not available from REDCap. Because of this the program will store the additional information on your computer to make them avilable after a program restart. This also includes informations on the exclusion of specific items. 
+Some information required by NDA is not available in the REDCap data dictionary. There is no length specification for character strings in REDCap. This information is needed for NDA's data dictionary and has to be added to the exported NDA data dictionary. Additional information that this program needs to keep is an alternative name of the instrument that might be different from the name used in REDCap. The program will also allow the user to indicate items that should not be part of the export. This automatically includes REDCap's notes fields, but other items can also be removed from the export.
 
-Small 'tag' buttons are displayed next to each item that can be used to code for item exclusion, or items string length (at most 60 or 200 characters, 30 characters is used as default).
+All of the information above have to be gathered during the export process. The program will store these additional information on your computer and it will try to load them every time it is restarted.
 
+Small 'tag' buttons are displayed next to each item that can be used to code for item exclusion, or items string length (at most 60 or 200 characters, 30 characters is used as default). An edit icon is displayed next to the instrument name to allow the user to change the value of the string.
 
 ### Build
 
