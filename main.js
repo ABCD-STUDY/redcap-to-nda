@@ -806,6 +806,11 @@ ipcMain.on('exportForm', function(event, data) {
 });
 
 function updateInstrumentList( event ) {
+    if (typeof instrumentLabels === 'undefined') {
+        setTimeout(function() { updateInstrumentList( event ); }, 2000);
+        return; // do nothing
+    }
+
     // filter instruments instruments by event
     var instruments = [];
     var inst = Object.keys(instrumentLabels);
