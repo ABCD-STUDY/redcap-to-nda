@@ -657,8 +657,37 @@ ipcMain.on('exportData', function(event,data) {
             str = form_name + "\n";
             // add the header
             var keys = Object.keys(data[0]);
+            // sort keys by order in datadictionary
+            var sortedKeys = keys.sort(function(a,b) {
+                var idxA = -1;
+                var idxB = -1;
+                var astr = a;
+                var bstr = b;
+                for (var i = 0; i < datadictionary.length; i++) {
+                    // checkbox?
+                    if (a.split('___').length === 2) {
+                        astr = a.split('___')[0];
+                    }
+                    if (datadictionary[i]['field_name'] == astr) {
+                        idxA = i;
+                        break;
+                    }
+                }
+                for (var i = 0; i < datadictionary.length; i++) {
+                    // checkbox?
+                    if (b.split('___').length === 2) {
+                        bstr = b.split('___')[0];
+                    }
+                    if (datadictionary[i]['field_name'] == bstr) {
+                        idxB = i;
+                        break;
+                    }
+                }
+                return (idxA > idxB)?1:((idxA < idxB)?-1:0);
+            });
+
             var skipkeys = [];
-            for ( var j = 0; j < keys.length; j++) {
+            for ( var j = 0; j < sortedKeys.length; j++) {
                 var k = keys[j];
                 if (k == 'id_redcap')
                     k = 'subjectkey,eventname';
@@ -681,17 +710,20 @@ ipcMain.on('exportData', function(event,data) {
                 if (data[i]['nda_year_1_inclusion___1'] == "1") {
                     // export this participants data
                     var keys = Object.keys(data[i]);
-                    for ( var j = 0; j < keys.length; j++) {
-                        var name = keys[j];
+                    for ( var j = 0; j < sortedKeys.length; j++) {
+                        var name = sortedKeys[j];
                         if (name == "redcap_event_name" || name == "nda_year_1_inclusion___1" || name == (form + "_complete"))
                             continue; // skip, is exported next to id_redcap
                         // skip this key if its not needed
                         if (skipkeys.indexOf(name) !== -1) {
                             continue; // don't export this key
                         }
-                        // we could have a key here that contains '___'    
-                        var label = data[i][name];
-                        label = mapValueToString(name, label);
+                        var label = '';
+                        if (typeof data[i][name] !== 'undefined') { // a key we have not seen before
+                            // we could have a key here that contains '___'    
+                            label = data[i][name];
+                            label = mapValueToString(name, label);
+                        }
                         label = label.replace(/\"/g, "\"\"\"");
                         if (name == "id_redcap") {
                             str = str + data[i][name] + "," + data[i]['redcap_event_name'];
