@@ -1,6 +1,7 @@
 const {app, BrowserWindow, ipcMain, Menu} = require('electron')
 const path = require('path')
 const url = require('url')
+const striptags = require('striptags')
 const Store = require('electron-store');
 const store = new Store();
 
@@ -306,7 +307,7 @@ ipcMain.on('getTags', function(event,data) {
             results.push( { 'tags': tags, 'item': data[i]['item'], 'prefix': tag_prefix } );
         }
     }
-    console.log("getTags: " + JSON.stringify(data) + " " + JSON.stringify(results));
+    //console.log("getTags: " + JSON.stringify(data) + " " + JSON.stringify(results));
     win.send('updateTagValues', results);
 });
 
@@ -722,7 +723,7 @@ ipcMain.on('exportData', function(event,data) {
                         if (typeof data[i][name] !== 'undefined') { // a key we have not seen before
                             // we could have a key here that contains '___'    
                             label = data[i][name];
-                            label = mapValueToString(name, label);
+                            //label = mapValueToString(name, label);
                         }
                         label = label.replace(/\"/g, "\"\"\"");
                         if (name == "id_redcap") {
@@ -790,6 +791,11 @@ function mapValueToString(item, value) {
     return ret;
 }
 
+function unHTML( str ) {
+    // we have to call the renderer for this as this needs a window
+    return striptags(str);
+}
+
 ipcMain.on('exportForm', function(event, data) {
     console.log("save now form : " + data['form'] + " " + data['filename']);
     var filename = data['filename'];
@@ -814,9 +820,9 @@ ipcMain.on('exportForm', function(event, data) {
     // Notes
     // Aliases
     str = form_name + "\n"; //data['form'] + ",01";
-    str = str + "ElementName,DataType,Size,Required,ElementDescription,ValueRange,Notes,Aliases\n";
-    str = str + "subjectkey,GUID,,Required,The NDAR Global Unique Identifier (GUID) for research subject,NDAR*,,\n";
-    str = str + "eventname,String,60,Required,The event name for which the data was collected,,,\n";
+    str = str + "ElementName,DataType,Size,Required,Condition,ElementDescription,ValueRange,Notes,Aliases\n";
+    str = str + "subjectkey,GUID,,Required,,The NDAR Global Unique Identifier (GUID) for research subject,NDAR*,,\n";
+    str = str + "eventname,String,60,Required,,The event name for which the data was collected,,,\n";
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
         if (d['form_name'] == data['form']) {
@@ -825,8 +831,9 @@ ipcMain.on('exportForm', function(event, data) {
             var type = "String";
             var range = "";
             var notes = d['field_note'];
+            var condition = ''
             if (typeof d['branching_logic'] !== 'undefined' && d['branching_logic'] !== '') {
-                notes = JSON.stringify( { "notes": notes, "branching_logic": d['branching_logic'] } );
+                condition = d['branching_logic']
             }
             var aliases = "";
             var foundIntegerRange = false;
@@ -852,15 +859,17 @@ ipcMain.on('exportForm', function(event, data) {
                 }
             }
             if (d['field_type'] == "radio") {
+                // overwrite the notes with the coding for this entry
                 var choices = d['select_choices_or_calculations'].split("|");
-                range = "";
+                notes = "";
                 type = "String";
                 for (var j = 0; j < choices.length; j++) {
-                    range = range + choices[j].split(",")[1].trim();
+                    var bla = choices[j].split(",");
+                    notes = notes + bla[0].trim() + " = " + bla[1].trim();
                     if (j < choices.length-1)
-                        range = range + "; ";
+                        notes = notes + "; ";
                 }
-                range = "\"" + range + "\"";
+                //notes = "\"" + notes + "\"";
             }
             if (d['field_type'] == "number") {
                 type = "Float";
@@ -898,23 +907,34 @@ ipcMain.on('exportForm', function(event, data) {
             }
 
             var label = d['field_label'];
+            // NDA does not want to have our nice color and language feature, instead they
+            // want good old text fields. Lets ask jQuery for the text representation of this html.
+            label = unHTML(label);
+            //label = label.replace(/\&nbsp\;/g, "")
+
             label = label.replace(/\"/g, "\"\"");
             label = label.replace(/\r\n/g, "\n");
             //label = label.replace(/,/g,"\",\"");
             notes = notes.replace(/\"/g, "\"\"");
             notes = notes.replace(/\r\n/g, "\n");
             //notes = notes.replace(/,/g,"\",\"");
-            
+            condition = condition.replace(/\"/g, "\"\"");
+            condition = condition.replace(/\r\n/g, "\n");
+
+            // convert condition to NDA syntax
+
+
             if (d['field_type'] == "checkbox") { // create separate entries for each of these
                 var choices = d['select_choices_or_calculations'].split("|");
-                range = "0 :: 1";
+                range = "0 ; 1";
                 type = "Integer";
                 size = '';
                 for (var j = 0; j < choices.length; j++) {
                     str = str + d['field_name'] + "___" + (j+1) + "," + 
                         type + "," + 
                         size + "," + 
-                        "Recommended" + "," + 
+                        ((condition !== '')?"Conditional":"Recommended") + "," +
+                        condition + "," +  
                         "\"" + label + " (" + choices[j].trim() + ")\"," + 
                         range + "," + 
                         "\"" + notes + "\"," + 
@@ -927,7 +947,8 @@ ipcMain.on('exportForm', function(event, data) {
                 str = str + d['field_name'] + "," + 
                    type + "," + 
                    size + "," + 
-                   "Recommended" + "," + 
+                   ((condition !== '')?"Conditional":"Recommended") + "," + 
+                   condition + "," +  
                    "\"" + label + "\"," + 
                    range + "," + 
                    "\"" + notes + "\"," + 
@@ -1076,7 +1097,7 @@ function getDataDictionary( token ) {
                 // find out if we have a date attached to the HIDEFROMCOMPLETION field
                 matches = datadictionary[entry]['field_annotation'].match(/HIDEFROMCOMPLETION(\d{4})(\d{2})(\d{2})/);
                 if (matches !== null) {
-                    console.log(" HIDEFROMCOMPLETION FOUND WITH DATE! " + JSON.stringify(matches) + " for " + datadictionary[entry]['field_annotation'] + " " + JSON.stringify(datadictionary[entry]));
+                    //console.log(" HIDEFROMCOMPLETION FOUND WITH DATE! " + JSON.stringify(matches) + " for " + datadictionary[entry]['field_annotation'] + " " + JSON.stringify(datadictionary[entry]));
                 } else { // we could still have a HIDEFROMCOMPLETION without a date here
                     if (datadictionary[entry]['field_annotation'].indexOf("HIDEFROMCOMPLETION") !== -1)
                         continue;

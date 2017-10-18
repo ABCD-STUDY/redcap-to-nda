@@ -17,7 +17,7 @@ Small 'tag' buttons are displayed next to each item that can be used to code for
 See if the provided executables in the dist/ directory are sufficient for you. Otherwise build the program by installing nodejs and git. Clone this repositories in a folder on your system and:
 
 ```
-npm install request async electron jquery electron-store
+npm install request async electron jquery electron-store striptags
 npm start
 ```
 
