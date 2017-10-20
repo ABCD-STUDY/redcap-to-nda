@@ -689,7 +689,7 @@ ipcMain.on('exportData', function(event,data) {
                 return (idxA > idxB)?1:((idxA < idxB)?-1:0);
             });
             //console.log("sort is done");
-            console.log("sort these keys: " + JSON.stringify(sortedKeys));
+            //console.log("sort these keys: " + JSON.stringify(sortedKeys));
 
             var skipkeys = [];
             for ( var j = 0; j < sortedKeys.length; j++) {
@@ -879,7 +879,7 @@ ipcMain.on('exportForm', function(event, data) {
                     type = "Date";
                 }
             }
-            if (d['field_type'] == "radio") {
+            if (d['field_type'] == "radio" || d['field_type'] == "dropdown") {
                 // overwrite the notes with the coding for this entry
                 var choices = d['select_choices_or_calculations'].split("|");
                 notes = "";
