@@ -914,6 +914,9 @@ ipcMain.on('exportForm', function(event, data) {
             }
             if (d['field_type'] == "text" && !foundIntegerRange) {
                 type = "String";
+
+                // "select_choices_or_calculations":"BIOPORTAL:RXNORM"
+
             }
             if (d['field_type'] == "descriptive") {
                 type = "String";
