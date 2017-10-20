@@ -737,7 +737,7 @@ ipcMain.on('exportData', function(event,data) {
                     str = str + "\n";
                 }
             }
-            try { 
+            try {
                 fs.writeFile(filename, str, function(err) {
                     if (err) {
                         return console.log(err);
@@ -792,8 +792,13 @@ function mapValueToString(item, value) {
 }
 
 function unHTML( str ) {
+    var s = str;
     // we have to call the renderer for this as this needs a window
-    return striptags(str);
+    str = striptags(str);
+    str = str.replace(/\&nbsp/g, " ");
+    str = str.trim();
+    //console.log("before: \"" + s + "\" after :\"" + str + "\"")
+    return str;
 }
 
 ipcMain.on('exportForm', function(event, data) {
@@ -823,6 +828,7 @@ ipcMain.on('exportForm', function(event, data) {
     str = str + "ElementName,DataType,Size,Required,Condition,ElementDescription,ValueRange,Notes,Aliases\n";
     str = str + "subjectkey,GUID,,Required,,The NDAR Global Unique Identifier (GUID) for research subject,NDAR*,,\n";
     str = str + "eventname,String,60,Required,,The event name for which the data was collected,,,\n";
+    var lastGoodLabel = '';
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
         if (d['form_name'] == data['form']) {
@@ -834,6 +840,16 @@ ipcMain.on('exportForm', function(event, data) {
             var condition = ''
             if (typeof d['branching_logic'] !== 'undefined' && d['branching_logic'] !== '') {
                 condition = d['branching_logic']
+                var s = condition;
+                // normalize the condition field to resemble javascript
+                var re = RegExp(/\(([0-9]*)\)/g);
+                condition = condition.replace(re, "__$1");
+                condition = condition.replace(/([^>|<])=/g, "$1 ==");
+                condition = condition.replace(/\ and\ /g, " && ");
+                condition = condition.replace(/\ or\ /g, " || ");
+                re = RegExp(/\[([^\]]*)\]/g);
+                //console.log("condition: first: " + s + " \"" + condition + "\" -> " + condition.replace(re, " $1 ") );
+                condition = condition.replace(re, " $1 ");
             }
             var aliases = "";
             var foundIntegerRange = false;
@@ -862,12 +878,17 @@ ipcMain.on('exportForm', function(event, data) {
                 // overwrite the notes with the coding for this entry
                 var choices = d['select_choices_or_calculations'].split("|");
                 notes = "";
-                type = "String";
+                range = "";
+                type = "Integer";
+                size = "";
                 for (var j = 0; j < choices.length; j++) {
                     var bla = choices[j].split(",");
                     notes = notes + bla[0].trim() + " = " + bla[1].trim();
-                    if (j < choices.length-1)
+                    range = range + bla[0].trim();
+                    if (j < choices.length-1) {
                         notes = notes + "; ";
+                        range = range + " ; ";
+                    }
                 }
                 //notes = "\"" + notes + "\"";
             }
@@ -877,15 +898,21 @@ ipcMain.on('exportForm', function(event, data) {
             if (d['field_type'] == "number") {
                 type = "Float";
             }
+            if (d['field_type'] == "calc") {
+                notes = "Calculation: " + d['select_choices_or_calculations'];
+            }
             if (d['field_type'] == "yesno") {
-                range = "\"yes; no\"";
-                type = "String";
+                range = "\"0 ; 1\"";
+                notes = "1 = Yes; 0 = No"
+                type = "Integer";
+                size = "";
             }
             if (d['field_type'] == "text" && !foundIntegerRange) {
                 type = "String";
             }
             if (d['field_type'] == "descriptive") {
                 type = "String";
+                notes = "Descriptive field";
             }
             if (d['field_type'] == "notes" ) {
                 type = "String";
@@ -914,6 +941,8 @@ ipcMain.on('exportForm', function(event, data) {
 
             label = label.replace(/\"/g, "\"\"");
             label = label.replace(/\r\n/g, "\n");
+            if (label.trim() !== '')
+                lastGoodLabel = label;
             //label = label.replace(/,/g,"\",\"");
             notes = notes.replace(/\"/g, "\"\"");
             notes = notes.replace(/\r\n/g, "\n");
@@ -921,12 +950,16 @@ ipcMain.on('exportForm', function(event, data) {
             condition = condition.replace(/\"/g, "\"\"");
             condition = condition.replace(/\r\n/g, "\n");
 
-            // convert condition to NDA syntax
-
+            // if the description field is empty we should look at the previous items and 
+            // copy its description over to this entry. The descriptions are likely to be
+            // shared.
+            if (label.trim() === "")
+                label = "(r) " + lastGoodLabel;
 
             if (d['field_type'] == "checkbox") { // create separate entries for each of these
                 var choices = d['select_choices_or_calculations'].split("|");
                 range = "0 ; 1";
+                notes = "0 = No; 1 = Yes";
                 type = "Integer";
                 size = '';
                 for (var j = 0; j < choices.length; j++) {
