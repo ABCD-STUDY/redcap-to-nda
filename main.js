@@ -710,6 +710,7 @@ ipcMain.on('exportData', function(event,data) {
             // add the header
             var keys = Object.keys(data[0]);
             // sort keys by order in datadictionary
+            //console.log("sort these keys: " + JSON.stringify(keys));
             var sortedKeys = keys.sort(function(a,b) {
                 var idxA = -1;
                 var idxB = -1;
@@ -735,8 +736,11 @@ ipcMain.on('exportData', function(event,data) {
                         break;
                     }
                 }
+                //console.log("sorted keys: " + idxA + " " + idxB + " " + ((idxA > idxB)?1:((idxA < idxB)?-1:0))  );
                 return (idxA > idxB)?1:((idxA < idxB)?-1:0);
             });
+            //console.log("sort is done");
+            //console.log("sort these keys: " + JSON.stringify(sortedKeys));
 
             var skipkeys = [];
             for ( var j = 0; j < sortedKeys.length; j++) {
@@ -844,7 +848,8 @@ function mapValueToString(item, value) {
 
 function unHTML( str ) {
     var s = str;
-    // we have to call the renderer for this as this needs a window
+    // we might have no spaces between the spanish and english versions, lets add some first
+    str = str.replace(/\<\/span\>/g, "</span> ");
     str = striptags(str);
     str = str.replace(/\&nbsp/g, " ");
     str = str.trim();
@@ -927,7 +932,7 @@ ipcMain.on('exportForm', function(event, data) {
                     type = "Date";
                 }
             }
-            if (d['field_type'] == "radio") {
+            if (d['field_type'] == "radio" || d['field_type'] == "dropdown") {
                 // overwrite the notes with the coding for this entry
                 var choices = d['select_choices_or_calculations'].split("|");
                 notes = "";
@@ -936,7 +941,7 @@ ipcMain.on('exportForm', function(event, data) {
                 size = "";
                 for (var j = 0; j < choices.length; j++) {
                     var bla = choices[j].split(",");
-                    notes = notes + bla[0].trim() + " = " + bla[1].trim();
+                    notes = notes + bla[0].trim() + " = " + unHTML(bla[1]);
                     range = range + bla[0].trim();
                     if (j < choices.length-1) {
                         notes = notes + "; ";
@@ -962,6 +967,9 @@ ipcMain.on('exportForm', function(event, data) {
             }
             if (d['field_type'] == "text" && !foundIntegerRange) {
                 type = "String";
+
+                // "select_choices_or_calculations":"BIOPORTAL:RXNORM"
+
             }
             if (d['field_type'] == "descriptive") {
                 type = "String";
@@ -1016,12 +1024,14 @@ ipcMain.on('exportForm', function(event, data) {
                 type = "Integer";
                 size = '';
                 for (var j = 0; j < choices.length; j++) {
+                    var parts = choices[j].split(",");
+                    var sanitized_choice = parts[0] + ", " + unHTML(parts[1]);
                     str = str + d['field_name'] + "___" + (j+1) + "," + 
                         type + "," + 
                         size + "," + 
                         ((condition !== '')?"Conditional":"Recommended") + "," +
                         condition + "," +  
-                        "\"" + label + " (" + choices[j].trim() + ")\"," + 
+                        "\"" + label + " (" + sanitized_choice + ")\"," + 
                         range + "," + 
                         "\"" + notes + "\"," + 
                         aliases + "\n";    
@@ -1169,8 +1179,18 @@ function getDataDictionary( token ) {
             return;
         }
         
-        datadictionary = body;
-        
+        datadictionary = [];
+        // we should remove entries in the data dictionary that are HIDDEN
+        // field_annotation == @HIDDEN
+        for(var e in body) {
+            entry = body[e];
+            // skip values that are hidden
+            if (typeof entry['field_annotation'] !== 'undefined' && entry['field_annotation'].indexOf("@HIDDEN") !== -1) {
+                continue;
+            }
+            datadictionary.push(entry);
+        }
+
         // get list of instruments
         instruments = {};
         for (var entry in datadictionary) {
