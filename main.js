@@ -20,6 +20,7 @@ var async = require("async");
 let win
 let setupDialog
 let changeLabelDialog
+let getDateStringDialog
 let datadicationary
 let instrumentLabels
 let token
@@ -28,7 +29,7 @@ let instrumentEventMapping
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 1100, height: 700, "webPreferences" : { devTools: false } });
+  win = new BrowserWindow({width: 1100, height: 700, "webPreferences" : { devTools: true } });
 
   // and load the index.html of the app.
   win.loadURL(url.format({
@@ -56,7 +57,7 @@ function createWindow () {
     ]}
   ];
 
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  //Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   // Open the DevTools.
   //win.webContents.openDevTools()
@@ -133,6 +134,51 @@ ipcMain.on('closeSetupDialogOk', function(event, arg) {
     }
 });
 
+ipcMain.on('openGetDateStringDialog', function ( event, arg) {
+    console.log("start openGetDateStringDialog... with argument: " + JSON.stringify(arg));
+    var item = arg['item'];
+    if (getDateStringDialog) {
+        getDateStringDialog.show();
+        var parse = store.get('parse-' + item);
+        console.log("get value from store for " + 'parse-' + item + " IS: " + parse);
+        getDateStringDialog.send('changeParse', { parse: parse, item: arg['item'] });
+        return;
+    }
+    getDateStringDialog = new BrowserWindow({ parent: win, modal: true, show: false, titleBarStyle: 'hidden', frame: false });
+    getDateStringDialog.loadURL(url.format({
+        pathname: path.join(__dirname, 'getDateStringDialog.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+    getDateStringDialog.once('ready-to-show', function() { 
+        getDateStringDialog.show();
+        var parse = store.get('parse-' + arg['item']);
+        getDateStringDialog.send('changeParse', { parse: parse, item: arg['item'] }); 
+    });
+    console.log("done with getDateStringDialog...");
+    getDateStringDialog.on('closed', function() {
+        console.log("getDateStringDialog was closed");
+    });
+});
+
+ipcMain.on('closeGetDateStringDialogCancel', function(event, arg) {
+    if (getDateStringDialog) {
+        getDateStringDialog.hide();
+        console.log("closed setup DIALOG after cancel");
+    }
+});
+
+ipcMain.on('closeGetDateStringDialogOk', function(event, arg) {
+    if (getDateStringDialog) {
+        getDateStringDialog.hide();
+        parse  = arg.parse;
+        item   = arg.item;
+        console.log("closed setup DIALOG after ok: " + parse + " " + item + " save now: " + 'parse-' + item + " with value: " + parse);
+        // we need to store the parse now
+        store.set('parse-' + item, [parse]);
+    }
+});
+
 
 ipcMain.on('openChangeLabelDialog', function (event, arg) {
     console.log("start openChangeLabelDialog... with argument: " + JSON.stringify(arg));
@@ -175,12 +221,14 @@ ipcMain.on('closeChangeLabelDialogReset', function(event, arg) {
         win.send('updateTagValues', results);
     }
 });
+
 ipcMain.on('closeChangeLabelDialogCancel', function(event, arg) {
     if (changeLabelDialog) {
         changeLabelDialog.hide();
         console.log("closed setup DIALOG after cancel");
     }
 });
+
 ipcMain.on('closeChangeLabelDialogOk', function(event, arg) {
     if (changeLabelDialog) {
         changeLabelDialog.hide();
@@ -199,8 +247,6 @@ ipcMain.on('closeChangeLabelDialogOk', function(event, arg) {
         // updateInstrumentList( event );
     }
 });
-
-
 
 
 ipcMain.on('getEventsFromREDCap', function(event, arg) {
@@ -502,12 +548,17 @@ function checkItem( item, form, data, callback ) {
             if (d['field_type'] == "text" && d['text_validation_min'] === '' && d['text_validation_max'] === '') { // text field without validation
                 // get the length for this entry
                 allowedLength = 30;
+                convertToDate = false;
                 var flags = store.get('tag-' + d['field_name'])
                 if (typeof flags !== 'undefined') {
                     if (flags.indexOf('long') !== -1)
-                       allowedLength = 60;
+                        allowedLength = 60;
                     if (flags.indexOf('huge') !== -1)
-                       allowedLength = 200;
+                        allowedLength = 200;
+                    if (flags.indexOf('date') !== -1) {
+                        convertToDate = true;
+                        // we have to ask 
+                    }
                 }
                 checkEntryLength(item, allowedLength, data, function(result, status) {
                     (callback)( result, status );
@@ -832,6 +883,8 @@ ipcMain.on('exportForm', function(event, data) {
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
         if (d['form_name'] == data['form']) {
+            var vv = store.get('parse-' + d['field_name']); // do we have a date field here instead of a string?            
+
             //console.log("item is: " + Object.keys(d));
             var size = "30"; // default, could be 60 or 200 as well
             var type = "String";

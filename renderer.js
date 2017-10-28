@@ -64,7 +64,8 @@ ipcRenderer.on('updateItems', function(event, data) {
     jQuery('#current-items-list div.tag-group').append(
         '<button class="btn btn-default tag" value="remove" title="Disable this item, do not export">D</button>' + 
         '<button class="btn btn-default tag" value="long" title="Increase max string length to 60">L</button>' +
-        '<button class="btn btn-default tag" value="huge" title="Increase max string length to 200">H</button>'
+        '<button class="btn btn-default tag" value="huge" title="Increase max string length to 200">H</button>' +
+        '<button class="btn btn-default tag" value="date" title="Convert given value to date">T</button>'        
     );
     jQuery('#current-items-list div.tag-group').each(function() {
         // try to get the tags for this item
@@ -244,6 +245,10 @@ jQuery(document).ready(function() {
             var item = jQuery(this).parent().parent().attr('value');
             // add the tag for this item
             ipcRenderer.send('setTags', [ { 'item': item, 'tags': [ tag ] } ]);
+            // for a date field we need some input
+            if (tag == 'date') {
+                ipcRenderer.send('openGetDateStringDialog', { 'item': item });
+            }
         }
 
         // disable the default
