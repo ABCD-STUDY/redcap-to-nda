@@ -46,9 +46,11 @@ ipcRenderer.on('updateInstrumentList', function(event, data) {
 ipcRenderer.on('updateItems', function(event, data) {
     // console.log("show these items:" + data);
     jQuery('#current-items-list').children().remove();
+    // we should sort the data by the order from the data dictionary first
+
     for (var i = 0; i < data.length; i++) {
         jQuery('#current-items-list').append(
-            '<li class="list-group-item" value='+ data[i]['field_name'] +'>' +
+            '<li class="list-group-item" value='+ data[i]['field_name'] +' order=\"'+data[i]['order']+'\">' +
             '<div class="tag-group pull-left"></div>' +  
             //'<img class="img-circle media-object pull-left" src="img/item.png" width="32" height="32">' +
             '<div class="media-body">' +  
@@ -65,7 +67,7 @@ ipcRenderer.on('updateItems', function(event, data) {
         '<button class="btn btn-default tag" value="remove" title="Disable this item, do not export">D</button>' + 
         '<button class="btn btn-default tag" value="long" title="Increase max string length to 60">L</button>' +
         '<button class="btn btn-default tag" value="huge" title="Increase max string length to 200">H</button>' +
-        '<button class="btn btn-default tag" value="date" title="Convert given value to date">T</button>'        
+        '<button class="btn btn-default tag" value="date" title="Convert the given value to NDA date">T</button>'        
     );
     jQuery('#current-items-list div.tag-group').each(function() {
         // try to get the tags for this item
@@ -138,11 +140,11 @@ ipcRenderer.on('showItemCheck', function(event, data) {
         jQuery('#message-list').append(it);
     }
     // sort entries by order
-    jQuery('#message-list').sort(function (a,b) {
+    jQuery('#message-list li').sort(function (a,b) {
         var c1 = parseInt(jQuery(a).attr('order'));
         var c2 = parseInt(jQuery(b).attr('order'));
         return (c1 < c2) ? -1 : (c1 > c2)? 1: 0;
-    });
+    }).appendTo('#message-list');
 
     var entry = jQuery('#message-list').find('[value="'+ item + '"]');
     jQuery('#message-list li.list-group-item').removeClass('active');

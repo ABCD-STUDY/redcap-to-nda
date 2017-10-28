@@ -27,7 +27,7 @@ Usually there are two representations for the value of choice items. One is a nu
 See if the provided executables in the dist/ directory are sufficient for you. Otherwise build the program by installing nodejs and git. Clone this repositories in a folder on your system and:
 
 ```
-npm install request async electron jquery electron-store striptags
+npm install request async electron jquery electron-store striptags moment
 npm start
 ```
 

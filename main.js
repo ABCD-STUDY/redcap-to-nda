@@ -1,8 +1,9 @@
 const {app, BrowserWindow, ipcMain, Menu} = require('electron')
-const path = require('path')
-const url = require('url')
+const path      = require('path')
+const url       = require('url')
 const striptags = require('striptags')
-const Store = require('electron-store');
+const Store     = require('electron-store');
+const moment    = require('moment');
 const store = new Store();
 
 module.paths.push(path.resolve('node_modules'));
@@ -24,7 +25,7 @@ let getDateStringDialog
 let datadicationary
 let instrumentLabels
 let token
-let event
+let current_event
 let instrumentEventMapping
 
 function createWindow () {
@@ -126,11 +127,11 @@ ipcMain.on('closeSetupDialogOk', function(event, arg) {
     if (setupDialog) {
         setupDialog.hide();
         token = arg.token;
-        event = arg.event;
+        current_event = arg.event;
         console.log("closed setup DIALOG after ok: " + token + " " + event);
 
         // now populate the list with the instruments
-        updateInstrumentList( event );
+        updateInstrumentList( current_event );
     }
 });
 
@@ -266,9 +267,41 @@ ipcMain.on('getItemsForForm', function (event, form) {
     var items = [];
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
-        if (d['form_name'] == form)
+        if (d['form_name'] == form) {
+            d['order'] = i;
             items.push(d);
+        }
     }
+
+/*    items.sort(function(a,b) {
+        var idxA = -1;
+        var idxB = -1;
+        var astr = a['field_name'];
+        var bstr = b['field_name'];
+        console.log()
+        for (var i = 0; i < datadictionary.length; i++) {
+            // checkbox?
+            if (a.split('___').length === 2) {
+                astr = a.split('___')[0];
+            }
+            if (datadictionary[i]['field_name'] == astr) {
+                idxA = i;
+                break;
+            }
+        }
+        for (var i = 0; i < datadictionary.length; i++) {
+            // checkbox?
+            if (b.split('___').length === 2) {
+                bstr = b.split('___')[0];
+            }
+            if (datadictionary[i]['field_name'] == bstr) {
+                idxB = i;
+                break;
+            }
+        }
+        return (idxA > idxB)?1:((idxA < idxB)?-1:0);
+    }); */
+
 
     win.send('updateItems', items);
 });
@@ -391,6 +424,7 @@ ipcMain.on('checkData', function(event, data) {
             'token': token,
             'content': 'record',
             //'forms[0]': form,
+            'events[0]': current_event,
             'format': 'json',
             'type': 'flat',
             'rawOrLabel': 'raw',
@@ -420,45 +454,51 @@ ipcMain.on('checkData', function(event, data) {
             if (error || response.statusCode !== 200) {
                 // error case
                 //process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
-                win.send('alert', JSON.stringify(response));
+                win.send('alert', JSON.stringify({ response: response, error: error, body: body}));
                 callback("error");
                 return;
             }
             //console.log("data from REDCAP: " + JSON.stringify(response));
+            win.send('message', "preparing data...");
             data = body;
-
+            console.log("check form: " + form);
             for (var i = 0; i < datadictionary.length; i++) {
                 var d = datadictionary[i];
                 // only call checkItem for items that we have in the current body
                 if (d['form_name'] == form && chunk.indexOf(d['field_name']) !== -1)  {
-                    checkItem(d['field_name'], form, data, function(result, status) {
-                        win.send('showItemCheck', { item: d['field_name'], form: form, result: result, status: status, order: i });
-                    });
+                    checkItem(d['field_name'], form, data, (function(i) {
+                        return function(result, status) {
+                            win.send('showItemCheck', { item: d['field_name'], form: form, result: result, status: status, order: i });
+                        };
+                    })(i));
                 }
             }
-            callback("something");
-        }).on('data', function(data) {
-            //console.log("request got DATA");
-        }).on('response', function(data) {
-            //console.log('on response....');
+            callback("ok");
         });
-    }, 1);
+    }, 2);
 
+    var allChunksSend2 = false;
     queue.drain = function() {
         process.stdout.write("finished getting data from redcap for checkData\n");
+        if (allChunksSend2) {
+            win.send('message', "done with checking...");
+        }
         // findProblems( tokens );
     };
     var chunks = items.chunk(40); // get 20 items at the same time from REDCap
 
     for (var i = 0; i < chunks.length; i++) {
-        console.log('get chunk ' + i + " of " + chunks.length);
-        queue.push([chunks[i]], (function(counter) {
-            return function(err) {
-                console.log("finished getting data for chunk: " + counter + " with " + err );
-            };
-        })(i));
+        console.log('request chunk ' + i + " of " + (chunks.length-1));
+        queue.push([chunks[i]], 
+            (function(counter, maxCounter) {
+                return function(err) {
+                    console.log("finished getting data for chunk: " + counter + " with " + err );
+                    win.send('message', "got data for chunk " + counter + "/" + maxCounter);
+                };
+            })(i, chunks.length)
+        );
     }    
-
+    allChunksSend2 = true;
 });
 
 ipcMain.on('checkItem', function(event, data) {
@@ -522,6 +562,28 @@ function checkEntryLength( item, l, data, callback ) {
     (callback)( status + " " + result, status );
 }
 
+function checkEntryDateConversion( item, parse_string, data, callback ) {
+    var result = "";
+    for (var i = 0; i < data.length; i++) {
+        if (typeof data[i][item] !== 'undefined' && data[i][item] !== "") {
+            // use the string to parse the date
+            if (!moment(data[i][item], parse_string).isValid()) {
+                result = result + "date [" + data[i][item] + " not \"" + parse_string + "\"], ";
+            }
+        }
+    }
+    status = "good";
+    if (result.length > 0) {
+        status = "bad";
+    } else {
+        result = "data conversion ok";
+    }
+
+    (callback)( status + " " + result, status );
+}
+
+
+
 function checkEntryNumber( item, data, callback ) {
     var result = "";
     for (var i = 0; i < data.length; i++) {
@@ -545,20 +607,24 @@ function checkItem( item, form, data, callback ) {
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
         if (item == d['field_name']) {
+            var flags = store.get('tag-' + d['field_name']);
+            if (typeof flags !== 'undefined' && flags.indexOf('date') !== -1) { // only check date conversion if this flag is set, nothing else
+                // we have to ask
+                var convertString = store.get('parse-' + d['field_name']);
+                checkEntryDateConversion(item, convertString, data, function(result, status) {
+                    (callback)(result, status);
+                    return;
+                });
+                return;
+            }
             if (d['field_type'] == "text" && d['text_validation_min'] === '' && d['text_validation_max'] === '') { // text field without validation
                 // get the length for this entry
                 allowedLength = 30;
-                convertToDate = false;
-                var flags = store.get('tag-' + d['field_name'])
                 if (typeof flags !== 'undefined') {
                     if (flags.indexOf('long') !== -1)
                         allowedLength = 60;
                     if (flags.indexOf('huge') !== -1)
                         allowedLength = 200;
-                    if (flags.indexOf('date') !== -1) {
-                        convertToDate = true;
-                        // we have to ask 
-                    }
                 }
                 checkEntryLength(item, allowedLength, data, function(result, status) {
                     (callback)( result, status );
@@ -641,6 +707,7 @@ ipcMain.on('exportData', function(event,data) {
             'fields[0]': 'id_redcap',
             'fields[1]': 'redcap_event_name',
             'fields[2]': 'nda_year_1_inclusion',
+            'events[0]': current_event,            
             'format': 'json',
             'type': 'flat',
             'rawOrLabel': 'raw',
@@ -696,7 +763,7 @@ ipcMain.on('exportData', function(event,data) {
             }
             callback("ok");
         });
-    }, 3);
+    }, 2);
 
     // could be called several times, should check if all chunks have been added
     var allChunksSend = false;
@@ -711,7 +778,9 @@ ipcMain.on('exportData', function(event,data) {
             var keys = Object.keys(data[0]);
             // sort keys by order in datadictionary
             //console.log("sort these keys: " + JSON.stringify(keys));
-            var sortedKeys = keys.sort(function(a,b) {
+            // sort does this in place... shouldn't this be just keys.sort?
+            var sortedKeys = keys;
+            sortedKeys.sort(function(a,b) {
                 var idxA = -1;
                 var idxB = -1;
                 var astr = a;
@@ -809,11 +878,12 @@ ipcMain.on('exportData', function(event,data) {
     for (var i = 0; i < chunks.length; i++) {
         //console.log("push chunk " + i + " into the queue with: " + chunks[i].length + " elements in it -> " + JSON.stringify(chunks[i]));
         queue.push([chunks[i]], 
-            (function(counter) {
+            (function(counter, maxCounter) {
                 return function(err) {
-                    console.log("finished getting data for chunk: " + counter );
+                    console.log("finished getting data for chunk: " + counter + " with " + err);
+                    win.send('message', "got data for chunk " + counter + "/" + maxCounter);
                 };
-            })(i)
+            })(i, chunks.length)
         );
     }
     allChunksSend = true;   
@@ -1263,7 +1333,7 @@ function getNamesForInstrument( token ) {
             process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
             return;
         }
-        data = body;
+        var data = body;
         for (var entry in data) {
             instrumentLabels[data[entry]['instrument_name']] = data[entry]['instrument_label'];     
         }
