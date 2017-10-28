@@ -273,36 +273,6 @@ ipcMain.on('getItemsForForm', function (event, form) {
         }
     }
 
-/*    items.sort(function(a,b) {
-        var idxA = -1;
-        var idxB = -1;
-        var astr = a['field_name'];
-        var bstr = b['field_name'];
-        console.log()
-        for (var i = 0; i < datadictionary.length; i++) {
-            // checkbox?
-            if (a.split('___').length === 2) {
-                astr = a.split('___')[0];
-            }
-            if (datadictionary[i]['field_name'] == astr) {
-                idxA = i;
-                break;
-            }
-        }
-        for (var i = 0; i < datadictionary.length; i++) {
-            // checkbox?
-            if (b.split('___').length === 2) {
-                bstr = b.split('___')[0];
-            }
-            if (datadictionary[i]['field_name'] == bstr) {
-                idxB = i;
-                break;
-            }
-        }
-        return (idxA > idxB)?1:((idxA < idxB)?-1:0);
-    }); */
-
-
     win.send('updateItems', items);
 });
 
@@ -689,10 +659,16 @@ ipcMain.on('exportData', function(event,data) {
     }
 
     var items = [];
+    var dateConversions = {};
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
         if (d['form_name'] == form) {
             items.push(d['field_name']);
+            // each item could have a parse_string assigned to it
+            var parse_string = store.get('parse-' + d['field_name']);
+            if (typeof parse_string !== 'undefined') {
+                dateConversions[d['field_name']] = parse_string;
+            }
         }
     }
     console.log("total number of items to pull from REDCap: " + items.length);
@@ -843,12 +819,19 @@ ipcMain.on('exportData', function(event,data) {
                         if (skipkeys.indexOf(name) !== -1) {
                             continue; // don't export this key
                         }
+
                         var label = '';
                         if (typeof data[i][name] !== 'undefined') { // a key we have not seen before
                             // we could have a key here that contains '___'    
                             label = data[i][name];
                             //label = mapValueToString(name, label);
                         }
+                        // do we have to perform a date conversion?
+                        if (label !== '' && typeof dateConversions[name] !== 'undefined') {
+                            // convert this value given the parse information to the NDA date format
+                            label = moment(label, dateConversions[name]).format("MM/DD/YYYY");
+                        }
+                        
                         label = label.replace(/\"/g, "\"\"\"");
                         if (name == "id_redcap") {
                             str = str + data[i][name] + "," + data[i]['redcap_event_name'];
@@ -1062,6 +1045,10 @@ ipcMain.on('exportForm', function(event, data) {
                     size = "60"
                 if (flags.indexOf('huge') !== -1)
                     size = "200"
+            }
+            if (typeof vv !== 'undefined') { // conversion to date requested
+                type = "Date";
+                size = "";
             }
 
             var label = d['field_label'];
