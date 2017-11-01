@@ -21,12 +21,16 @@ jQuery(document).ready(function() {
     jQuery('#setup-dialog-ok').on('click', function() {
         var token = jQuery('#redcap-access-token').val();
         var choice = jQuery('#setup-events-list').val();
+        var url    = jQuery('#redcap-api-url').val(); // if no value is provided use ABCD
+        if (url.trim() === "") {
+            url = "https://abcd-rc.ucsd.edu/redcap/api/";
+        }
         if (token == "" || choice == "" || choice == null || typeof choice == 'undefined') {
             alert("Error: please enter a token, press Update and select an event");
             return false;
         }
 
-        ipcRenderer.send('closeSetupDialogOk', { token: token, event: choice } );
+        ipcRenderer.send('closeSetupDialogOk', { token: token, event: choice, url: url } );
         return false;
     });
     jQuery('#setup-dialog-cancel').on('click', function() {

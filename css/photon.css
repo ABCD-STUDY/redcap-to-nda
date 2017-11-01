@@ -733,6 +733,7 @@ img {
 
 .media-body {
   overflow: hidden;
+  height: 50px;
 }
 
 .nav-group {

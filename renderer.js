@@ -269,5 +269,11 @@ jQuery(document).ready(function() {
         return false;
     });
 
+    // synchronize the scrolling between the two list displays (one way)
+    jQuery('#items-pane').on('scroll', function() {
+        //console.log("scroll on first column");
+        jQuery('#message-pane').prop("scrollTop", this.scrollTop).prop("scrollLeft", this.scrollLeft);
+    });
+
     setTimeout(function() { jQuery('#open-setup-dialog').trigger('click'); }, 500);
 });

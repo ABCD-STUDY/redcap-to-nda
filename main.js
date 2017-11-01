@@ -26,6 +26,7 @@ let datadicationary
 let instrumentLabels
 let token
 let current_event
+let current_url = 'https://abcd-rc.ucsd.edu/redcap/api/';
 let instrumentEventMapping
 
 function createWindow () {
@@ -103,7 +104,16 @@ ipcMain.on('openSetupDialog', function (event, arg) {
         setupDialog.show();
         return;
     }
-    setupDialog = new BrowserWindow({ parent: win, modal: true, show: false, titleBarStyle: 'hidden', frame: false });
+    setupDialog = new BrowserWindow({ 
+        parent: win, 
+        modal: true, 
+        show: false, 
+        titleBarStyle: 'hidden', 
+        frame: false, 
+        useContentSize: true,
+        width: 460,
+        height: 340
+    });
     setupDialog.loadURL(url.format({
         pathname: path.join(__dirname, 'setupDialog.html'),
         protocol: 'file:',
@@ -128,7 +138,8 @@ ipcMain.on('closeSetupDialogOk', function(event, arg) {
         setupDialog.hide();
         token = arg.token;
         current_event = arg.event;
-        console.log("closed setup DIALOG after ok: " + token + " " + event);
+        current_url = arg.url;
+        console.log("closed setup DIALOG after ok: " + token + " " + event + " " + current_url);
 
         // now populate the list with the instruments
         updateInstrumentList( current_event );
@@ -145,7 +156,16 @@ ipcMain.on('openGetDateStringDialog', function ( event, arg) {
         getDateStringDialog.send('changeParse', { parse: parse, item: arg['item'] });
         return;
     }
-    getDateStringDialog = new BrowserWindow({ parent: win, modal: true, show: false, titleBarStyle: 'hidden', frame: false });
+    getDateStringDialog = new BrowserWindow({ 
+        parent: win, 
+        modal: true, 
+        show: false, 
+        titleBarStyle: 'hidden', 
+        frame: false, 
+        useContentSize: true,
+        width: 460,
+        height: 350  
+    });
     getDateStringDialog.loadURL(url.format({
         pathname: path.join(__dirname, 'getDateStringDialog.html'),
         protocol: 'file:',
@@ -188,7 +208,16 @@ ipcMain.on('openChangeLabelDialog', function (event, arg) {
         changeLabelDialog.send('changeLabelCurrentName', { name: arg['name'], instrument: arg['instrument'] });         
         return;
     }
-    changeLabelDialog = new BrowserWindow({ parent: win, modal: true, show: false, titleBarStyle: 'hidden', frame: false });
+    changeLabelDialog = new BrowserWindow({
+        parent: win,
+        modal: true,
+        show: false,
+        titleBarStyle: 'hidden',
+        frame: false,
+        useContentSize: true,
+        width: 460,
+        height: 350
+    });
     changeLabelDialog.loadURL(url.format({
         pathname: path.join(__dirname, 'changeLabelDialog.html'),
         protocol: 'file:',
@@ -413,7 +442,7 @@ ipcMain.on('checkData', function(event, data) {
             'Content-Type':     'application/x-www-form-urlencoded'
         }
         console.log("run request now...");
-        var url = "https://abcd-rc.ucsd.edu/redcap/api/";
+        var url = current_url;
         request({
             method: 'POST',
             url: url,
@@ -494,7 +523,7 @@ ipcMain.on('checkItem', function(event, data) {
         'Content-Type':     'application/x-www-form-urlencoded'
     }
     
-    var url = "https://abcd-rc.ucsd.edu/redcap/api/";
+    var url = current_url; 
     request({
         method: 'POST',
         url: url,
@@ -665,9 +694,14 @@ ipcMain.on('exportData', function(event,data) {
         if (d['form_name'] == form) {
             items.push(d['field_name']);
             // each item could have a parse_string assigned to it
-            var parse_string = store.get('parse-' + d['field_name']);
-            if (typeof parse_string !== 'undefined') {
-                dateConversions[d['field_name']] = parse_string;
+            var flags = store.get('tag-' + d['field_name']);
+            if (typeof flags !== 'undefined') {
+                if (flags.indexOf('date') !== -1) {
+                    var parse_string = store.get('parse-' + d['field_name']);
+                    if (typeof parse_string !== 'undefined') {
+                        dateConversions[d['field_name']] = parse_string;
+                    }
+                }
             }
         }
     }
@@ -704,7 +738,7 @@ ipcMain.on('exportData', function(event,data) {
             'Content-Type':     'application/x-www-form-urlencoded'
         }
         
-        var url = "https://abcd-rc.ucsd.edu/redcap/api/";
+        var url = current_url;
         request({
             method: 'POST',
             url: url,
@@ -748,6 +782,8 @@ ipcMain.on('exportData', function(event,data) {
         if (allChunksSend) {
             console.log("finished getting data from redcap at this point, save itemsPerRecord to file: " + filename);
             win.send('message', "done with save...");
+            var rxnorm_cache = {};
+            
             data = itemsPerRecord;
             str = form_name + "\n";
             // add the header
@@ -807,6 +843,37 @@ ipcMain.on('exportData', function(event,data) {
                     str = str + ",";
             }
             str = str + "\n";
+
+            // check if one of the keys is representing RXNORM data
+            for (var i = 0; i < sortedKeys.length; i++) {
+                var name = sortedKeys[j];
+                if (name == "redcap_event_name" || name == "nda_year_1_inclusion___1" || name == (form + "_complete"))
+                    continue; // skip, is exported next to id_redcap
+                // skip this key if its not needed
+                if (skipkeys.indexOf(name) !== -1) {
+                    continue; // don't export this key
+                }
+                // for all other keys check the column in the data dictionary
+                for (var j = 0; j < datadictionary.length; j++) {
+                    if (name == datadictionary[i]['field_name'] && datadictionary[i]['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
+                        // check if this is already in the cache
+                        for (var k = 0; k < data.length; k++) {
+                            if (data[k]['nda_year_1_inclusion___1'] == "1") {
+                                if (data[k]['field_name'] === name) {
+                                    if (typeof rxnorm_cache[data[k][name]] === 'undefined') {
+                                        // now call bioportal and get the full name for this field and remember this in rxnorm_cache
+                                        rxnorm_cache[data[k][name]] = '';
+                                        // http://data.bioontology.org/ontologies/RXNORM/classes/214081?apikey=98a3d17e-8da0-4771-ba60-f540755e2e5d
+
+                                        // further down we will look into the cache to enhance the existing label
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             for ( var i = 0; i < data.length; i++) {
                 if (data[i]['nda_year_1_inclusion___1'] == "1") {
                     // export this participants data
@@ -830,6 +897,15 @@ ipcMain.on('exportData', function(event,data) {
                         if (label !== '' && typeof dateConversions[name] !== 'undefined') {
                             // convert this value given the parse information to the NDA date format
                             label = moment(label, dateConversions[name]).format("MM/DD/YYYY");
+                        }
+                        // for rxnorm fields change the label and add the human readable name
+                        if (d['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
+                            // 
+                            // curl -X GET -H "Authorization: apikey token=98a3d17e-8da0-4771-ba60-f540755e2e5d" -H "Content-Type: application/json" -H "Accept: application/json" http://data.bioontology.org/ontologies/RXNORM/classes/214081 | jq "." -
+                            /*if (typeof rxnorm_cache[d['field_label']] === 'undefined') {
+                                // get the list of keys and store in this key
+        
+                            }*/
                         }
                         
                         label = label.replace(/\"/g, "\"\"\"");
@@ -941,8 +1017,6 @@ ipcMain.on('exportForm', function(event, data) {
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
         if (d['form_name'] == data['form']) {
-            var vv = store.get('parse-' + d['field_name']); // do we have a date field here instead of a string?            
-
             //console.log("item is: " + Object.keys(d));
             var size = "30"; // default, could be 60 or 200 as well
             var type = "String";
@@ -1020,9 +1094,15 @@ ipcMain.on('exportForm', function(event, data) {
             }
             if (d['field_type'] == "text" && !foundIntegerRange) {
                 type = "String";
-
                 // "select_choices_or_calculations":"BIOPORTAL:RXNORM"
+                /*if (d['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
+                    // http://data.bioontology.org/ontologies/RXNORM/classes/214081?apikey=98a3d17e-8da0-4771-ba60-f540755e2e5d
+                    // curl -X GET -H "Authorization: apikey token=98a3d17e-8da0-4771-ba60-f540755e2e5d" -H "Content-Type: application/json" -H "Accept: application/json" http://data.bioontology.org/ontologies/RXNORM/classes/214081 | jq "." -
+                    if (typeof rxnorm_cache[d['field_label']] === 'undefined') {
+                        // get the list of keys and store in this key
 
+                    }
+                }*/
             }
             if (d['field_type'] == "descriptive") {
                 type = "String";
@@ -1038,6 +1118,7 @@ ipcMain.on('exportForm', function(event, data) {
             }
             // check if we have a longer flag for this field_name
             var flags = store.get('tag-' + d['field_name']);
+            var flag_date = false; // do we have a date to parse?
             if (typeof flags !== 'undefined') {
                 if (flags.indexOf('remove') !== -1)
                     continue; // ignore this entry in the data dictionary
@@ -1045,11 +1126,16 @@ ipcMain.on('exportForm', function(event, data) {
                     size = "60"
                 if (flags.indexOf('huge') !== -1)
                     size = "200"
+                if (flags.indexOf('date') !== -1)
+                    flag_date = true;
             }
-            if (typeof vv !== 'undefined') { // conversion to date requested
-                type = "Date";
-                size = "";
-            }
+            if (flag_date) { // if we should parse a date we also need the parse string (stored in the parse- variable)
+                var vv = store.get('parse-' + d['field_name']); // do we have a date field here instead of a string?            
+                if (typeof vv !== 'undefined') { // conversion to date requested
+                    type = "Date";
+                    size = "";
+                }
+            } // otherwise we ignore the date parsing
 
             var label = d['field_label'];
             // NDA does not want to have our nice color and language feature, instead they
@@ -1160,7 +1246,7 @@ function getEvents( token ) {
         'Content-Type':     'application/x-www-form-urlencoded'
     }
     
-    var url = "https://abcd-rc.ucsd.edu/redcap/api/";
+    var url = current_url;
     request({
         method: 'POST',
         url: url,
@@ -1190,7 +1276,7 @@ function getInstrumentEventMapping( token ) {
         'Content-Type':     'application/x-www-form-urlencoded'
     }
     
-    var url = "https://abcd-rc.ucsd.edu/redcap/api/";
+    var url = current_url;
     request({
         method: 'POST',
         url: url,

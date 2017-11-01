@@ -18,12 +18,18 @@
                           <button class="btn btn-form btn-default pull-right" id="setup-dialog-update">Update</button>                                
                           <input type="text" class="form-control" id="redcap-access-token" placeholder="REDCap Access Token">
                         </div>
-                        <label>Events (use Update to populate)</label>
-                        <select class="form-control" id="setup-events-list"></select>
+                        <div class="form-group">
+                            <label>Events (use Update to populate)</label>
+                            <select class="form-control" id="setup-events-list"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>REDCap API (default is ABCD)</label>
+                            <input type="text" class="form-control" id="redcap-api-url" placeholder="https://abcd-rc.ucsd.edu/redcap/api/">
+                        </div>
                         <hr>
                         <div class="form-actions">
-                          <button class="btn btn-form btn-default" id="setup-dialog-cancel">Cancel</button>
-                          <button class="btn btn-form btn-primary" id="setup-dialog-ok">OK</button>
+                            <button class="btn btn-form btn-default" id="setup-dialog-cancel">Cancel</button>
+                            <button class="btn btn-form btn-primary" id="setup-dialog-ok">Save</button>
                         </div>
                     </form>
                 </div>
