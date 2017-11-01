@@ -863,6 +863,9 @@ ipcMain.on('exportData', function(event,data) {
                                     if (typeof rxnorm_cache[data[k][name]] === 'undefined') {
                                         // now call bioportal and get the full name for this field and remember this in rxnorm_cache
                                         rxnorm_cache[data[k][name]] = '';
+
+                                        // we can get this information from REDCap if we ask for rawOrLabel: label (instead of raw)
+
                                         // http://data.bioontology.org/ontologies/RXNORM/classes/214081?apikey=98a3d17e-8da0-4771-ba60-f540755e2e5d
 
                                         // further down we will look into the cache to enhance the existing label
@@ -1112,6 +1115,11 @@ ipcMain.on('exportForm', function(event, data) {
                 type = "String";
                 size = "400";
                 continue; // don't export
+            }
+            //console.log("Don't export completeness item: " + form + "_complete");
+            if (d['field_label'] === form + "_complete") {
+                //console.log("Don't export completeness item: " + d['field_label']);
+                continue; // ignore the item that contains the completeness information
             }
             if (type == "String" && size == '') {
                 size = "30"; // default value
