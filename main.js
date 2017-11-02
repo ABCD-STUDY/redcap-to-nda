@@ -31,7 +31,7 @@ let instrumentEventMapping
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 1100, height: 700, "webPreferences" : { devTools: true } });
+  win = new BrowserWindow({width: 1100, height: 700, "webPreferences" : { devTools: false } });
 
   // and load the index.html of the app.
   win.loadURL(url.format({
@@ -59,7 +59,7 @@ function createWindow () {
     ]}
   ];
 
-  //Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   // Open the DevTools.
   //win.webContents.openDevTools()
