@@ -1024,7 +1024,10 @@ ipcMain.on('exportForm', function(event, data) {
             var size = "30"; // default, could be 60 or 200 as well
             var type = "String";
             var range = "";
-            var notes = d['field_note'];
+            var notes = "";
+            notes = notes + (d['field_note'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_note']):"");
+            notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
+            
             var condition = ''
             if (typeof d['branching_logic'] !== 'undefined' && d['branching_logic'] !== '') {
                 condition = d['branching_logic']
@@ -1078,7 +1081,8 @@ ipcMain.on('exportForm', function(event, data) {
                         range = range + " ; ";
                     }
                 }
-                //notes = "\"" + notes + "\"";
+                notes = notes + (d['field_note'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_note']):"");
+                notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
             }
             if (d['field_type'] == "number") {
                 type = "Float";
@@ -1088,12 +1092,16 @@ ipcMain.on('exportForm', function(event, data) {
             }
             if (d['field_type'] == "calc") {
                 notes = "Calculation: " + d['select_choices_or_calculations'];
+                notes = notes + (d['field_note'].length>0?" | " + unHTML(d['field_note']):"");
+                notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
             }
             if (d['field_type'] == "yesno") {
                 range = "\"0 ; 1\"";
                 notes = "1 = Yes; 0 = No"
                 type = "Integer";
                 size = "";
+                notes = notes + (d['field_note'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_note']):"");
+                notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
             }
             if (d['field_type'] == "text" && !foundIntegerRange) {
                 type = "String";
@@ -1110,6 +1118,8 @@ ipcMain.on('exportForm', function(event, data) {
             if (d['field_type'] == "descriptive") {
                 type = "String";
                 notes = "Descriptive field";
+                notes = notes + (d['field_note'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_note']):"");
+                notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
             }
             if (d['field_type'] == "notes" ) {
                 type = "String";
@@ -1172,6 +1182,8 @@ ipcMain.on('exportForm', function(event, data) {
                 var choices = d['select_choices_or_calculations'].split("|");
                 range = "0 ; 1";
                 notes = "0 = No; 1 = Yes";
+                notes = notes + (d['field_note'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_note']):"");
+                notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
                 type = "Integer";
                 size = '';
                 for (var j = 0; j < choices.length; j++) {
