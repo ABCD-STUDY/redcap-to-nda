@@ -71,6 +71,9 @@ function createWindow () {
     // when you should delete the corresponding element.
     win = null
   })
+
+  // show some information about the program location for the local file:
+  console.log("store location for local file: " + app.getPath('userData'));
 }
 
 // This method will be called when Electron has finished
