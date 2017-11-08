@@ -1174,7 +1174,8 @@ ipcMain.on('exportForm', function(event, data) {
             //notes = notes.replace(/,/g,"\",\"");
             condition = condition.replace(/\"/g, "\"\"");
             condition = condition.replace(/\r\n/g, "\n");
-
+            condition = condition.replace(/\r/g, "");
+            
             // if the description field is empty we should look at the previous items and 
             // copy its description over to this entry. The descriptions are likely to be
             // shared.
