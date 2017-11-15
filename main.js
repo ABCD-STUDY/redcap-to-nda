@@ -551,7 +551,7 @@ function checkEntryLength( item, l, data, callback ) {
     var result = "";
     for (var i = 0; i < data.length; i++) {
         if (typeof data[i][item] !== 'undefined' && data[i][item].length > l) {
-            console.log("  max-length-validation error for item " + item + ": \"" + data[i][item] + "\" Length: " + data[i][item].length);
+            console.log("  max-length-validation error for item " + item + " in row " + i + ": \"" + data[i][item] + "\" Length: " + data[i][item].length);
             result = result + "max-length-validation [" + data[i][item].length + "/" + l + "], ";
         }
     }
