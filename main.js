@@ -898,7 +898,7 @@ ipcMain.on('exportData', function(event,data) {
                             // we could have a key here that contains '___'    
                             label = data[i][name];
                             var flags = store.get('tag-' + name);
-                            if (flags.indexOf('label') !== -1)
+                            if (typeof flags !== 'undefined' && flags.indexOf('label') !== -1)
                                 label = mapValueToString(name, label);
                         }
                         // do we have to perform a date conversion?
