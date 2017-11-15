@@ -67,7 +67,8 @@ ipcRenderer.on('updateItems', function(event, data) {
         '<button class="btn btn-default tag" value="remove" title="Disable this item, do not export">D</button>' + 
         '<button class="btn btn-default tag" value="long" title="Increase max string length to 60">L</button>' +
         '<button class="btn btn-default tag" value="huge" title="Increase max string length to 200">H</button>' +
-        '<button class="btn btn-default tag" value="date" title="Convert the given value to NDA date">T</button>'        
+        '<button class="btn btn-default tag" value="date" title="Convert the given value to NDA date">T</button>' +        
+        '<button class="btn btn-default tag" value="label" title="Export as label not as number">V</button>'       
     );
     jQuery('#current-items-list div.tag-group').each(function() {
         // try to get the tags for this item

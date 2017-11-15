@@ -897,7 +897,9 @@ ipcMain.on('exportData', function(event,data) {
                         if (typeof data[i][name] !== 'undefined') { // a key we have not seen before
                             // we could have a key here that contains '___'    
                             label = data[i][name];
-                            //label = mapValueToString(name, label);
+                            var flags = store.get('tag-' + name);
+                            if (flags.indexOf('label') !== -1)
+                                label = mapValueToString(name, label);
                         }
                         // do we have to perform a date conversion?
                         if (label !== '' && typeof dateConversions[name] !== 'undefined') {
@@ -1149,6 +1151,10 @@ ipcMain.on('exportForm', function(event, data) {
                     size = "200"
                 if (flags.indexOf('date') !== -1)
                     flag_date = true;
+                if (flags.indexOf('label') !== -1) {
+                    // in this case we will export the entries as strings (assuming that 30 characters are sufficient...)
+                    type = "String"; // should not be exported as checkbox with values
+                }
             }
             if (flag_date) { // if we should parse a date we also need the parse string (stored in the parse- variable)
                 var vv = store.get('parse-' + d['field_name']); // do we have a date field here instead of a string?            
@@ -1182,6 +1188,7 @@ ipcMain.on('exportForm', function(event, data) {
             if (label.trim() === "")
                 label = "(r) " + lastGoodLabel;
 
+            // NDA might not like these entries if only a single choice has been selected (should be a radio button type)
             if (d['field_type'] == "checkbox") { // create separate entries for each of these
                 var choices = d['select_choices_or_calculations'].split("|");
                 range = "0 ; 1";
