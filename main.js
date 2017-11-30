@@ -467,7 +467,7 @@ ipcMain.on('checkData', function(event, data) {
             data = [];
             // only add data that will be exported
             for(var i = 0; i < body.length; i++) {
-                if (body['nda_year_1_inclusion'] !== "1")
+                if (body['nda_year_1_inclusion___1'] !== "1")
                     continue;
                 data.push(body[i]);
             }
