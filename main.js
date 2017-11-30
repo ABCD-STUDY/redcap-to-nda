@@ -439,6 +439,8 @@ ipcMain.on('checkData', function(event, data) {
         for (var i = 0; i < chunk.length; i++) {
             data['fields[' +  i + ']'] = chunk[i];
         }
+        // restrict the check to participants that we will exported
+        data['fields[' + chunk.length + ']'] = 'nda_year_1_inclusion';
         
         var headers = {
             'User-Agent':       'Super Agent/0.0.1',
@@ -462,7 +464,14 @@ ipcMain.on('checkData', function(event, data) {
             }
             //console.log("data from REDCAP: " + JSON.stringify(response));
             win.send('message', "preparing data...");
-            data = body;
+            data = [];
+            // only add data that will be exported
+            for(var i = 0; i < body.length; i++) {
+                if (body['nda_year_1_inclusion'] !== "1")
+                    continue;
+                data.push(body[i]);
+            }
+
             console.log("check form: " + form);
             for (var i = 0; i < datadictionary.length; i++) {
                 var d = datadictionary[i];
