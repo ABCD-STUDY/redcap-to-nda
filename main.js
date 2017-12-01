@@ -1135,6 +1135,8 @@ ipcMain.on('exportForm', function(event, data) {
                 notes = "Descriptive field";
                 notes = notes + (d['field_note'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_note']):"");
                 notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
+                // NDA will not take any descriptive fields - only data can be exported
+                continue;
             }
             if (d['field_type'] == "notes" ) {
                 type = "String";
