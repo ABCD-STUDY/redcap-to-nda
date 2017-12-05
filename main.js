@@ -798,7 +798,7 @@ ipcMain.on('exportData', function(event,data) {
             var rxnorm_cache = {};
             
             data = itemsPerRecord;
-            str = form_name + "\n";
+            str = "\"" + form_name + "\"\n"; // form name could contain commas 
             // add the header
             var keys = Object.keys(data[0]);
             // sort keys by order in datadictionary
