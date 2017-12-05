@@ -1,0 +1,1274 @@
+{
+	"tag-bal_intro": [
+		"remove"
+	],
+	"tag-bal_test1_notcollrea": [
+		"remove"
+	],
+	"tag-bal_note": [
+		"remove"
+	],
+	"tag-bal_test2_notcollrea": [
+		"remove"
+	],
+	"tag-bal_test1_notes": [
+		"remove"
+	],
+	"tag-bal2_intro": [
+		"remove"
+	],
+	"tag-bal2_test1_notcollrea": [
+		"remove"
+	],
+	"tag-bal2_note": [
+		"remove"
+	],
+	"tag-bal2_test2_notcollrea": [
+		"remove"
+	],
+	"tag-bal2_notes": [
+		"remove"
+	],
+	"tag-dna_blood_sample_instructions": [
+		"remove"
+	],
+	"tag-dna_blood_notcoll_reas": [
+		"remove"
+	],
+	"tag-dna_blood_inventory_code": [
+		"remove"
+	],
+	"tag-dna_blood_notes": [
+		"remove"
+	],
+	"tag-eprime_up_notes": [
+		"remove"
+	],
+	"tag-midq_comment": [
+		"remove"
+	],
+	"tag-postscan1_comment": [
+		"remove"
+	],
+	"tag-postscan2_comment": [
+		"remove"
+	],
+	"tag-prescan1_comment": [
+		"remove"
+	],
+	"tag-prescan2_comment": [
+		"remove"
+	],
+	"tag-rec_mem_comment": [
+		"remove"
+	],
+	"tag-dna_saliva_notcoll_reas": [
+		"remove"
+	],
+	"tag-dna_saliva_inventory_code": [
+		"remove"
+	],
+	"tag-dna_sal_homekit": [
+		"remove"
+	],
+	"tag-dna_sal_home_received": [
+		"remove"
+	],
+	"tag-dna_sal_hk_date": [
+		"remove"
+	],
+	"tag-dna_saliva_inventory_homekit": [
+		"remove"
+	],
+	"tag-dna_saliva_notes": [
+		"remove"
+	],
+	"tag-hair_intro_y": [
+		"remove"
+	],
+	"tag-hair_sample_barcode_label": [
+		"remove"
+	],
+	"tag-hair_not_collect_reason": [
+		"remove"
+	],
+	"tag-hair_sent": [
+		"remove"
+	],
+	"tag-hair_not_sent_reason2": [
+		"remove"
+	],
+	"tag-hair_notes": [
+		"remove"
+	],
+	"tag-hormone_sal_notcoll_reas": [
+		"remove"
+	],
+	"tag-hormon_sal_notes_y": [],
+	"tag-hormone_sal_other_y": [
+		"remove"
+	],
+	"tag-rtg_pguid": [
+		"remove"
+	],
+	"tag-rtg_wb_ruid": [
+		"remove"
+	],
+	"tag-rtg_wb_gc_date": [
+		"remove",
+		"date"
+	],
+	"tag-rtg_zyg_ruid1": [
+		"remove"
+	],
+	"tag-rtg_zyg_ruid2": [
+		"remove"
+	],
+	"tag-rtg_zyg_pguid1": [
+		"remove"
+	],
+	"tag-rtg_zyg_pguid2": [
+		"remove"
+	],
+	"tag-rtg_zyg_date": [
+		"remove",
+		"date"
+	],
+	"tag-tox_intro_y": [
+		"remove"
+	],
+	"tag-tox1_notcoll_reas": [
+		"remove"
+	],
+	"tag-instruct_redo_tox": [
+		"remove"
+	],
+	"tag-tox1_notes": [
+		"remove"
+	],
+	"tag-tox1_notcoll_reas_2": [
+		"remove"
+	],
+	"tag-tox1_notes_2": [
+		"remove"
+	],
+	"tag-tox2_des": [
+		"remove"
+	],
+	"tag-tox_intro_y2": [
+		"remove"
+	],
+	"tag-tox2_notcoll_reas": [
+		"remove"
+	],
+	"tag-instruct2_redo_tox": [
+		"remove"
+	],
+	"tag-tox2_notes": [
+		"remove"
+	],
+	"tag-tox2_notcoll_reas_2": [
+		"remove"
+	],
+	"tag-tox2_notes_2": [
+		"remove"
+	],
+	"tag-midq_comment_rescan_y": [
+		"remove"
+	],
+	"instrument-bal_testyouth": [
+		"Youth Alcohol Screen"
+	],
+	"instrument-toxicology_test_dtyouth": [
+		"Youth Toxicology Test"
+	],
+	"instrument-genetic_blood_rucdryouth": [
+		"Youth Genetic Blood (RUCDR)"
+	],
+	"instrument-hair_sample_hsyouth": [
+		"Youth Hair Sample"
+	],
+	"instrument-eprime_data_upload": [
+		"Youth Eprime Data Upload"
+	],
+	"instrument-pubertal_hormone_saliva_psyouth": [
+		"Youth Pubertal Hormone Saliva (SPH)"
+	],
+	"instrument-genetic_saliva_rucdryouth": [
+		"Youth Genetic Saliva (RUCDR)"
+	],
+	"instrument-baby_teeth_parent": [
+		"Parent Baby Teeth (BBT)"
+	],
+	"instrument-rutgers_biosamplesdaic_use_only": [
+		"Rutgers Biosamples"
+	],
+	"instrument-hormone_saliva_salimatric_scores_daic_use_only": [
+		"Hormone Saliva Salimetric Scores"
+	],
+	"instrument-ra_scanning_checklist_and_notes": [
+		"RA Scanning Checklist and Notes"
+	],
+	"instrument-pre_scan_questionnaireyouth_1": [
+		"Youth Pre Scan Questionnaire 1"
+	],
+	"instrument-post_scan_questionnaireyouth_1": [
+		"Youth Post Scan Questionnaire 1"
+	],
+	"instrument-pre_scan_questionnaireyouth_2": [
+		"Youth Pre Scan Questionnaire 2"
+	],
+	"instrument-post_scan_questionnaireyouth_2": [
+		"Youth Post Scan Questionnaire  2"
+	],
+	"instrument-mid_post_scan_questionnaireyouth": [
+		"Youth Monetary Incentive Delay Task Survey Post Scan Questionnaire"
+	],
+	"instrument-rec_memory_for_emo_nback": [
+		"Youth Recognition Memory for Emotional Nback Task Post Scan Questionnaire"
+	],
+	"instrument-y_rescan_mid_post_scan_questionnaire": [
+		"Youth Rescan Monetary Incentive Delay Task Survey Post Scan Questionnaire"
+	],
+	"instrument-brief_problem_monitorteacher_formbpmt_for_ages_618": [
+		"Brief Problem Monitor-Teacher Form For Ages 6-18 (BPMT)"
+	],
+	"instrument-mri_qc_scores_daic_use_only": [
+		"MRI QC Scores"
+	],
+	"instrument-plus_day_1youth": [
+		"Youth Participant Last Use Survey Day 1 2 3 4 (PLUS)"
+	],
+	"instrument-plus_day_2parent": [
+		"Parent Participant Last Use Survey Day 2 3 4 (PLUS)"
+	],
+	"instrument-p_parent_rules_pr": [
+		"Parent Rules (PRQ)"
+	],
+	"instrument-su_community_risk_and_protection_parent": [
+		"Parent Community Risk & Protective Factors (CRPF)"
+	],
+	"instrument-sum_scores_su": [
+		"Sum Scores Substance Use"
+	],
+	"instrument-tlfb_calendar_scores_daic_use_only": [
+		"Timeline Follow-back Survey Calendar Scores (TLFB)"
+	],
+	"instrument-anthropometrics_modified_phenx_antyouth": [
+		"Youth Anthropometrics Modified From PhenX (ANT)"
+	],
+	"instrument-edinburgh_handedness_inventory_short_form": [
+		"Youth Edinburgh Handedness Inventory Short Form (EHIS)"
+	],
+	"instrument-snellen_vision_screener_visyouth": [
+		"Youth Snellen Vision Screener (SVS)"
+	],
+	"instrument-pubertal_development_scale_pdsmenstrual_historyyou": [
+		"Youth Pubertal Development Scale and Menstrual Cycle Survey History (PDMS)"
+	],
+	"instrument-youth_risk_behavior_physical_activity_payouth": [
+		"Youth Youth Risk Behavior Survey Exercise Physical Activity (YRB)"
+	],
+	"instrument-screen_time_styouth": [
+		"Youth Screen Time Survey (STQ)"
+	],
+	"instrument-uppsshortphenxyouth": [
+		"UPPS-P for Children Short Form (ABCD-version)"
+	],
+	"instrument-bisbasphenxyouth": [
+		"Youth Behavioral Inhibition/Behavioral Approach System Scales Modified from PhenX (BIS/BAS)"
+	],
+	"instrument-youth_resiliency_scale_yrsyouth": [
+		"Youth Youth Resilience Scale (YRS)"
+	],
+	"instrument-prodromal_psychosis_scale_pps_youth": [
+		"Youth Prodromal Psychosis Scale (PPS)"
+	],
+	"instrument-ksads5background_items_youth": [
+		"Youth Diagnostic Interview for DSM-5 Background Items 5 (KSAD)"
+	],
+	"instrument-medication_inventoryphenx_medsparent": [
+		"Parent Medications Survey Inventory Modified from PhenX (PMP"
+	],
+	"instrument-family_history_assessment_parent": [
+		"Parent Family History Assessment (FHX)"
+	],
+	"instrument-ksads5_background_items_parent": [
+		"Parent Diagnostic Interview for DSM-5 Background Items Full (KSAD)"
+	],
+	"instrument-demographicsdem_parent": [
+		"Parent Demographics Survey Modified from PhenX (PDEM)"
+	],
+	"instrument-developmental_history_questionnaire_devhxparent": [
+		"Parent Developmental History Questionnaire (DHX)"
+	],
+	"instrument-medical_history_questionnaire_mhqparent": [
+		"Parent Medical History Questionnaire (MHX)"
+	],
+	"instrument-tbi_screenmodified_ohio_state_screen_tbiparent": [
+		"Parent Ohio State Traumatic Brain Injury Screen-Short Modified (OTBI)"
+	],
+	"instrument-sports_activities_involvement_saiqparent": [
+		"Parent Sports and Activities Involvement Questionnaire (SAIQ)"
+	],
+	"instrument-pubertal_development_scale_pdsmenstrual_historypar": [
+		"Parent Pubertal Development Scale and Menstrual Cycle Survey History (PDMS)"
+	],
+	"instrument-sleep_disturbance_scale_for_children_sdsparent": [
+		"Parent Sleep Disturbance Scale for Children (SDS)"
+	],
+	"instrument-screen_time_stparent": [
+		"Parent Screen Time Survey (STQ)"
+	],
+	"instrument-p_ksadsdaic_use_only": [
+		"Parent Diagnostic Interview for DSM-5 Full (KSAD)"
+	],
+	"instrument-y_ksadsdaic_use_only": [
+		"Youth Diagnostic Interview for DSM-5 5 (KSAD)"
+	],
+	"instrument-t_raw_ksadsdaic_use_only": [
+		"Youth Raw Diagnostic Interview for DSM-5 (KSAD)"
+	],
+	"instrument-p_raw_ksadsdaic_use_only": [
+		"Parent Raw Diagnostic Interview for DSM-5 (KSAD)"
+	],
+	"instrument-child_behavior_check_list_aseba_cbclparent": [
+		"Parent Child Behavior Checklist Scores Aseba (CBCL)"
+	],
+	"instrument-general_behavior_inventory_gbiparent": [
+		"Parent Parent General Behavior Inventory-Mania (PGBI)"
+	],
+	"instrument-adult_self_report_aseba_asrparent": [
+		"Parent Adult Self Report Scores Aseba (ASR)"
+	],
+	"instrument-sum_scores_mh_y": [
+		"Sum Scores Mental Health Youth"
+	],
+	"instrument-sum_scores_mh_p": [
+		"Sum Scores Mental Health Parent"
+	],
+	"instrument-sum_score_tbi": [
+		"Sum Scores Traumatic Brain Injury"
+	],
+	"instrument-nih_tbx_summary_scores_daic_use_only": [
+		"Youth NIH TB Summary Scores"
+	],
+	"instrument-nihtbx_demo": [
+		"NIH TBX Demo"
+	],
+	"instrument-nihtbx_demo_rescore": [
+		"NIH TBX_ Demo Rescore"
+	],
+	"tag-nihtbx_demo_deviceid": [
+		"long"
+	],
+	"tag-nihtbx_demo_name": [
+		"long"
+	],
+	"instrument-little_man_task_daic_use_only": [
+		"Youth Little Man Task Raw Summary Scores Only (LMT)"
+	],
+	"instrument-little_man_task_score": [
+		"Youth Little Man Task Score (LMT)"
+	],
+	"instrument-pearson_scores": [
+		"Pearson Scores"
+	],
+	"tag-pea_assessmentid": [
+		"long"
+	],
+	"tag-pea_last_name": [
+		"long"
+	],
+	"instrument-cash_choice_task": [
+		"Youth Cash Choice Task (CCT)"
+	],
+	"instrument-prosocial_tendencies_pstyouth": [
+		"Youth Prosocial Behavior Survey (PST)"
+	],
+	"instrument-acculturationmodified_phenx_actyouth": [
+		"Youth Acculturation Survey Modified from PhenX (ACC)"
+	],
+	"instrument-parental_monitoring_pmyouth": [
+		"Youth Parental Monitoring Survey (PMQ)"
+	],
+	"instrument-crpbi_acceptance_subscaleyouth": [
+		"Youth Acceptance Subscale from Children's Report of Parental Behavioral Inventory Short (ASQ)"
+	],
+	"instrument-family_environment_conflict_scale_modified_phenx_f": [
+		"Youth Family Environment Scale-Family Conflict Subscale (FES)"
+	],
+	"instrument-neighborhood_safety_crimemodified_phenx_nscyouth": [
+		"Youth Neighborhood Safety/Crime Survey Modified from PhenX (NSC)"
+	],
+	"instrument-school_risk_protective_factorsmodified_phenx_srpfy": [
+		"Youth School Risk & Protective Factors Survey Modified from PhenX (SRPF)"
+	],
+	"instrument-acculturationmodified_phenx_actparent": [
+		"Parent Acculturation Survey Modified from PhenX (ACC)"
+	],
+	"instrument-mexican_american_cultural_values_scalemodifie_974c": [
+		"Parent Mexican American Cultural Values Scale Modified (MACV)"
+	],
+	"instrument-neighborhood_safetycrimephenx_nscparent": [
+		"Parent Neighborhood Safety/Crime Survey Modified from PhenX (NSC)"
+	],
+	"instrument-multigroup_ethnic_identity_meimrparent": [
+		"Parent Multi-Group Ethnic Identity-Revised Survey (MEIM)"
+	],
+	"instrument-vancouver_index_of_acculturationviaparent": [
+		"Parent Vancouver Index of Acculturation-Short Survey (VIA)"
+	],
+	"instrument-family_environment_scale_family_conflict_subscalem": [
+		"Parent Family Environment Scale-Family Conflict Subscale (FES)"
+	],
+	"instrument-prosocial_tendencies_prostparent": [
+		"Parent Prosocial Behavior Survey (PST)"
+	],
+	"instrument-sum_scores_c_e_y": [
+		"Sum Scores Culture & Environment Youth"
+	],
+	"instrument-sum_scores_c_e_p": [
+		"Sum Scores Culture & Environment Parent"
+	],
+	"instrument-mri_qc_raw_daic_use_only": [
+		"MRI QC Raw"
+	],
+	"instrument-freesvol01": [
+		"Freesvol01"
+	],
+	"tag-accult_q3_y": [
+		"remove"
+	],
+	"tag-accult_q3_p": [
+		"remove"
+	],
+	"tag-vancouver_q1_p": [
+		"remove"
+	],
+	"tag-crpbi_other_y": [
+		"remove"
+	],
+	"tag-vancouver_q1_other_p": [
+		"remove"
+	],
+	"tag-barcode_id_redcap": [
+		"date"
+	],
+	"tag-baseline_visits_num": [
+		"date"
+	],
+	"parse-mriqc_date": [
+		"YYYY-MM-DD"
+	],
+	"parse-lmt_scr_assess_date": [
+		"YYYY-MM-DD"
+	],
+	"parse-nihtbx_picvocab_date": [
+		"YYYY-MM-DD"
+	],
+	"parse-bal1_dot_y": [
+		"YYYY-MM-DD"
+	],
+	"parse-bal2_dot_y": [
+		"YYYY-MM-DD"
+	],
+	"tag-bal2_dot_y": [
+		"date"
+	],
+	"tag-bal21_dot_y": [
+		"date"
+	],
+	"parse-bal21_dot_y": [
+		"YYYY-MM-DD"
+	],
+	"parse-tox1_dot_y": [
+		"YYYY-MM-DD"
+	],
+	"parse-tox2_dot_y": [
+		"YYYY-MM-DD"
+	],
+	"parse-dna_blood_dot_y": [
+		"YYYY-MM-DD"
+	],
+	"parse-hair_dot_y": [
+		"YYYY-MM-DD"
+	],
+	"parse-hormone_sal_last_meal_y": [
+		"YYYY-MM-DD"
+	],
+	"parse-dna_saliva_recoll_date": [
+		"YYYY-MM-DD"
+	],
+	"parse-dna_saliva_time_date": [
+		"YYYY-MM-DD"
+	],
+	"parse-rtg_saliva_gc_date": [
+		"YYYY-MM-DD"
+	],
+	"parse-rtg_wb_gc_date": [
+		"YYYY-MM-DD"
+	],
+	"parse-rtg_zyg_date": [
+		"M/D/YYYY"
+	],
+	"parse-prescan_dt": [
+		"YYYY-MM-DD"
+	],
+	"parse-postscan_1_dt": [
+		"YYYY-MM-DD"
+	],
+	"parse-prescan_2_dt": [
+		"YYYY-MM-DD"
+	],
+	"parse-postscan_2_dt": [
+		"YYYY-MM-DD"
+	],
+	"tag-nihtbx_flanker_date": [
+		"date"
+	],
+	"parse-nihtbx_flanker_date": [
+		"YYYY-MM-DD"
+	],
+	"tag-nihtbx_list_date": [
+		"date"
+	],
+	"parse-nihtbx_list_date": [
+		"YYYY-MM-DD"
+	],
+	"parse-nihtbx_cardsort_date": [
+		"YYYY-MM-DD"
+	],
+	"tag-nihtbx_cardsort_date": [
+		"date"
+	],
+	"parse-nihtbx_pattern_date": [
+		"YYYY-MM-DD"
+	],
+	"parse-nihtbx_picture_date": [
+		"YYYY-MM-DD"
+	],
+	"parse-nihtbx_reading_date": [
+		"YYYY-MM-DD"
+	],
+	"tag-nihtbx_fluidcomp_date": [
+		"date"
+	],
+	"parse-nihtbx_fluidcomp_date": [
+		"YYYY-MM-DD"
+	],
+	"tag-nihtbx_cryst_date": [
+		"date"
+	],
+	"parse-nihtbx_cryst_date": [
+		"YYYY-MM-DD"
+	],
+	"tag-nihtbx_totalcomp_date": [
+		"date"
+	],
+	"parse-nihtbx_totalcomp_date": [
+		"YYYY-MM-DD"
+	],
+	"tag-nihtbx_earlycomp_date": [
+		"date",
+		"remove"
+	],
+	"parse-nihtbx_earlycomp_date": [
+		"YYYY-MM-DD"
+	],
+	"parse-nihtbx_crystallized_date": [
+		"YYYY-MM-DD"
+	],
+	"parse-pea_assessmentdate": [
+		"dd, DD MMM YYYY"
+	],
+	"tag-pls2_p_notes": [
+		"remove"
+	],
+	"tag-pls3_notes_p": [
+		"remove"
+	],
+	"tag-pls4_notes_p": [
+		"remove"
+	],
+	"tag-pls4_notes": [
+		"remove"
+	],
+	"tag-pls3_notes": [
+		"remove"
+	],
+	"tag-pls2_notes": [
+		"remove"
+	],
+	"tag-pls1_notes": [
+		"remove"
+	],
+	"parse-pls1_sess_date_time": [
+		"YYYY-MM-DD"
+	],
+	"parse-pls2_date_time": [
+		"YYYY-MM-DD"
+	],
+	"tag-pls3_sess_date_time": [
+		"date"
+	],
+	"parse-pls3_sess_date_time": [
+		"YYYY-MM-DD"
+	],
+	"tag-pls4_sess_date_time": [
+		"date"
+	],
+	"parse-pls4_sess_date_time": [
+		"YYYY-MM-DD"
+	],
+	"tag-pls1_other": [
+		"remove"
+	],
+	"tag-pls3_other": [
+		"remove"
+	],
+	"tag-pls2_other": [
+		"remove"
+	],
+	"tag-pls4_other": [
+		"remove"
+	],
+	"tag-bal1_dot_y": [
+		"date"
+	],
+	"tag-bal22_dot_y": [
+		"date"
+	],
+	"parse-bal22_dot_y": [
+		"YYYY-MM-DD"
+	],
+	"tag-tox2_dot_y": [
+		"date"
+	],
+	"tag-dna_blood_dot_y": [
+		"date"
+	],
+	"tag-hair_dot_y": [
+		"date"
+	],
+	"tag-hormone_sal_last_meal_y": [
+		"date"
+	],
+	"tag-dna_saliva_recoll_date": [
+		"date"
+	],
+	"tag-dna_saliva_time_date": [
+		"date"
+	],
+	"tag-rtg_saliva_gc_date": [
+		"date"
+	],
+	"tag-prescan_dt": [
+		"date",
+		"remove"
+	],
+	"tag-prescan_2_dt": [
+		"date",
+		"remove"
+	],
+	"tag-postscan_1_dt": [
+		"date",
+		"remove"
+	],
+	"tag-postscan_2_dt": [
+		"date",
+		"remove"
+	],
+	"tag-pls1_sess_date_time": [
+		"date"
+	],
+	"tag-pls2_date_time": [
+		"date"
+	],
+	"tag-nihtbx_picvocab_date": [
+		"date"
+	],
+	"tag-nihtbx_pattern_date": [
+		"date"
+	],
+	"tag-nihtbx_picture_date": [
+		"date"
+	],
+	"tag-nihtbx_reading_date": [
+		"date"
+	],
+	"tag-nihtbx_crystallized_date": [
+		"date",
+		"remove"
+	],
+	"tag-lmt_scr_assess_date": [
+		"date"
+	],
+	"tag-mriqc_date": [
+		"date"
+	],
+	"tag-anthro_notes": [
+		"remove"
+	],
+	"tag-pdsms_notes": [
+		"remove"
+	],
+	"tag-upps3_y": [
+		"remove"
+	],
+	"tag-upps5_y": [
+		"remove"
+	],
+	"tag-upps9_y": [
+		"remove"
+	],
+	"tag-kbi_y_det_reason_other": [
+		"remove"
+	],
+	"tag-tbi_1a": [
+		"remove"
+	],
+	"tag-tbi_2a": [
+		"remove"
+	],
+	"tag-tbi_3a": [
+		"remove"
+	],
+	"tag-tbi_4a": [
+		"remove"
+	],
+	"tag-tbi_5a": [
+		"remove"
+	],
+	"tag-tbi_7b": [
+		"remove"
+	],
+	"tag-tbi_7h": [
+		"remove"
+	],
+	"tag-tbi_8h": [
+		"remove"
+	],
+	"tag-ple_y_ss_total_number": [
+		"remove"
+	],
+	"tag-ple_y_ss_total_good": [
+		"remove"
+	],
+	"tag-ple_y_ss_total_bad": [
+		"remove"
+	],
+	"tag-ple_y_ss_affect_sum": [
+		"remove"
+	],
+	"tag-ple_y_ss_affected_mean": [
+		"remove"
+	],
+	"tag-ple_y_ss_affected_good_sum": [
+		"remove"
+	],
+	"tag-ple_y_ss_affected_good_mean": [
+		"remove"
+	],
+	"tag-ple_y_ss_affected_bad_sum": [
+		"remove"
+	],
+	"tag-ple_y_ss_affected_bad_mean": [
+		"remove"
+	],
+	"tag-delq_y_ss_sum": [
+		"remove"
+	],
+	"tag-delq_y_ss_sum_nm": [
+		"remove"
+	],
+	"tag-delq_y_ss_sum_nt": [
+		"remove"
+	],
+	"tag-delq_y_ss_sum_wt": [
+		"remove"
+	],
+	"tag-sup_y_ss_sum": [
+		"remove"
+	],
+	"tag-sup_y_ss_sum_nm": [
+		"remove"
+	],
+	"tag-sup_y_ss_sum_nt": [
+		"remove"
+	],
+	"tag-poa_y_ss_sum": [
+		"remove"
+	],
+	"tag-poa_y_ss_sum_nm": [
+		"remove"
+	],
+	"tag-poa_y_ss_sum_nt": [
+		"remove"
+	],
+	"tag-gish_y_ss_m_sum": [
+		"remove"
+	],
+	"tag-gish_y_ss_m_sum_nm": [
+		"remove"
+	],
+	"tag-gish_y_ss_m_sum_nt": [
+		"remove"
+	],
+	"tag-gish_y_ss_f_sum": [
+		"remove"
+	],
+	"tag-gish_y_ss_f_sum_nm": [
+		"remove"
+	],
+	"tag-gish_y_ss_f_sum_nt": [
+		"remove"
+	],
+	"tag-ple_p_ss_total_number": [
+		"remove"
+	],
+	"tag-ple_p_ss_total_number_nm": [
+		"remove"
+	],
+	"tag-ple_p_ss_total_good": [
+		"remove"
+	],
+	"tag-ple_p_ss_total_bad": [
+		"remove"
+	],
+	"tag-ple_p_ss_affected_good_sum": [
+		"remove"
+	],
+	"tag-ple_p_ss_affected_good_mean": [
+		"remove"
+	],
+	"tag-ple_p_ss_affected_bad_sum": [
+		"remove"
+	],
+	"tag-ple_p_ss_affected_bad_mean": [
+		"remove"
+	],
+	"tag-ple_p_ss_affected_mean": [
+		"remove"
+	],
+	"tag-ple_p_ss_affect_sum": [
+		"remove"
+	],
+	"tag-ssrs_p_ss_sum": [
+		"remove"
+	],
+	"tag-ssrs_p_ss_sum_nm": [
+		"remove"
+	],
+	"tag-ssrs_ss_sum_nt": [
+		"remove"
+	],
+	"tag-cna_p_ss_sum": [
+		"remove"
+	],
+	"tag-cna_p_ss_sum_nm": [
+		"remove"
+	],
+	"tag-cna_p_ss_sum_nt": [
+		"remove"
+	],
+	"tag-gish_p_ss_m_sum": [
+		"remove"
+	],
+	"tag-gish_p_ss_m_sum_nm": [
+		"remove"
+	],
+	"tag-gish_p_ss_m_sum_nt": [
+		"remove"
+	],
+	"tag-gish_p_ss_f_sum": [
+		"remove"
+	],
+	"tag-gish_p_ss_f_sum_nm": [
+		"remove"
+	],
+	"tag-gish_p_ss_f_sum_nt": [
+		"remove"
+	],
+	"tag-ehi_notes": [
+		"remove"
+	],
+	"tag-snellen_notes": [
+		"remove"
+	],
+	"tag-medhx_2_notes2": [
+		"remove"
+	],
+	"tag-medhx_2_notes": [
+		"remove"
+	],
+	"tag-medhx_6e_describe": [
+		"remove"
+	],
+	"tag-medhx_6t_describe": [
+		"remove"
+	],
+	"tag-demo_other_specify": [
+		"remove"
+	],
+	"tag-accult_select_language": [
+		"label"
+	],
+	"tag-accult_p_intro": [
+		"label"
+	],
+	"tag-accult_q1_p": [
+		"label"
+	],
+	"tag-accult_q2_p": [
+		"label"
+	],
+	"tag-accult_q3_dropdwn_p": [
+		"label"
+	],
+	"tag-accult_q3_other_p": [
+		"label"
+	],
+	"tag-accult_q4_p": [
+		"label"
+	],
+	"tag-accult_q5_p": [
+		"label"
+	],
+	"tag-accult_q1_y": [
+		"label"
+	],
+	"tag-accult_q2_y": [
+		"label"
+	],
+	"tag-accult_q3_dropdwn_y": [
+		"label"
+	],
+	"tag-accult_q3_other_y": [
+		"label"
+	],
+	"tag-accult_q4_y": [
+		"label"
+	],
+	"tag-accult_q5_y": [
+		"label"
+	],
+	"tag-bisbas1_y": [
+		"label"
+	],
+	"tag-bisbas2_y": [
+		"label"
+	],
+	"tag-bisbas3_y": [
+		"label"
+	],
+	"tag-bisbas4_y": [
+		"label"
+	],
+	"tag-bisbas5_y": [
+		"label"
+	],
+	"tag-bisbas6_y": [
+		"label"
+	],
+	"tag-bisbas7_y": [
+		"label"
+	],
+	"tag-bisbas8_y": [
+		"label"
+	],
+	"tag-bisbas10_y": [
+		"label"
+	],
+	"tag-bisbas9_y": [
+		"label"
+	],
+	"tag-bisbas11_y": [
+		"label"
+	],
+	"tag-bisbas12_y": [
+		"label"
+	],
+	"tag-bisbas13_y": [
+		"label"
+	],
+	"tag-bisbas14_y": [
+		"label"
+	],
+	"tag-bisbas15_y": [
+		"label"
+	],
+	"tag-bisbas16_y": [
+		"label"
+	],
+	"tag-bisbas17_y": [
+		"label"
+	],
+	"tag-bisbas18_y": [
+		"label"
+	],
+	"tag-bisbas19_y": [
+		"label"
+	],
+	"tag-bisbas20_y": [
+		"label"
+	],
+	"tag-bis_y_ss_bis_sum": [
+		"label"
+	],
+	"tag-bis_y_ss_bis_sum_nm": [
+		"label"
+	],
+	"tag-bis_y_ss_bis_sum_nt": [
+		"label"
+	],
+	"tag-bis_y_ss_bas_rr": [
+		"label"
+	],
+	"tag-bis_y_ss_bas_rr_nm": [
+		"label"
+	],
+	"tag-bis_y_ss_bas_rr_nt": [
+		"label"
+	],
+	"tag-bis_y_ss_bas_drive": [
+		"label"
+	],
+	"tag-bis_y_ss_bas_drive_nm": [
+		"label"
+	],
+	"tag-bis_y_ss_bas_drive_nt": [
+		"label"
+	],
+	"tag-bis_y_ss_bas_fs": [
+		"label"
+	],
+	"tag-bis_y_ss_bas_fs_nm": [
+		"label"
+	],
+	"tag-bis_y_ss_bas_fs_nt": [
+		"label"
+	],
+	"tag-bis_y_ss_bism_sum": [
+		"label"
+	],
+	"tag-bis_y_ss_bism_sum_nm": [
+		"label"
+	],
+	"tag-bis_y_ss_bism_sum_nt": [
+		"label"
+	],
+	"tag-bis_y_ss_basm_rr": [
+		"label"
+	],
+	"tag-bis_y_ss_basm_rr_nm": [
+		"label"
+	],
+	"tag-bis_y_ss_basm_rr_nt": [
+		"label"
+	],
+	"tag-bis_y_ss_basm_drive": [
+		"label"
+	],
+	"tag-bis_y_ss_basm_drive_nm": [
+		"label"
+	],
+	"tag-bis_y_ss_basm_drive_nt": [
+		"label"
+	],
+	"tag-testusername": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_ms": [
+		"remove"
+	],
+	"tag-ra_scan_cl_mc": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_tog": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_pmid": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_psst": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_pemo": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_metal": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_br": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_s1": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_s2": [
+		"remove"
+	],
+	"tag-mid_notes": [
+		"remove"
+	],
+	"tag-nback_notes": [
+		"remove"
+	],
+	"tag-sst_notes": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_pnotes": [
+		"remove"
+	],
+	"tag-eprime_notes": [
+		"remove"
+	],
+	"tag-scan_op_initials": [
+		"remove"
+	],
+	"tag-ra_scan_entry": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_t1": [
+		"remove"
+	],
+	"tag-ra_t1_scan_notes": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_t2": [
+		"remove"
+	],
+	"tag-ra_t2_scan_notes": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_dsc": [
+		"remove"
+	],
+	"tag-ra_dti_scan_notes": [
+		"remove"
+	],
+	"tag-ra_scan_check_list_rsc": [
+		"remove"
+	],
+	"tag-restscan_notes": [
+		"remove"
+	],
+	"tag-ra_scan_cl_prescr_order": [
+		"long"
+	],
+	"tag-ra_scan_check_list_rtmid": [
+		"long"
+	],
+	"tag-prescan_1_instructions": [
+		"remove"
+	],
+	"tag-pre_scan_need": [
+		"remove"
+	],
+	"tag-postscan_1_instructions": [
+		"remove"
+	],
+	"tag-postscan_2_need": [
+		"remove"
+	],
+	"tag-demo_prnt_indust_v26": [
+		"remove"
+	],
+	"tag-demo_prnt_job_v2": [
+		"remove"
+	],
+	"tag-demo_prtnr_indus_v29": [
+		"remove"
+	],
+	"tag-demo_prtnr_job_v2": [
+		"remove"
+	],
+	"tag-pds_f5b_p": [
+		"remove"
+	],
+	"tag-wps_y_ss_num_present": [
+		"remove"
+	],
+	"tag-wps_y_ss_sum": [
+		"remove"
+	],
+	"tag-wps_y_ss_sum_nm": [
+		"remove"
+	],
+	"tag-wps_y_ss_sum_nt": [
+		"remove"
+	],
+	"tag-dim_y_ss_mean": [
+		"remove"
+	],
+	"tag-dim_y_ss_nm": [
+		"remove"
+	],
+	"tag-dim_y_ss_nt": [
+		"remove"
+	],
+	"tag-nihtbx_earlycomp_rawscore": [
+		"remove"
+	],
+	"tag-nihtbx_earlycomp_theta": [
+		"remove"
+	],
+	"tag-nihtbx_earlycomp_itmcnt": [
+		"remove"
+	],
+	"tag-nihtbx_earlycomp_language": [
+		"remove"
+	],
+	"tag-nihtbx_earlycomp_computedscore": [
+		"remove"
+	],
+	"tag-nihtbx_earlycomp_uncorrected": [
+		"remove"
+	],
+	"tag-nihtbx_earlycomp_agecorrected": [
+		"remove"
+	],
+	"tag-nihtbx_earlycomp_fullycorrected": [
+		"remove"
+	],
+	"tag-nihtbx_earlycomp_v": [
+		"remove"
+	],
+	"tag-nihtbx_crystallized_rawscore": [
+		"remove"
+	],
+	"tag-nihtbx_crystallized_theta": [
+		"remove"
+	],
+	"tag-nihtbx_crystallized_itmcnt": [
+		"remove"
+	],
+	"tag-nihtbx_crystallized_language": [
+		"remove"
+	],
+	"tag-nihtbx_crystallized_computedscore": [
+		"remove"
+	],
+	"tag-nihtbx_crystallized_uncorrected": [
+		"remove"
+	],
+	"tag-nihtbx_crystallized_agecorrected": [
+		"remove"
+	],
+	"tag-nihtbx_crystallized_fullycorrected": [
+		"remove"
+	],
+	"tag-nihtbx_crystallized_v": [
+		"remove"
+	],
+	"tag-tox1_dot_y": [
+		"date"
+	],
+	"tag-meim_id_p": [
+		"remove"
+	],
+	"instrument-adult_self_report_scores": [
+		"Parent Adult Self Report Scores (ASR)"
+	]
+}
