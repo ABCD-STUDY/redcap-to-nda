@@ -595,7 +595,6 @@ function checkEntryDateConversion( item, parse_string, data, callback ) {
 }
 
 
-
 function checkEntryNumber( item, data, callback ) {
     var result = "";
     for (var i = 0; i < data.length; i++) {
@@ -607,7 +606,7 @@ function checkEntryNumber( item, data, callback ) {
     if (result.length > 0) {
         status = "bad";
     } else {
-        result = "no number validation";
+        result = "no number conversion error found";
     }
 
     (callback)( status + " " + result, status );
@@ -629,6 +628,13 @@ function checkItem( item, form, data, callback ) {
                 });
                 return;
             }
+            if (d['field_type'] == "text" && d['text_validation_type_or_show_slider_number'] == "number") {
+                checkEntryNumber(item, data, function(result, status) {
+                    (callback)( result, status );
+                });
+                return;
+            }
+
             if (d['field_type'] == "text" && d['text_validation_min'] === '' && d['text_validation_max'] === '') { // text field without validation
                 // get the length for this entry
                 allowedLength = 30;
@@ -1076,8 +1082,23 @@ ipcMain.on('exportForm', function(event, data) {
                     }
                     if (mi !== "" && ma !== "") {
                         range = mi + " :: " + ma;
-                        foundIntegerRange = true;
                     }
+                    foundIntegerRange = true; // can be empty
+                } else if (d['text_validation_type_or_show_slider_number'] == "number") {
+                    type = "Float";
+                    size = "";
+                    var mi = "";
+                    if (typeof d['text_validation_min'] !== 'undefined' && d['text_validation_min'] !== '') {
+                        mi = parseFloat(d['text_validation_min']);
+                    }
+                    var ma = "";
+                    if (typeof d['text_validation_max'] !== 'undefined' && d['text_validation_max'] !== '') {
+                        ma = parseFloat(d['text_validation_max']);
+                    }
+                    if (mi !== "" && ma !== "") {
+                        range = mi + " :: " + ma;
+                    }
+                    foundIntegerRange = true; // can be empty
                 }
                 if (d['text_validation_type_or_show_slider_number'] == "datetime_dmy") {
                     type = "Date";
@@ -1109,10 +1130,7 @@ ipcMain.on('exportForm', function(event, data) {
             if (d['field_type'] == "number") {
                 type = "Float";
             }
-            if (d['field_type'] == "number") {
-                type = "Float";
-            }
-            if (d['field_type'] == "calc") {
+              if (d['field_type'] == "calc") {
                 notes = "Calculation: " + d['select_choices_or_calculations'];
                 notes = notes + (d['field_note'].length>0?" | " + unHTML(d['field_note']):"");
                 notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
