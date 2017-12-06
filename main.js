@@ -995,6 +995,9 @@ function mapValueToString(item, value) {
 
 function unHTML( str ) {
     var s = str;
+    if (typeof str === 'undefined') {
+        return "";
+    }
     // we might have no spaces between the spanish and english versions, lets add some first
     str = str.replace(/\<\/span\>/g, "</span> ");
     str = striptags(str);
@@ -1089,7 +1092,11 @@ ipcMain.on('exportForm', function(event, data) {
                 size = "";
                 for (var j = 0; j < choices.length; j++) {
                     var bla = choices[j].split(",");
-                    notes = notes + bla[0].trim() + " = " + unHTML(bla[1]);
+                    if (typeof bla[1] === 'undefined') {
+                        notes = notes + bla[0].trim();
+                    } else {
+                        notes = notes + bla[0].trim() + " = " + unHTML(bla[1]);
+                    }
                     range = range + bla[0].trim();
                     if (j < choices.length-1) {
                         notes = notes + "; ";
