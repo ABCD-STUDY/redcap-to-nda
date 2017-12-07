@@ -1,3 +1,5 @@
+//import { Packager } from 'electron-builder/out/packager';
+
 const {app, BrowserWindow, ipcMain, Menu} = require('electron')
 const path      = require('path')
 const url       = require('url')
@@ -710,6 +712,11 @@ ipcMain.on('exportData', function(event,data) {
     var form = data['form'];
     console.log("start writing data to disk " + filename + " ...");
     
+    // lets also write a report to disk
+    var report = data['filename'];
+    report = path.join(path.dirname(report), path.basename(report, path.extname(report)) + "_report.txt");
+    var rstr = "### Data Export Report " + form + "\n\n";
+
     // what is the name of this instrument?
     var form_name = instrumentLabels[form];
     var form_version = "1";
@@ -913,6 +920,7 @@ ipcMain.on('exportData', function(event,data) {
                 for (var j = 0; j < datadictionary.length; j++) {
                     if (name == datadictionary[i]['field_name'] && datadictionary[i]['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
                         // check if this is already in the cache
+                        rstr = rstr + "Found BIOPORTAL:RXNORM entry [" + name + "] - requires a secondary lookup for the string representation of the drug number\n";
                         for (var k = 0; k < data.length; k++) {
                             if (data[k]['nda_year_1_inclusion___1'] == "1") {
                                 if (data[k]['field_name'] === name) {
@@ -968,22 +976,48 @@ ipcMain.on('exportData', function(event,data) {
         
                             }*/
                         }
-                        
+                       
+                        // check if the current value is bad, compared to the min/max values if they exist, set those values to empty and leave a record in rstr
+                        for (var k = 0; k < datadictionary.length; k++) {
+                            if (name == datadictionary[k]['field_name'] &&
+                                (datadictionary[k]['text_validation_min'] !== "" || 
+                                 datadictionary[k]['text_validation_max'] !== "")) {
+                                var mi = datadictionary[k]['text_validation_min'];
+                                var ma = datadictionary[k]['text_validation_max'];
+                                if (mi !== "") {
+                                    if (parseFloat(label) < mi)
+                                        rstr = rstr + "  Error: value " + label + " < " + mi + "\n";
+                                }
+                                if (ma !== "") {
+                                    if (parseFloat(label) > ma)
+                                        rstr = rstr + "  Error: value " + label + " > " + ma + "\n";
+                                }
+                            }
+                        }
+
                         label = label.replace(/\"/g, "\"\"\"");
                         if (name == "id_redcap") {
                             // we need more: subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
                             interview_date = data[i]['asnt_timestamp'];
                             interview_age = ""; // in month
                             gender = "";
+                            found = false;
                             // find the missing information in the subject_json structure loaded from outside file
                             for (var k=0; k < subject_json.length; k++) {
                                 if (subject_json[k]['pGUID'] == data[i][name]) {
                                     gender = subject_json[k]['gender'];
                                     var dob = moment(subject_json[k]['dob'], 'YYYY-MM-DD');
                                     var visit = moment(data[i]['asnt_timestamp'], 'YYYY-MM-DD HH:mm');
+                                    interview_date = visit.format('MM/DD/YYYY');
                                     interview_age = visit.diff(dob, 'month', false); // use the dob and the asnt_timestamp
+                                    found = true;
                                     break;
                                 }
+                            }
+                            if (!found) {
+                                rstr = rstr + "Error: could not find subject " + data[i][name] + " in subject JSON file " + current_subject_json + ".\n";
+                                // still convert the interview_date
+                                interview_date = visit.format('MM/DD/YYYY');
                             }
                             str = str + data[i][name] + "," + 
                                 data[i][name] + "," + 
@@ -1009,6 +1043,16 @@ ipcMain.on('exportData', function(event,data) {
                 });
             } catch(e) {
                 win.send('alert', 'Could not save to file: ' + filename);
+            }
+            try {
+                fs.writeFile(report, rstr, function(err) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    console.log("The report file was saved...");
+                });
+            } catch(e) {
+                win.send('alert', 'Could not save to report file: ' + report);
             }
         }
     };
