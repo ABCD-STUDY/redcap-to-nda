@@ -31,7 +31,7 @@ let instrumentEventMapping
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 1100, height: 700, "webPreferences" : { devTools: false } });
+  win = new BrowserWindow({width: 1100, height: 700, "webPreferences" : { devTools: true } });
 
   // and load the index.html of the app.
   win.loadURL(url.format({
@@ -59,7 +59,7 @@ function createWindow () {
     ]}
   ];
 
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  //Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   // Open the DevTools.
   //win.webContents.openDevTools()
@@ -208,7 +208,7 @@ ipcMain.on('openChangeLabelDialog', function (event, arg) {
     console.log("start openChangeLabelDialog... with argument: " + JSON.stringify(arg));
     if (changeLabelDialog) {
         changeLabelDialog.show();
-        changeLabelDialog.send('changeLabelCurrentName', { name: arg['name'], instrument: arg['instrument'] });         
+        changeLabelDialog.send('changeLabelCurrentName', { name: arg['name'], instrument: arg['instrument'], nda_name: arg['nda_name'], version: arg['version'] });         
         return;
     }
     changeLabelDialog = new BrowserWindow({
@@ -219,7 +219,7 @@ ipcMain.on('openChangeLabelDialog', function (event, arg) {
         frame: false,
         useContentSize: true,
         width: 460,
-        height: 350
+        height: 420
     });
     changeLabelDialog.loadURL(url.format({
         pathname: path.join(__dirname, 'changeLabelDialog.html'),
@@ -228,7 +228,7 @@ ipcMain.on('openChangeLabelDialog', function (event, arg) {
     }));
     changeLabelDialog.once('ready-to-show', function() { 
         changeLabelDialog.show(); 
-        changeLabelDialog.send('changeLabelCurrentName', { name: arg['name'], instrument: arg['instrument'] }); 
+        changeLabelDialog.send('changeLabelCurrentName', { name: arg['name'], instrument: arg['instrument'], nda_name: arg['nda_name'], version: arg['version'] }); 
     });
     console.log("done with openChangeLabelDialog...");
     changeLabelDialog.on('closed', function() {
@@ -244,13 +244,15 @@ ipcMain.on('closeChangeLabelDialogReset', function(event, arg) {
         changeLabelDialog.hide();
         var name = arg.name.trim();
         var instrument = arg.instrument;
+        var version = arg.version;
+        var nda_name = arg.nda_name;
 
         console.log("closed setup DIALOG after reset");
         // what is the default value?
         name = instrumentLabels[instrument];
 
         // here we should delete the tag instead of setting it to the default
-        results = [ { 'tags': [ name ], 'item': instrument, 'prefix': 'instrument-', 'additional-action': 'delete' } ];
+        results = [ { 'tags': [ name, version, nda_name ], 'item': instrument, 'prefix': 'instrument-', 'additional-action': 'delete' } ];
         win.send('updateTagValues', results);
     }
 });
@@ -267,13 +269,15 @@ ipcMain.on('closeChangeLabelDialogOk', function(event, arg) {
         changeLabelDialog.hide();
         name = arg.name.trim();
         instrument = arg.instrument;
-        console.log("closed setup DIALOG after ok, new name is: " + name + " for instrument: " + instrument);
+        version = arg.version.trim();
+        nda_name = arg.nda_name.trim();
+        console.log("closed setup DIALOG after ok, new name is: " + name + " for instrument: " + instrument + " version: " + version + " nda_name: " + nda_name);
 
         console.log("Store now: " + instrument + " with value: " + name);
-        store.set('instrument-' + instrument, [name]);
+        store.set('instrument-' + instrument, [name, version, nda_name]);
 
         // now update the interface with the new values
-        results = [ { 'tags': [ name ], 'item': instrument, 'prefix': 'instrument-' } ];
+        results = [ { 'tags': [ name, version, nda_name ], 'item': instrument, 'prefix': 'instrument-' } ];
         win.send('updateTagValues', results);
 
         // now populate the list with the instruments
@@ -701,9 +705,16 @@ ipcMain.on('exportData', function(event,data) {
     
     // what is the name of this instrument?
     var form_name = instrumentLabels[form];
+    var form_version = "1";
+    var form_nda_name = form_name;
     var v = store.get('instrument-' + form);
     if (typeof v !== 'undefined') {
-        form_name = v;
+        if (typeof v[0] !== 'undefined')
+            form_name = v[0];
+        if (typeof v[1] !== 'undefined')
+            form_version = v[1];
+        if (typeof v[2] !== 'undefined')
+            form_nda_name = v[2];
     }
 
     var items = [];
@@ -804,7 +815,7 @@ ipcMain.on('exportData', function(event,data) {
             var rxnorm_cache = {};
             
             data = itemsPerRecord;
-            str = "\"" + form_name + "\"\n"; // form name could contain commas 
+            str = "\"" + form_nda_name + "\"," + form_version + "\n"; // form name could contain commas 
             // add the header
             var keys = Object.keys(data[0]);
             // sort keys by order in datadictionary
@@ -1287,6 +1298,9 @@ function updateInstrumentList( event ) {
             // what is the correct name for this event?
             var instrument = instrumentEventMapping[i]['form'];
             var name = instrumentLabels[instrument];
+            if (typeof name == 'undefined') {
+                name = ""; // default name is empty string
+            }
             var found = false;
             for (var j = 0; j < instruments.length; j++) {
                 if ( instruments[j][0] == instrument ) {

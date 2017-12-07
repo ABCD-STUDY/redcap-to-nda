@@ -32,7 +32,7 @@ ipcRenderer.on('updateInstrumentList', function(event, data) {
         </li> */
         // lets check if we have an alternative name for this instrument
         ipcRenderer.send('getTags', [ { 'item': data[i][0], 'prefix': 'instrument-' } ]);
-
+        //console.log("for " + data[i][0] + " we have : " + data[i][1] + " in updateInstrumentList");
         jQuery('#current-instrument-list').append(
             '<li class="list-group-item" value='+ data[i][0] +'>' + 
             '<img class="img-circle media-object pull-left" src="img/instrument.png" width="32" height="32">' +
@@ -88,6 +88,9 @@ ipcRenderer.on('updateTagValues', function(event, data) {
             // ok, update the name of that instrument, not the tags on an item
             jQuery('#current-instrument-list li').each(function() {
                 if (jQuery(this).attr('value') == instr) {
+                    //console.log("in updateTagValues: " + JSON.stringify(data[i]));
+                    jQuery(this).attr('version', data[i]['tags'][1]);
+                    jQuery(this).attr('nda_name', data[i]['tags'][2]);
                     jQuery(this).find('.description').text(" " + data[i]['tags'][0]);
                     jQuery(this).find('.edit span').addClass('from-store');
                 }
@@ -260,12 +263,16 @@ jQuery(document).ready(function() {
 
     jQuery('#current-instrument-list').on('click', 'button.edit', function() {
         console.log("click on button, name: " + jQuery(this).text());
+        // use the name in this dialog - if there is no name assigned show an empty string
         var default_text = jQuery(this).parent().text().trim();
+        // console.log("got default text of : " + jQuery(this).parent().parent().find('strong').text());
         var instrument = jQuery(this).parent().parent().parent().attr('value'); // unique name of this instrument
+        var version = jQuery(this).parent().parent().parent().attr('version');
+        var nda_name = jQuery(this).parent().parent().parent().attr('nda_name');
         // maybe we have a value for this instrument as a tag?
         // no, we will only show descriptions that are current (default or tag value)
         //console.log("Open change label dialog with: " + default_text + " " + instrument);
-        ipcRenderer.send('openChangeLabelDialog', { 'name': default_text, 'instrument': instrument });
+        ipcRenderer.send('openChangeLabelDialog', { 'name': default_text, 'instrument': instrument, 'version': version, 'nda_name': nda_name });
         console.log("open another dialog finished");
         return false;
     });
