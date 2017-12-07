@@ -27,6 +27,7 @@ let instrumentLabels
 let token
 let current_event
 let current_url = 'https://abcd-rc.ucsd.edu/redcap/api/';
+let current_subject_json = ''; // the name of an additional file that contains subject information (pGUID, 'gender')
 let instrumentEventMapping
 
 function createWindow () {
@@ -115,7 +116,7 @@ ipcMain.on('openSetupDialog', function (event, arg) {
         frame: false, 
         useContentSize: true,
         width: 460,
-        height: 340
+        height: 420
     });
     setupDialog.loadURL(url.format({
         pathname: path.join(__dirname, 'setupDialog.html'),
@@ -142,7 +143,9 @@ ipcMain.on('closeSetupDialogOk', function(event, arg) {
         token = arg.token;
         current_event = arg.event;
         current_url = arg.url;
-        console.log("closed setup DIALOG after ok: " + token + " " + event + " " + current_url);
+        // the current_subject_json has already been set by the callback from the open dialog
+        //current_subject_json = arg.subject_json;
+        console.log("closed setup DIALOG after ok: " + token + " " + event + " " + current_url + " " + current_subject_json);
 
         // now populate the list with the instruments
         updateInstrumentList( current_event );
@@ -698,6 +701,10 @@ function checkItem( item, form, data, callback ) {
     return;
 }
 
+ipcMain.on('openLoadJSONDialog', function(event,data) {
+    current_subject_json = data['filename'][0];
+});
+
 ipcMain.on('exportData', function(event,data) {
     var filename = data['filename'];
     var form = data['form'];
@@ -747,6 +754,7 @@ ipcMain.on('exportData', function(event,data) {
             'fields[0]': 'id_redcap',
             'fields[1]': 'redcap_event_name',
             'fields[2]': 'nda_year_1_inclusion',
+            'fields[3]': 'asnt_timestamp',
             'events[0]': current_event,            
             'format': 'json',
             'type': 'flat',
@@ -759,7 +767,7 @@ ipcMain.on('exportData', function(event,data) {
         }
         
         for (var i = 0; i < chunk.length; i++) {
-            data['fields[' + (i + 3) + ']'] = chunk[i];
+            data['fields[' + (i + 4) + ']'] = chunk[i];
         }
         //console.log("got chunk of size " + chunk.length + " call: " + JSON.stringify(data));
         
@@ -813,6 +821,9 @@ ipcMain.on('exportData', function(event,data) {
             console.log("finished getting data from redcap at this point, save itemsPerRecord to file: " + filename);
             win.send('message', "done with save...");
             var rxnorm_cache = {};
+
+            // we need to add some standard columns at the beginning that identify the dataset on NDA
+            // subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
             
             data = itemsPerRecord;
             str = "\"" + form_nda_name + "\"," + form_version + "\n"; // form name could contain commas 
@@ -853,12 +864,27 @@ ipcMain.on('exportData', function(event,data) {
             //console.log("sort is done");
             //console.log("sort these keys: " + JSON.stringify(sortedKeys));
 
+            // read in the additional subject information from the current_subject_json
+            subject_json = []; 
+            if (current_subject_json == "") {
+                console.log("Error: no current_subject_json file specified");
+            } else {
+                if (fs.existsSync(current_subject_json)) {
+                    subject_json = JSON.parse(fs.readFileSync(current_subject_json, 'utf8'));
+                    // we expect some keys in this file, like pGUID, gender, and dob
+                } else {
+                    console.log("Error: file does not exist " + current_subject_json);
+                }            
+            }
+
             var skipkeys = [];
             for ( var j = 0; j < sortedKeys.length; j++) {
                 var k = keys[j];
-                if (k == 'id_redcap')
-                    k = 'subjectkey,eventname';
-                if (k == 'redcap_event_name' || k == "nda_year_1_inclusion___1" || k == (form + "_complete"))
+                if (k == 'id_redcap') {
+                    k = 'subjectkey,src_subject_id,interview_date,interview_age,gender,eventname';
+                    // we need more: subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
+                }
+                if (k == 'redcap_event_name' || k == "nda_year_1_inclusion___1" || k == (form + "_complete") || k == 'asnt_timestamp')
                     continue; // don't export, is grouped with id_redcap
                 var flags = store.get('tag-' + k);
                 if (typeof flags !== 'undefined') {
@@ -945,7 +971,26 @@ ipcMain.on('exportData', function(event,data) {
                         
                         label = label.replace(/\"/g, "\"\"\"");
                         if (name == "id_redcap") {
-                            str = str + data[i][name] + "," + data[i]['redcap_event_name'];
+                            // we need more: subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
+                            interview_date = data[i]['asnt_timestamp'];
+                            interview_age = ""; // in month
+                            gender = "";
+                            // find the missing information in the subject_json structure loaded from outside file
+                            for (var k=0; k < subject_json.length; k++) {
+                                if (subject_json[k]['pGUID'] == data[i][name]) {
+                                    gender = subject_json[k]['gender'];
+                                    var dob = moment(subject_json[k]['dob'], 'YYYY-MM-DD');
+                                    var visit = moment(data[i]['asnt_timestamp'], 'YYYY-MM-DD HH:mm');
+                                    interview_age = visit.diff(dob, 'month', false); // use the dob and the asnt_timestamp
+                                    break;
+                                }
+                            }
+                            str = str + data[i][name] + "," + 
+                                data[i][name] + "," + 
+                                interview_date + "," + 
+                                interview_age + "," + 
+                                gender + "," + 
+                                data[i]['redcap_event_name'];
                         } else {
                             str = str + "\"" + label + "\"";
                         }

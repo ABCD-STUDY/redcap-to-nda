@@ -2,6 +2,8 @@ var jQuery = require('jquery');
 var {ipcRenderer, remote} = require('electron');
 
 var main = remote.require("./main.js");
+const dialog = remote.dialog;
+
 
 ipcRenderer.on('my-msg', function(arg) {
     console.log("the setupDialog got a message : " + arg);
@@ -31,6 +33,12 @@ jQuery(document).ready(function() {
         }
 
         ipcRenderer.send('closeSetupDialogOk', { token: token, event: choice, url: url } );
+        return false;
+    });
+    jQuery('#nda-subject-json').on('click', function() {
+        dialog.showOpenDialog({ properties: ['openFile'], extensions: ['json'], defaultPath: "subject_data.json" }, function (filename) {
+            ipcRenderer.send('openLoadJSONDialog', { filename: filename });
+        });        
         return false;
     });
     jQuery('#setup-dialog-cancel').on('click', function() {
