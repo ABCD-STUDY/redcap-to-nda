@@ -807,7 +807,8 @@ ipcMain.on('exportData', function(event,data) {
                 var found = false;
                 for (var j = 0; j < itemsPerRecord.length; j++) {
                     var item = itemsPerRecord[j];
-                    if (item['id_redcap'] == data[i]['id_redcap'] && item['redcap_event_name'] == data[i]['redcap_event_name']) {
+                    if (item['id_redcap'] == data[i]['id_redcap'] && 
+                        item['redcap_event_name'] == data[i]['redcap_event_name']) {
                         itemsPerRecord[j] = Object.assign({}, itemsPerRecord[j], data[i]); // copy the key/values from both into one
                         found = true; 
                     }
@@ -885,13 +886,17 @@ ipcMain.on('exportData', function(event,data) {
             }
 
             var skipkeys = [];
+            var count = 0;
             for ( var j = 0; j < sortedKeys.length; j++) {
                 var k = keys[j];
                 if (k == 'id_redcap') {
                     k = 'subjectkey,src_subject_id,interview_date,interview_age,gender,eventname';
                     // we need more: subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
                 }
-                if (k == 'redcap_event_name' || k == "nda_year_1_inclusion___1" || k == (form + "_complete") || k == 'asnt_timestamp')
+                if (k == 'redcap_event_name' || 
+                    k == "nda_year_1_inclusion___1" || 
+                    k == (form + "_complete") || 
+                    k == 'asnt_timestamp')
                     continue; // don't export, is grouped with id_redcap
                 var flags = store.get('tag-' + k);
                 if (typeof flags !== 'undefined') {
@@ -900,16 +905,19 @@ ipcMain.on('exportData', function(event,data) {
                         continue; // don't export this key
                     }
                 }
-                
-                str = str + k;
-                if (j < keys.length-1) 
-                    str = str + ",";
+                if (count > 0)
+                    str = str + "," + k;
+                else
+                    str = str + k;
+
+                count = count + 1;
             }
             str = str + "\n";
 
             // check if one of the keys is representing RXNORM data
+            count = 0;
             for (var i = 0; i < sortedKeys.length; i++) {
-                var name = sortedKeys[j];
+                var name = sortedKeys[i];
                 if (name == "redcap_event_name" || name == "nda_year_1_inclusion___1" || name == (form + "_complete"))
                     continue; // skip, is exported next to id_redcap
                 // skip this key if its not needed
@@ -947,7 +955,10 @@ ipcMain.on('exportData', function(event,data) {
                     var keys = Object.keys(data[i]);
                     for ( var j = 0; j < sortedKeys.length; j++) {
                         var name = sortedKeys[j];
-                        if (name == "redcap_event_name" || name == "nda_year_1_inclusion___1" || name == (form + "_complete"))
+                        if (name == "redcap_event_name" || 
+                            name == "nda_year_1_inclusion___1" ||
+                            name == "asnt_timestamp" ||
+                            name == (form + "_complete"))
                             continue; // skip, is exported next to id_redcap
                         // skip this key if its not needed
                         if (skipkeys.indexOf(name) !== -1) {
@@ -1029,11 +1040,16 @@ ipcMain.on('exportData', function(event,data) {
                                 interview_age + "," + 
                                 gender + "," + 
                                 data[i]['redcap_event_name'];
+                            count = count + 1;
                         } else {
-                            str = str + "\"" + label + "\"";
+                            if (count > 0)
+                                str = str + ",\"" + label + "\"";
+                            else
+                                str = str + "\"" + label + "\"";
+                            count = count + 1;
                         }
-                        if (j < keys.length -1)
-                            str = str + ",";
+//                        if (count > 0)
+//                            str = str + ",";
                     }
                     str = str + "\n";
                 }
@@ -1295,6 +1311,9 @@ ipcMain.on('exportForm', function(event, data) {
                 if (flags.indexOf('label') !== -1) {
                     // in this case we will export the entries as strings (assuming that 30 characters are sufficient...)
                     type = "String"; // should not be exported as checkbox with values
+                }
+                if (flags.indexOf('clearcheckboxes') !== -1) {
+
                 }
             }
             if (flag_date) { // if we should parse a date we also need the parse string (stored in the parse- variable)
