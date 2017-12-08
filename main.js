@@ -985,12 +985,16 @@ ipcMain.on('exportData', function(event,data) {
                                 var mi = datadictionary[k]['text_validation_min'];
                                 var ma = datadictionary[k]['text_validation_max'];
                                 if (mi !== "") {
-                                    if (parseFloat(label) < mi)
+                                    if (parseFloat(label) < mi) {
                                         rstr = rstr + "  Error: value " + label + " < " + mi + "\n";
+                                        label = "";
+                                    }
                                 }
                                 if (ma !== "") {
-                                    if (parseFloat(label) > ma)
+                                    if (parseFloat(label) > ma) {
                                         rstr = rstr + "  Error: value " + label + " > " + ma + "\n";
+                                        label = "";
+                                    }
                                 }
                             }
                         }
