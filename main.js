@@ -888,7 +888,7 @@ ipcMain.on('exportData', function(event,data) {
             var skipkeys = [];
             var count = 0;
             for ( var j = 0; j < sortedKeys.length; j++) {
-                var k = keys[j];
+                var k = sortedKeys[j];
                 if (k == 'id_redcap') {
                     k = 'subjectkey,src_subject_id,interview_date,interview_age,gender,eventname';
                     // we need more: subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
@@ -969,9 +969,36 @@ ipcMain.on('exportData', function(event,data) {
                         if (typeof data[i][name] !== 'undefined') { // a key we have not seen before
                             // we could have a key here that contains '___'    
                             label = data[i][name];
-                            var flags = store.get('tag-' + name);
+                            var na = name;
+                            if (name.split("___").length > 1) {
+                                na = name.split("___")[0];
+                            }
+                            var flags = store.get('tag-' + na);
                             if (typeof flags !== 'undefined' && flags.indexOf('label') !== -1)
                                 label = mapValueToString(name, label);
+
+                            //
+                            // lets test if we should replace "0" with "" if the clearlabel flag is set
+                            //
+                            if (typeof flags !== 'undefined' && 
+                                  name.split("___").length > 1 && 
+                                  flags.indexOf('clearcheckboxes') !== -1) {
+                                // check if there is any value set to !0 for this name
+                                na = name.split("___")[0];
+                                foundOne = false;
+                                for (var k = 0; k < keys.length; k++) {
+                                    if (keys[k].indexOf(na + "___") === 0) {
+                                        if (data[i][keys[k]] !== "0") {
+                                            foundOne = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (!foundOne) {
+                                    // set this label to empty (no other checkbox is set, all are "0")
+                                    label = "";
+                                }
+                            }
                         }
                         // do we have to perform a date conversion?
                         if (label !== '' && typeof dateConversions[name] !== 'undefined') {
@@ -1020,11 +1047,11 @@ ipcMain.on('exportData', function(event,data) {
                             // find the missing information in the subject_json structure loaded from outside file
                             for (var k=0; k < subject_json.length; k++) {
                                 if (subject_json[k]['pGUID'] == data[i][name]) {
-                                    gender = subject_json[k]['gender'];
-                                    var dob = moment(subject_json[k]['dob'], 'YYYY-MM-DD');
+                                    gender    = subject_json[k]['gender'];
+                                    var dob   = moment(subject_json[k]['dob'], 'YYYY-MM-DD');
                                     var visit = moment(data[i]['asnt_timestamp'], 'YYYY-MM-DD HH:mm');
                                     interview_date = visit.format('MM/DD/YYYY');
-                                    interview_age = visit.diff(dob, 'month', false); // use the dob and the asnt_timestamp
+                                    interview_age  = visit.diff(dob, 'month', false); // use the dob and the asnt_timestamp
                                     found = true;
                                     break;
                                 }
