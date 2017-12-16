@@ -750,9 +750,29 @@ ipcMain.on('exportData', function(event,data) {
         }
     }
     console.log("total number of items to pull from REDCap: " + items.length);
+
+    // do we need to get label data for BIOPORTAL entries as well?
+    var bioportalVars = []; // pull these values as string instead of as number
+    for (var i = 0; i < datadictionary.length; i++) {
+        if (form == datadictionary[i]['form_name'] && datadictionary[i]['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
+            var name = datadictionary[i]['field_name'];
+            bioportalVars.push(name + "___BIOPORTAL"); // mark these as special
+        }
+    }
+    if (bioportalVars.length > 0) {
+        console.log("Warning: need to pull labels for BIOPORTAL entries as well...");
+    }
+
     //console.log("erstes Element is: " + items[0]);
     var itemsPerRecord = [];
     var queue = async.queue(function(chunk, callback) {
+        // do we have a BIOPORTAL chunk here?
+        var getLabel = false;
+        if (chunk[0].indexOf("___BIOPORTAL") > 0) {
+            console.log("Asked to pull BIOPORTAL variables from REDCap...");
+            getLabel = true;
+        }
+
         //console.log("chunk is: " + JSON.stringify(chunk));
         var data = {
             'token': token,
@@ -765,7 +785,7 @@ ipcMain.on('exportData', function(event,data) {
             'events[0]': current_event,            
             'format': 'json',
             'type': 'flat',
-            'rawOrLabel': 'raw',
+            'rawOrLabel': getLabel?'label':'raw',
             'rawOrLabelHeader': 'raw',
             'exportCheckboxLabel': 'false',
             'exportSurveyFields': 'false',
@@ -774,7 +794,12 @@ ipcMain.on('exportData', function(event,data) {
         }
         
         for (var i = 0; i < chunk.length; i++) {
-            data['fields[' + (i + 4) + ']'] = chunk[i];
+            if (getLabel) {
+                var l = chunk[i].split("___BIOPORTAL")[0];
+                data['fields[' + (i + 4) + ']'] = l;
+            } else {
+                data['fields[' + (i + 4) + ']'] = chunk[i];
+            }
         }
         //console.log("got chunk of size " + chunk.length + " call: " + JSON.stringify(data));
         
@@ -804,17 +829,36 @@ ipcMain.on('exportData', function(event,data) {
             // we have to merge these (items for each user) every time before we can export them
             for (var i = 0; i < data.length; i++) {
                 // find this participant and event in itemsPerRecord
+                var dat = data[i];
+                if (getLabel) { // we should keep the variables separate - add BIOPORTAL back
+                    //console.log("what is in dat?");
+                    var dat2 = {};
+                    var k2 = Object.keys(dat);
+                    for (var j = 0; j < k2.length; j++) {
+                        if (k2[j] == 'asnt_timestamp' || 
+                            k2[j] == 'id_redcap' || 
+                            k2[j] == 'nda_year_1_inclusion___1' || 
+                            k2[j] == 'redcap_event_name') {
+                            dat2['id_redcap'] = dat['id_redcap'];
+                            dat2['redcap_event_name'] = current_event;
+                        } else {
+                            dat2[k2[j] + '___BIOPORTAL'] = dat[k2[j]];
+                        }
+                    }
+                    dat = dat2;
+                }
                 var found = false;
                 for (var j = 0; j < itemsPerRecord.length; j++) {
                     var item = itemsPerRecord[j];
                     if (item['id_redcap'] == data[i]['id_redcap'] && 
-                        item['redcap_event_name'] == data[i]['redcap_event_name']) {
-                        itemsPerRecord[j] = Object.assign({}, itemsPerRecord[j], data[i]); // copy the key/values from both into one
-                        found = true; 
+                        item['redcap_event_name'] == current_event) {
+                        itemsPerRecord[j] = Object.assign({}, itemsPerRecord[j], dat); // copy the key/values from both into one
+                        found = true;
+                        break;
                     }
                 }
                 if (!found) {
-                    itemsPerRecord.push(data[i]);
+                    itemsPerRecord.push(dat);
                 }
             }
             callback("ok");
@@ -915,7 +959,7 @@ ipcMain.on('exportData', function(event,data) {
             str = str + "\n";
 
             // check if one of the keys is representing RXNORM data
-            count = 0;
+/*            count = 0;
             for (var i = 0; i < sortedKeys.length; i++) {
                 var name = sortedKeys[i];
                 if (name == "redcap_event_name" || name == "nda_year_1_inclusion___1" || name == (form + "_complete"))
@@ -926,7 +970,7 @@ ipcMain.on('exportData', function(event,data) {
                 }
                 // for all other keys check the column in the data dictionary
                 for (var j = 0; j < datadictionary.length; j++) {
-                    if (name == datadictionary[i]['field_name'] && datadictionary[i]['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
+                    if (name == datadictionary[j]['field_name'] && datadictionary[j]['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
                         // check if this is already in the cache
                         rstr = rstr + "Found BIOPORTAL:RXNORM entry [" + name + "] - requires a secondary lookup for the string representation of the drug number\n";
                         for (var k = 0; k < data.length; k++) {
@@ -947,7 +991,7 @@ ipcMain.on('exportData', function(event,data) {
                         }
                     }
                 }
-            }
+            } */
 
             for ( var i = 0; i < data.length; i++) {
                 if (data[i]['nda_year_1_inclusion___1'] == "1") {
@@ -960,6 +1004,12 @@ ipcMain.on('exportData', function(event,data) {
                             name == "asnt_timestamp" ||
                             name == (form + "_complete"))
                             continue; // skip, is exported next to id_redcap
+
+                        // skip entries if they are from BIOPORTAL (is added automatically to raw item)
+                        if (name.indexOf('___BIOPORTAL') > 0) {
+                            continue;
+                        }
+
                         // skip this key if its not needed
                         if (skipkeys.indexOf(name) !== -1) {
                             continue; // don't export this key
@@ -1006,13 +1056,18 @@ ipcMain.on('exportData', function(event,data) {
                             label = moment(label, dateConversions[name]).format("MM/DD/YYYY");
                         }
                         // for rxnorm fields change the label and add the human readable name
-                        if (d['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
-                            // 
-                            // curl -X GET -H "Authorization: apikey token=98a3d17e-8da0-4771-ba60-f540755e2e5d" -H "Content-Type: application/json" -H "Accept: application/json" http://data.bioontology.org/ontologies/RXNORM/classes/214081 | jq "." -
-                            /*if (typeof rxnorm_cache[d['field_label']] === 'undefined') {
-                                // get the list of keys and store in this key
-        
-                            }*/
+                        for (var k = 0; k < datadictionary.length; k++) {
+                            if (name == datadictionary[k]['field_name']) {
+                                d = datadictionary[k];
+                                if (d['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
+                                    // lookup the label variable
+                                    var nname = name + '___BIOPORTAL';
+                                    if (sortedKeys.indexOf(nname) >= 0 && data[i][nname].length > 0) {
+                                        label = label + " " + data[i][nname];
+                                    }
+                                    break;                                    
+                                }
+                            }
                         }
                        
                         // check if the current value is bad, compared to the min/max values if they exist, set those values to empty and leave a record in rstr
@@ -1024,16 +1079,17 @@ ipcMain.on('exportData', function(event,data) {
                                 var ma = datadictionary[k]['text_validation_max'];
                                 if (mi !== "") {
                                     if (parseFloat(label) < mi) {
-                                        rstr = rstr + "  Error: value " + label + " < " + mi + "\n";
+                                        rstr = rstr + "Warning: value for " + name + " " + label + " < " + mi + " for " + data[i]['id_redcap'] + ". Value will be deleted!\n";
                                         label = "";
                                     }
                                 }
                                 if (ma !== "") {
                                     if (parseFloat(label) > ma) {
-                                        rstr = rstr + "  Error: value " + label + " > " + ma + "\n";
+                                        rstr = rstr + "Warning: value for " + name + " " + label + " > " + ma + " for " + data[i]['id_redcap'] + ". Value will be deleted!\n";
                                         label = "";
                                     }
                                 }
+                                break; // if we find this the first time, skip the rest
                             }
                         }
 
@@ -1107,7 +1163,7 @@ ipcMain.on('exportData', function(event,data) {
     //console.log("chunks has : " + chunks.length + " elements. -> " + JSON.stringify(chunks));
     for (var i = 0; i < chunks.length; i++) {
         //console.log("push chunk " + i + " into the queue with: " + chunks[i].length + " elements in it -> " + JSON.stringify(chunks[i]));
-        queue.push([chunks[i]], 
+        queue.push([chunks[i]],
             (function(counter, maxCounter) {
                 return function(err) {
                     console.log("finished getting data for chunk: " + counter + " with " + err);
@@ -1115,6 +1171,20 @@ ipcMain.on('exportData', function(event,data) {
                 };
             })(i, chunks.length)
         );
+    }
+    // if we have bioportal code, ask for those values as well here
+    if (bioportalVars.length > 0) { // don't do this now
+        var chunks = bioportalVars.chunk(20);
+        for (var i = 0; i < chunks.length; i++) {
+            queue.push([chunks[i]],
+                (function (counter, maxCounter) {
+                    return function (err) {
+                        console.log("finished getting data for BIOPORTAL chunk: " + counter + " with " + err);
+                        win.send('message', "got data for BIOPORTAL chunk " + counter + "/" + maxCounter);
+                    };
+                })(i, chunks.length)
+            );
+        }
     }
     allChunksSend = true;   
 });
