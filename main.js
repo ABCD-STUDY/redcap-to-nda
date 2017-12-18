@@ -736,6 +736,16 @@ ipcMain.on('exportData', function(event,data) {
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
         if (d['form_name'] == form) {
+            // ignore HIDDEN
+            if (typeof d['field_annotation'] !== 'undefined' && d['field_annotation'].indexOf("@HIDDEN") !== -1) {
+                rstr = rstr + "Info: item " + d['field_name'] + " has @HIDDEN annotation and will not be exported\n";
+                continue;
+            }
+            if (typeof d['field_type'] !== 'undefined'
+                && (d['field_type'] == 'descriptive' || d['field_type'] == 'notes')) {
+                rstr = rstr + "Info: item " + d['field_name'] + " is descriptive or notes type and will not be exported\n";          
+                continue;
+            }
             items.push(d['field_name']);
             // each item could have a parse_string assigned to it
             var flags = store.get('tag-' + d['field_name']);
@@ -744,6 +754,7 @@ ipcMain.on('exportData', function(event,data) {
                     var parse_string = store.get('parse-' + d['field_name']);
                     if (typeof parse_string !== 'undefined') {
                         dateConversions[d['field_name']] = parse_string;
+                        rstr = rstr + "Info: Parse string \"" + parse_string + "\" found for: " + d['field_name'] + "\n";
                     }
                 }
             }
@@ -761,6 +772,7 @@ ipcMain.on('exportData', function(event,data) {
     }
     if (bioportalVars.length > 0) {
         console.log("Warning: need to pull labels for BIOPORTAL entries as well...");
+        rstr = rstr + "Info: BIOPORTAL variables detected: [" + bioportalVars.join(",") + "]\n";
     }
 
     //console.log("erstes Element is: " + items[0]);
@@ -769,7 +781,7 @@ ipcMain.on('exportData', function(event,data) {
         // do we have a BIOPORTAL chunk here?
         var getLabel = false;
         if (chunk[0].indexOf("___BIOPORTAL") > 0) {
-            console.log("Asked to pull BIOPORTAL variables from REDCap...");
+            //console.log("Asked to pull BIOPORTAL variables from REDCap...");
             getLabel = true;
         }
 
