@@ -772,7 +772,7 @@ ipcMain.on('exportData', function(event,data) {
     }
     if (bioportalVars.length > 0) {
         console.log("Warning: need to pull labels for BIOPORTAL entries as well...");
-        rstr = rstr + "Info: BIOPORTAL variables detected: [" + bioportalVars.join(",") + "]\n";
+        rstr = rstr + "Info: BIOPORTAL variables detected: [ " + bioportalVars.join(", ") + " ]\n";
     }
 
     //console.log("erstes Element is: " + items[0]);
