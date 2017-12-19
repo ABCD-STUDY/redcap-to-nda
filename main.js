@@ -954,6 +954,10 @@ ipcMain.on('exportData', function(event,data) {
                     k == (form + "_complete") || 
                     k == 'asnt_timestamp')
                     continue; // don't export, is grouped with id_redcap
+                if (k.indexOf("___BIOPORTAL") > 0) {
+                    skipkeys.push(k);
+                    continue;
+                }
                 var flags = store.get('tag-' + k);
                 if (typeof flags !== 'undefined') {
                     if (flags.indexOf('remove') !== -1) {
