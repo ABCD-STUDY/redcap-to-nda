@@ -69,7 +69,8 @@ ipcRenderer.on('updateItems', function(event, data) {
         '<button class="btn btn-default tag" value="huge" title="Increase max string length to 200">H</button>' +
         '<button class="btn btn-default tag" value="date" title="Convert the given value to NDA date">T</button>' +        
         '<button class="btn btn-default tag" value="label" title="Export as label not as number">V</button>' +
-        '<button class="btn btn-default tag" value="clearcheckboxes" title="Remove checkbox fields if none set">X</button>'
+        '<button class="btn btn-default tag" value="clearcheckboxes" title="Remove checkbox fields if none set">X</button>' +
+        '<button class="btn btn-default tag" value="branching2notes" title="Copy branching logic information to notes section">N</button>'
     );
     jQuery('#current-items-list div.tag-group').each(function() {
         // try to get the tags for this item

@@ -1426,7 +1426,13 @@ ipcMain.on('exportForm', function(event, data) {
                     type = "String"; // should not be exported as checkbox with values
                 }
                 if (flags.indexOf('clearcheckboxes') !== -1) {
-
+                    // nothing needs to be done in the data dictionary
+                }
+                // if the branching logic referrs to entries that are outside the current instrument, NDA data uploads will fail
+                if (flags.indexOf('branching2notes') !== -1) { // copy the conditional logic to the notes section
+                    notes = notes + " Branching logic: " + condition;
+                    notes = notes.trim();
+                    condition = "";
                 }
             }
             if (flag_date) { // if we should parse a date we also need the parse string (stored in the parse- variable)
