@@ -1291,7 +1291,7 @@ ipcMain.on('exportForm', function(event, data) {
                 var s = condition;
                 // normalize the condition field to resemble javascript
                 var re = RegExp(/\(([0-9]*)\)/g);
-                condition = condition.replace(re, "__$1");
+                condition = condition.replace(re, "___$1");
                 condition = condition.replace(/([^>|<])=/g, "$1 ==");
                 condition = condition.replace(/\ and\ /g, " && ");
                 condition = condition.replace(/\ or\ /g, " || ");
