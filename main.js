@@ -883,7 +883,6 @@ ipcMain.on('exportData', function(event,data) {
         console.log("drain called...");
         if (allChunksSend) {
             console.log("finished getting data from redcap at this point, save itemsPerRecord to file: " + filename);
-            win.send('message', "done with save...");
             var rxnorm_cache = {};
 
             // we need to add some standard columns at the beginning that identify the dataset on NDA
@@ -922,19 +921,20 @@ ipcMain.on('exportData', function(event,data) {
                         break;
                     }
                 }
-                //console.log("sorted keys: " + idxA + " " + idxB + " " + ((idxA > idxB)?1:((idxA < idxB)?-1:0))  );
                 return (idxA > idxB)?1:((idxA < idxB)?-1:0);
             });
-            //console.log("sort is done");
-            //console.log("sort these keys: " + JSON.stringify(sortedKeys));
 
             // read in the additional subject information from the current_subject_json
-            subject_json = []; 
+            subject_json = {};
             if (current_subject_json == "") {
                 console.log("Error: no current_subject_json file specified");
             } else {
                 if (fs.existsSync(current_subject_json)) {
-                    subject_json = JSON.parse(fs.readFileSync(current_subject_json, 'utf8'));
+                    var sj = JSON.parse(fs.readFileSync(current_subject_json, 'utf8'));
+                    // get the pGUID as key
+                    for(var j = 0; j < sj.length; j++) {
+                        subject_json[sj[j]['pGUID']] = sj[j];
+                    }
                     // we expect some keys in this file, like pGUID, gender, and dob
                 } else {
                     console.log("Error: file does not exist " + current_subject_json);
@@ -973,45 +973,21 @@ ipcMain.on('exportData', function(event,data) {
                 count = count + 1;
             }
             str = str + "\n";
+            try {
+                fs.writeFileSync(filename, str);
+            } catch(e) {
+                win.send('alert', 'Could not save to file: ' + filename);
+            }
 
-            // check if one of the keys is representing RXNORM data
-/*            count = 0;
-            for (var i = 0; i < sortedKeys.length; i++) {
-                var name = sortedKeys[i];
-                if (name == "redcap_event_name" || name == "nda_year_1_inclusion___1" || name == (form + "_complete"))
-                    continue; // skip, is exported next to id_redcap
-                // skip this key if its not needed
-                if (skipkeys.indexOf(name) !== -1) {
-                    continue; // don't export this key
-                }
-                // for all other keys check the column in the data dictionary
-                for (var j = 0; j < datadictionary.length; j++) {
-                    if (name == datadictionary[j]['field_name'] && datadictionary[j]['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
-                        // check if this is already in the cache
-                        rstr = rstr + "Found BIOPORTAL:RXNORM entry [" + name + "] - requires a secondary lookup for the string representation of the drug number\n";
-                        for (var k = 0; k < data.length; k++) {
-                            if (data[k]['nda_year_1_inclusion___1'] == "1") {
-                                if (data[k]['field_name'] === name) {
-                                    if (typeof rxnorm_cache[data[k][name]] === 'undefined') {
-                                        // now call bioportal and get the full name for this field and remember this in rxnorm_cache
-                                        rxnorm_cache[data[k][name]] = '';
-
-                                        // we can get this information from REDCap if we ask for rawOrLabel: label (instead of raw)
-
-                                        // http://data.bioontology.org/ontologies/RXNORM/classes/214081?apikey=98a3d17e-8da0-4771-ba60-f540755e2e5d
-
-                                        // further down we will look into the cache to enhance the existing label
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } */
-
+            var ds = {}; // a cache for data dictionary entries - gets filled during the first iteration
+            var flags_cache = {}; // a cache for the flags
             for ( var i = 0; i < data.length; i++) {
                 if (data[i]['nda_year_1_inclusion___1'] == "1") {
                     // export this participants data
+                    str = "";
+                    if (i % 100 == 0) {
+                        console.log("create file line: " + i + "/" + data.length);
+                    }
                     var keys = Object.keys(data[i]);
                     for ( var j = 0; j < sortedKeys.length; j++) {
                         var name = sortedKeys[j];
@@ -1039,7 +1015,14 @@ ipcMain.on('exportData', function(event,data) {
                             if (name.split("___").length > 1) {
                                 na = name.split("___")[0];
                             }
-                            var flags = store.get('tag-' + na);
+                            var flags = [];
+                            var flag_name = 'tag-' + na;
+                            if (flag_name in flags_cache) {
+                                flags = flags_cache[flag_name];
+                            } else { // store.get is expensive - only do this the first time
+                                flags = store.get(flag_name);
+                                flags_cache[flag_name] = flags;
+                            } 
                             if (typeof flags !== 'undefined' && flags.indexOf('label') !== -1)
                                 label = mapValueToString(name, label);
 
@@ -1071,28 +1054,42 @@ ipcMain.on('exportData', function(event,data) {
                             // convert this value given the parse information to the NDA date format
                             label = moment(label, dateConversions[name]).format("MM/DD/YYYY");
                         }
-                        // for rxnorm fields change the label and add the human readable name
-                        for (var k = 0; k < datadictionary.length; k++) {
-                            if (name == datadictionary[k]['field_name']) {
-                                d = datadictionary[k];
-                                if (d['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
-                                    // lookup the label variable
-                                    var nname = name + '___BIOPORTAL';
-                                    if (sortedKeys.indexOf(nname) >= 0 && data[i][nname].length > 0) {
-                                        label = label + " " + data[i][nname];
-                                    }
-                                    break;                                    
+                        // build the cache for data dictionary entries
+                        var d = []; // current entry in data dictionary - find once and keep
+                        if (name in ds) {
+                            d = ds[name];
+                        } else {
+                            var na = name;
+                            if (name.split("___").length > 1) {
+                                na = name.split("___")[0];
+                            }
+                            for (var k = 0; k < datadictionary.length; k++) {
+                                if (na == datadictionary[k]['field_name']) {
+                                    d = datadictionary[k];
+                                    ds[name] = datadictionary[k];
+                                    break;
                                 }
                             }
                         }
-                       
+                        if (d == []) {
+                            console.log("Error: Could not find data dictionary entry for " + name);
+                        }
+                        if (d['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
+                            // lookup the label variable
+                            var nname = name + '___BIOPORTAL';
+                            if (sortedKeys.indexOf(nname) >= 0 && data[i][nname].length > 0) {
+                                label = label + " " + data[i][nname];
+                            }
+                            break;
+                        }
+           
                         // check if the current value is bad, compared to the min/max values if they exist, set those values to empty and leave a record in rstr
-                        for (var k = 0; k < datadictionary.length; k++) {
-                            if (name == datadictionary[k]['field_name'] &&
-                                (datadictionary[k]['text_validation_min'] !== "" || 
-                                 datadictionary[k]['text_validation_max'] !== "")) {
-                                var mi = datadictionary[k]['text_validation_min'];
-                                var ma = datadictionary[k]['text_validation_max'];
+                        //for (var k = 0; k < datadictionary.length; k++) {
+                            if (name == d['field_name'] &&
+                                (d['text_validation_min'] !== "" || 
+                                 d['text_validation_max'] !== "")) {
+                                var mi = d['text_validation_min'];
+                                var ma = d['text_validation_max'];
                                 if (mi !== "") {
                                     if (parseFloat(label) < mi) {
                                         rstr = rstr + "Warning: value for " + name + " " + label + " < " + mi + " for " + data[i]['id_redcap'] + ". Value will be deleted!\n";
@@ -1105,9 +1102,9 @@ ipcMain.on('exportData', function(event,data) {
                                         label = "";
                                     }
                                 }
-                                break; // if we find this the first time, skip the rest
+                                //break; // if we find this the first time, skip the rest
                             }
-                        }
+                        //}
 
                         label = label.replace(/\"/g, "\"\"\"");
                         if (name == "id_redcap") {
@@ -1117,21 +1114,17 @@ ipcMain.on('exportData', function(event,data) {
                             gender = "";
                             found = false;
                             // find the missing information in the subject_json structure loaded from outside file
-                            for (var k=0; k < subject_json.length; k++) {
-                                if (subject_json[k]['pGUID'] == data[i][name]) {
-                                    gender    = subject_json[k]['gender'];
-                                    var dob   = moment(subject_json[k]['dob'], 'YYYY-MM-DD');
-                                    var visit = moment(data[i]['asnt_timestamp'], 'YYYY-MM-DD HH:mm');
-                                    interview_date = visit.format('MM/DD/YYYY');
-                                    interview_age  = visit.diff(dob, 'month', false); // use the dob and the asnt_timestamp
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (!found) {
-                                rstr = rstr + "Error: could not find subject " + data[i][name] + " in subject JSON file " + current_subject_json + ".\n";
+                            pGUID = data[i][name];
+                            if (typeof subject_json[pGUID] === 'undefined') {
+                                rstr = rstr + "Error: could not find subject " + pGUID + " in subject JSON file " + current_subject_json + ".\n";
                                 // still convert the interview_date
                                 interview_date = visit.format('MM/DD/YYYY');
+                            } else {
+                                gender = subject_json[pGUID]['gender'];
+                                var dob = moment(subject_json[pGUID]['dob'], 'YYYY-MM-DD');
+                                var visit = moment(data[i]['asnt_timestamp'], 'YYYY-MM-DD HH:mm');
+                                interview_date = visit.format('MM/DD/YYYY');
+                                interview_age = visit.diff(dob, 'month', false); // use the dob and the asnt_timestamp
                             }
                             str = str + data[i][name] + "," + 
                                 data[i][name] + "," + 
@@ -1147,21 +1140,14 @@ ipcMain.on('exportData', function(event,data) {
                                 str = str + "\"" + label + "\"";
                             count = count + 1;
                         }
-//                        if (count > 0)
-//                            str = str + ",";
                     }
                     str = str + "\n";
-                }
-            }
-            try {
-                fs.writeFile(filename, str, function(err) {
-                    if (err) {
-                        return console.log(err);
+                    try {
+                        fs.appendFileSync(filename, str);
+                    } catch (e) {
+                        win.send('alert', 'Could not append to file: ' + filename);
                     }
-                    console.log("The file was saved...");
-                });
-            } catch(e) {
-                win.send('alert', 'Could not save to file: ' + filename);
+                }
             }
             try {
                 fs.writeFile(report, rstr, function(err) {
@@ -1173,12 +1159,11 @@ ipcMain.on('exportData', function(event,data) {
             } catch(e) {
                 win.send('alert', 'Could not save to report file: ' + report);
             }
+            win.send('message', "done with save...");
         }
     };
     var chunks = items.chunk(20); // get 20 items at the same time from REDCap
-    //console.log("chunks has : " + chunks.length + " elements. -> " + JSON.stringify(chunks));
     for (var i = 0; i < chunks.length; i++) {
-        //console.log("push chunk " + i + " into the queue with: " + chunks[i].length + " elements in it -> " + JSON.stringify(chunks[i]));
         queue.push([chunks[i]],
             (function(counter, maxCounter) {
                 return function(err) {
@@ -1242,6 +1227,17 @@ function unHTML( str ) {
     str = striptags(str);
     str = str.replace(/\&nbsp/g, " ");
     str = str.trim();
+
+    // we could have our own html-ish tags here, try to remove those as well
+    var regex = /(##en##)/ig
+    str = str.replace(regex,"");
+    var regex = /(##es##)/ig
+    str = str.replace(regex,"");
+    var regex = /(##\/en##)/ig
+    str = str.replace(regex," ");
+    var regex = /(##\/es##)/ig
+    str = str.replace(regex," ");
+
     //console.log("before: \"" + s + "\" after :\"" + str + "\"")
     return str;
 }
@@ -1378,27 +1374,30 @@ ipcMain.on('exportForm', function(event, data) {
             }
             if (d['field_type'] == "text" && !foundIntegerRange) {
                 type = "String";
-                // "select_choices_or_calculations":"BIOPORTAL:RXNORM"
-                /*if (d['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
-                    // http://data.bioontology.org/ontologies/RXNORM/classes/214081?apikey=98a3d17e-8da0-4771-ba60-f540755e2e5d
-                    // curl -X GET -H "Authorization: apikey token=98a3d17e-8da0-4771-ba60-f540755e2e5d" -H "Content-Type: application/json" -H "Accept: application/json" http://data.bioontology.org/ontologies/RXNORM/classes/214081 | jq "." -
-                    if (typeof rxnorm_cache[d['field_label']] === 'undefined') {
-                        // get the list of keys and store in this key
-
-                    }
-                }*/
             }
             if (d['field_type'] == "descriptive") {
                 type = "String";
                 notes = "Descriptive field";
                 notes = notes + (d['field_note'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_note']):"");
                 notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
+                var label = d['field_label'];
+                label = unHTML(label);
+                label = label.replace(/\"/g, "\"\"");
+                label = label.replace(/\r\n/g, "\n");                    
+                if (label.trim() !== '')
+                    lastGoodLabel = label;
                 // NDA will not take any descriptive fields - only data can be exported
                 continue;
             }
             if (d['field_type'] == "notes" ) {
                 type = "String";
                 size = "400";
+                var label = d['field_label'];
+                label = unHTML(label);
+                label = label.replace(/\"/g, "\"\"");
+                label = label.replace(/\r\n/g, "\n");                    
+                if (label.trim() !== '')
+                    lastGoodLabel = label;
                 continue; // don't export
             }
             //console.log("Don't export completeness item: " + form + "_complete");
@@ -1447,6 +1446,9 @@ ipcMain.on('exportForm', function(event, data) {
             // NDA does not want to have our nice color and language feature, instead they
             // want good old text fields. Lets ask jQuery for the text representation of this html.
             label = unHTML(label);
+            // TODO: no solution for this yet:
+            //   This will not work for math stuff like : bla <= 5, blub > 42
+
             //label = label.replace(/\&nbsp\;/g, "")
 
             label = label.replace(/\"/g, "\"\"");
@@ -1478,8 +1480,10 @@ ipcMain.on('exportForm', function(event, data) {
                 size = '';
                 for (var j = 0; j < choices.length; j++) {
                     var parts = choices[j].split(",");
+                    parts[0] = parts[0].trim();
+                    parts[1] = parts.slice(1).join(", ");
                     var sanitized_choice = parts[0] + ", " + unHTML(parts[1]);
-                    str = str + d['field_name'] + "___" + (j+1) + "," + 
+                    str = str + d['field_name'] + "___" + (parts[0]) + "," + 
                         type + "," + 
                         size + "," + 
                         ((condition !== '')?"Conditional":"Recommended") + "," +
