@@ -1080,7 +1080,6 @@ ipcMain.on('exportData', function(event,data) {
                             if (sortedKeys.indexOf(nname) >= 0 && data[i][nname].length > 0) {
                                 label = label + " " + data[i][nname];
                             }
-                            break;
                         }
            
                         // check if the current value is bad, compared to the min/max values if they exist, set those values to empty and leave a record in rstr
