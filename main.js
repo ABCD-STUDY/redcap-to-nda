@@ -1060,6 +1060,9 @@ ipcMain.on('exportData', function(event,data) {
             // subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
             
             data = itemsPerRecord;
+	    if (restrictToNDA.length > 0) {
+		form_nda_name = restrictToNDA;
+	    }
             str = "\"" + form_nda_name + "\"," + form_version + "\n"; // form name could contain commas 
             // add the header
             var keys = Object.keys(data[0]);
