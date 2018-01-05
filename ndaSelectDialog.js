@@ -31,6 +31,12 @@ jQuery(document).ready(function() {
         ipcRenderer.send('closeNDASelectDialogCancel', "");
         return false;
     });
+    jQuery('#nda-select-dialog-clear').on('click', function() {
+        //ipcRenderer.send('closeNDASelectDialogCancel', "");
+        jQuery('#nda-select.list-group-item').parent().children().removeClass('active');
+        current_item = '';
+        return false;
+    });
 
     jQuery('#nda-select').on('click', '.list-group-item', function() {
         console.log("click on list group item - update display: " + jQuery(this).attr('value'));

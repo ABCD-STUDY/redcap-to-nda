@@ -138,8 +138,11 @@ ipcMain.on('openNDASelectDialog', function (event, arg) {
 });
 
 ipcMain.on('closeNDASelectDialogOk', function(event,arg) {
-    console.log("got to set a new Value as :" + arg['shortName']);
+    //console.log("got to set a new Value as :" + arg['shortName']);
     restrictToNDA = arg['shortName'];
+    // indicate in the interface that there is a value for this now
+    win.send('ndaSelectButtonTextChange', { 'shortName': arg['shortName'] });
+
     // get the data dictionary for this short name
     restrictToNDADD = [];
     // curl -X GET --header 'Accept: application/json' 'https://ndar.nih.gov/api/datadictionary/v2/datastructure/abcd_psb01'

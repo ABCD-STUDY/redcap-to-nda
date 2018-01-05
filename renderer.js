@@ -81,6 +81,14 @@ ipcRenderer.on('updateItems', function(event, data) {
     });
 });
 
+ipcRenderer.on('ndaSelectButtonTextChange', function(event,data) {
+    if (typeof data['shortName'] !== 'undefined' && data['shortName'] !== '') {
+        jQuery('#nda-select-button-text').text('NDA Select (' + data['shortName'] + ')');
+    } else {
+        jQuery('#nda-select-button-text').text('NDA Select');        
+    }
+});
+
 ipcRenderer.on('updateTagValues', function(event, data) {
     // if the prefix in data is not 'tag-'
     
