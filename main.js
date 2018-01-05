@@ -1411,7 +1411,7 @@ ipcMain.on('exportForm', function(event, data) {
     // if we have a restrictToNDADD defined we should export only stuff that fits with this data dictionary (remove columns that are wrong)
     if (restrictToNDA.length > 0) {
         // use the short name for the data dictionary
-        form_name = restrictToNDA;
+        form_name = restrictToNDA + ',01';
         // we don't know the version number - always assume its user defined
     }
 
