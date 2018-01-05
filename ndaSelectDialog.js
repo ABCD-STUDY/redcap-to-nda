@@ -13,7 +13,7 @@ ipcRenderer.on('ndaDDFromREDCap', function(event, data) {
     //alert('got data back from REDCap: ' + JSON.stringify(data) );
     jQuery('#nda-select').children().remove();
     for(var i = 0; i < data.length; i++) {
-        jQuery('#nda-select').append('<li class="list-group-item" value="'+data[i]['shortName']+'">'+ data[i]['title']+'</li>');
+        jQuery('#nda-select').append('<li class="list-group-item" value="'+data[i]['shortName']+'">'+ data[i]['title']+ ' (' + data[i]['shortName'] + ')</li>');
     }
 });
 

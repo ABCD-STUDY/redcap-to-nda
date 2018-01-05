@@ -1397,8 +1397,18 @@ ipcMain.on('exportForm', function(event, data) {
             if (restrictToNDA.length > 0) {
                 // check if this item is in the allowed export list
                 found = false;
+                var na = d['field_name'];
+                na = na.split('___')[0];
                 for ( var j = 0; j < restrictToNDADD['dataElements'].length; j++) {
-                    if (d['field_name'] == restrictToNDADD['dataElements'][j]['name']) {
+                    // we could have underscores in there as well
+                    var name = restrictToNDADD['dataElements'][j]['name'];
+                    name = name.split('___')[0];
+                    if (na == name) {
+                        found = true;
+                        break;
+                    }
+                    // check for translations as well
+                    if (restrictToNDADD['dataElements'][j]['translations'].indexOf(na) >= 0) {
                         found = true;
                         break;
                     }
