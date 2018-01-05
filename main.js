@@ -34,6 +34,7 @@ let current_subject_json = ''; // the name of an additional file that contains s
 let instrumentEventMapping
 let restrictToNDA = ''
 let restrictToNDADD = []
+let removeAnyText = false
 
 function createWindow () {
   // Create the browser window.
@@ -232,7 +233,7 @@ ipcMain.on('openSetupDialog', function (event, arg) {
         frame: false, 
         useContentSize: true,
         width: 480,
-        height: 420
+        height: 460
     });
     setupDialog.loadURL(url.format({
         pathname: path.join(__dirname, 'setupDialog.html'),
@@ -265,6 +266,14 @@ ipcMain.on('closeSetupDialogOk', function(event, arg) {
 
         // now populate the list with the instruments
         updateInstrumentList( current_event );
+    }
+});
+
+ipcMain.on('setupRemoveAnyText', function(event, arg) {
+    if (arg['value']) {
+        removeAnyText = true;
+    } else {
+        removeAnyText = false;
     }
 });
 
@@ -896,6 +905,15 @@ ipcMain.on('exportData', function(event,data) {
                 }
             }
 
+            if (removeAnyText) {
+                // this global flag indicates if normal text fields should be removed from the export
+                // a normal text field is a text field that is not a date/number/integer
+                if (d['field_type'] == "text" && d['text_validation_type_or_show_slider_number'] == '') {
+                    rstr = rstr + "Info: item " + d['field_name'] + " is type text without validation and will not be exported.";
+                    continue;
+                }
+            }
+
             items.push(d['field_name']);
             // each item could have a parse_string assigned to it
             var flags = store.get('tag-' + d['field_name']);
@@ -1490,6 +1508,7 @@ ipcMain.on('exportForm', function(event, data) {
                 //console.log("condition: first: " + s + " \"" + condition + "\" -> " + condition.replace(re, " $1 ") );
                 condition = condition.replace(re, " $1 ");
             }
+
             var aliases = "";
             var foundIntegerRange = false;
             if (typeof d['text_validation_type_or_show_slider_number'] !== 'undefined') {
@@ -1663,6 +1682,15 @@ ipcMain.on('exportForm', function(event, data) {
             // shared.
             if (label.trim() === "")
                 label = "(r) " + lastGoodLabel;
+
+            if (removeAnyText) {
+                // this global flag indicates if normal text fields should be removed from the export
+                // a normal text field is a text field that is not a date/number/integer
+                if (d['field_type'] == "text" && d['text_validation_type_or_show_slider_number'] == '') {
+                    console.log("Warning: removed field " + d['field_name'] + " because its type text without validation.");
+                    continue;
+                }
+            }
 
             // NDA might not like these entries if only a single choice has been selected (should be a radio button type)
             if (d['field_type'] == "checkbox") { // create separate entries for each of these

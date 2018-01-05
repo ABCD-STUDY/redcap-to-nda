@@ -38,6 +38,7 @@ jQuery(document).ready(function() {
     jQuery('#nda-subject-json').on('click', function() {
         dialog.showOpenDialog({ properties: ['openFile'], extensions: ['json'], defaultPath: "subject_data.json" }, function (filename) {
             ipcRenderer.send('openLoadJSONDialog', { filename: filename });
+            jQuery('#nda-subject-json-filename').text(filename);
         });        
         return false;
     });
@@ -51,6 +52,11 @@ jQuery(document).ready(function() {
 
         // don't submit dialog again
         return false;
+    });
+
+    jQuery('#setup-dialog-remove-text').on('change', function() {
+        var v = jQuery('#setup-dialog-remove-text').is(':checked');
+        ipcRenderer.send('setupRemoveAnyText', { 'value': v });
     });
 
 });
