@@ -147,26 +147,27 @@ ipcMain.on('closeNDASelectDialogOk', function(event,arg) {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Accept': 'application/json'
     }
-    var url = 'https://ndar.nih.gov/api/datadictionary/v2/datastructure/' + restrictToNDA;
-    request({
-        method: 'GET',
-        url: url,
-        form: [],
-        headers: headers,
-        json: true
-    }, function (error, response, body) {
-        if (error || response.statusCode !== 200) {
-            // error case
-            //process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
-            win.send('alert', JSON.stringify({ response: response, error: error, body: body }));
-            callback("error");
-            return;
-        }
-        //console.log(JSON.stringify(body));
-        win.send('message', "read data dictionary for " + restrictToNDA + " from NDA...");
-        restrictToNDADD = body;
-    });
-    
+    if (restrictToNDA.length > 0) {
+        var url = 'https://ndar.nih.gov/api/datadictionary/v2/datastructure/' + restrictToNDA;
+        request({
+            method: 'GET',
+            url: url,
+            form: [],
+            headers: headers,
+            json: true
+        }, function (error, response, body) {
+            if (error || response.statusCode !== 200) {
+                // error case
+                //process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
+                win.send('alert', JSON.stringify({ response: response, error: error, body: body }));
+                callback("error");
+                return;
+            }
+            //console.log(JSON.stringify(body));
+            win.send('message', "read data dictionary for " + restrictToNDA + " from NDA...");
+            restrictToNDADD = body;
+        });
+    }    
 
     if (ndaSelectDialog)
         ndaSelectDialog.hide();
