@@ -60,6 +60,7 @@ ipcRenderer.on('updateItems', function(event, data) {
     }
     jQuery('footer h1').text(current_form + " [" + data.length + "]");
     jQuery('#export-current-form-button').prop('disabled','');
+    //jQuery('#export-nda-select').prop('disabled','');
     jQuery('#check-data-button').prop('disabled','');
     jQuery('#clear-messages').prop('disabled','');
     jQuery('#export-current-form-data-button').prop('disabled','');
@@ -222,6 +223,15 @@ jQuery(document).ready(function() {
         dialog.showSaveDialog({ defaultPath: current_form + "_dictionary.csv" }, function (filename) {
             ipcRenderer.send('exportForm', { form: current_form, filename: filename });
         });
+    });
+
+    jQuery('#export-nda-select').on('click', function() {
+        ipcRenderer.send('openNDASelectDialog', "");
+    });
+
+    jQuery('#nda-select-dialog-ok').on('click', function() {
+        console.log("OK button click!");
+        ipcRenderer.sendSync('closeNDASelectDialog',"");
     });
 
     jQuery('#export-current-form-data-button').on('click', function() {

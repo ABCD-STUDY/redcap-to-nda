@@ -1,90 +1,95 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>REDCap2NDAR</title>
-    <link rel="stylesheet" href="css/photon.css">
-    <style>
-        .list-group-item:hover {
-            background-color:darkgray;
-        }
-        .tag-group {
-           width: 60px;
-           height: 50px;
-           margin-right: 5px;
-           display: inline-flex;
-           flex-wrap: wrap;
-        }
-        .tag {
-           width: 15px;
-           height: 15px;
-           display: inline;
-           font-size: 8px;
-           margin: 1px;
-           line-height: 1em;
-           padding-left: 4px;
-        }
-        .edit {
-          height: 15px;
-          width: 15px;
-          padding: 0;
-          margin: 0;
-        }
-        span.from-store {
-           background-color: lightblue;
-        }
-        </style>
-  </head>
-  <body>
-        <div class="window">
-            <header class="toolbar toolbar-header">
-                  <h1 class="title">REDCap 2 NDAR</h1>
-                  <div class="toolbar-actions">
-                        <div class="btn-group">
-                          <button class="btn btn-default" id="open-setup-dialog">
-                            <span class="icon icon-cog icon-text"></span>
-                            Setup
-                          </button>
-                        </div>
 
-                        <div class="btn-group pull-right">
-                                <button class="btn btn-large btn-default" id="check-data-button" disabled>
-                                        <span class="icon icon-check icon-text"></span>
-                                        Check Form
-                                </button>
-                                <button class="btn btn-large btn-default" id="clear-messages" disabled>
-                                        <span class="icon icon-cup icon-text"></span>
-                                        Clear
-                                </button>
-                                <button class="btn btn-large btn-default" id="export-current-form-button" disabled>
-                                        <span class="icon icon-floppy icon-text"></span>
-                                        Dictionary
-                                </button>
-                                <button class="btn btn-large btn-default" id="export-current-form-data-button" disabled>
-                                        <span class="icon icon-floppy icon-text"></span>
-                                        Data
-                                </button>
-                        </div>
-                        
-                        <!-- <button class="btn btn-default">
-                          <span class="icon icon-home icon-text"></span>
-                          Filters
-                        </button> -->
-                    
-                        <!-- <button class="btn btn-default btn-dropdown pull-right">
-                          <span class="icon icon-megaphone"></span>
-                        </button> -->
-                      </div>
-                    </header>
-            </header>
-            <div class="window-content">
-                  <div class="pane-group">
-                    <div class="pane pane-one-fourth sidebar">
-                            <ul  class="list-group" id="current-instrument-list">
-                                <li class="list-group-header fixed">
-                                     <input class="form-control" type="text" placeholder="Search" id="instrument-search">
-                                </li>
-                                          <!-- <li class="list-group-item">
+<head>
+  <meta charset="UTF-8">
+  <title>REDCap2NDAR</title>
+  <link rel="stylesheet" href="css/photon.css">
+  <style>
+    .list-group-item:hover {
+      background-color: darkgray;
+    }
+
+    .tag-group {
+      width: 60px;
+      height: 50px;
+      margin-right: 5px;
+      display: inline-flex;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      width: 15px;
+      height: 15px;
+      display: inline;
+      font-size: 8px;
+      margin: 1px;
+      line-height: 1em;
+      padding-left: 4px;
+    }
+
+    .edit {
+      height: 15px;
+      width: 15px;
+      padding: 0;
+      margin: 0;
+    }
+
+    span.from-store {
+      background-color: lightblue;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="window">
+    <header class="toolbar toolbar-header">
+      <h1 class="title">REDCap 2 NDAR</h1>
+      <div class="toolbar-actions">
+        <div class="btn-group">
+          <button class="btn btn-default" id="open-setup-dialog">
+            <span class="icon icon-cog icon-text"></span>
+            Setup
+          </button>
+        </div>
+
+        <div class="btn-group pull-right">
+          <button class="btn btn-large btn-default" id="export-current-form-button" disabled>
+            <span class="icon icon-floppy icon-text"></span>
+            Dictionary
+          </button>
+          <button class="btn btn-large btn-default" id="export-nda-select" title="Select the appropriate NDA data dictionary for the export">
+            <span class="icon icon-floppy icon-text"></span>
+            NDA Select
+          </button>
+          <button class="btn btn-large btn-default" id="export-current-form-data-button" disabled>
+            <span class="icon icon-floppy icon-text"></span>
+            Data
+          </button>
+        </div>
+
+
+        <div class="btn-group pull-right">
+          <button class="btn btn-large btn-default" id="check-data-button" disabled>
+            <span class="icon icon-check icon-text"></span>
+            Check Form
+          </button>
+          <button class="btn btn-large btn-default" id="clear-messages" disabled>
+            <span class="icon icon-cup icon-text"></span>
+            Clear
+          </button>
+        </div>
+      </div>
+    </header>
+    </header>
+    <div class="window-content">
+      <div class="pane-group">
+        <div class="pane pane-one-fourth sidebar">
+          <ul class="list-group" id="current-instrument-list">
+            <li class="list-group-header fixed">
+              <input class="form-control" type="text" placeholder="Search" id="instrument-search">
+            </li>
+            <!-- <li class="list-group-item">
                                   <img class="img-circle media-object pull-left" src="/assets/img/avatar.jpg" width="32" height="32">
                                   <div class="media-body">
                                     <strong>List item title</strong>
@@ -98,28 +103,29 @@
                                     <p>Lorem ipsum dolor sit amet.</p>
                                   </div>
                                 </li> -->
-                            </ul>
+          </ul>
 
-                    </div>
-                    <div class="pane" id="items-pane">
-                            <ul  class="list-group" id="current-items-list"></ul>
-                    </div>
-                    <div class="pane" id="message-pane">
-                            <div>
-                                <ul class="list-group" id="message-list"></ul>
-                            </div>
-                    </div>
-                </div>
-            </div>
-            <footer class="toolbar toolbar-footer">
-                  <h1 class="title">Hauke Bartsch, 2017</h1>
-            </footer>
         </div>
+        <div class="pane" id="items-pane">
+          <ul class="list-group" id="current-items-list"></ul>
+        </div>
+        <div class="pane" id="message-pane">
+          <div>
+            <ul class="list-group" id="message-list"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="toolbar toolbar-footer">
+      <h1 class="title">Hauke Bartsch, 2017</h1>
+    </footer>
+  </div>
 
-  </body>
+</body>
 
-  <script>
-    // You can also require other files to run in this process
-    require('./renderer.js')
-  </script>
+<script>
+  // You can also require other files to run in this process
+  require('./renderer.js')
+</script>
+
 </html>

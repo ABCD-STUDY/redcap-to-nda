@@ -22,6 +22,7 @@ var async = require("async");
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 let setupDialog
+let ndaSelectDialog
 let changeLabelDialog
 let getDateStringDialog
 let datadicationary
@@ -31,6 +32,8 @@ let current_event
 let current_url = 'https://abcd-rc.ucsd.edu/redcap/api/';
 let current_subject_json = ''; // the name of an additional file that contains subject information (pGUID, 'gender')
 let instrumentEventMapping
+let restrictToNDA = ''
+let restrictToNDADD = []
 
 function createWindow () {
   // Create the browser window.
@@ -104,6 +107,116 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can alsdo put them in separate files and require them here.
 
+
+ipcMain.on('openNDASelectDialog', function (event, arg) {
+    console.log("start openNDASelectDialog...");
+    if (ndaSelectDialog) {
+        ndaSelectDialog.show();
+        return;
+    }
+    ndaSelectDialog = new BrowserWindow({ 
+        parent: win, 
+        modal: true, 
+        show: false, 
+        titleBarStyle: 'hidden', 
+        frame: false, 
+        useContentSize: true,
+        width: 630,
+        height: 410
+    });
+    ndaSelectDialog.loadURL(url.format({
+        pathname: path.join(__dirname, 'ndaSelectDialog.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+    ndaSelectDialog.once('ready-to-show', function() { ndaSelectDialog.show(); });
+    console.log("done with openNDASelectDialog...");
+    ndaSelectDialog.on('closed', function() {
+        console.log("ndaSelectDialog was closed");
+    });
+});
+
+ipcMain.on('closeNDASelectDialogOk', function(event,arg) {
+    console.log("got to set a new Value as :" + arg['shortName']);
+    restrictToNDA = arg['shortName'];
+    // get the data dictionary for this short name
+    restrictToNDADD = [];
+    // curl -X GET --header 'Accept: application/json' 'https://ndar.nih.gov/api/datadictionary/v2/datastructure/abcd_psb01'
+    var headers = {
+        'User-Agent': 'Super Agent/0.0.1',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+    }
+    var url = 'https://ndar.nih.gov/api/datadictionary/v2/datastructure/' + restrictToNDA;
+    request({
+        method: 'GET',
+        url: url,
+        form: [],
+        headers: headers,
+        json: true
+    }, function (error, response, body) {
+        if (error || response.statusCode !== 200) {
+            // error case
+            //process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
+            win.send('alert', JSON.stringify({ response: response, error: error, body: body }));
+            callback("error");
+            return;
+        }
+        //console.log(JSON.stringify(body));
+        win.send('message', "read data dictionary for " + restrictToNDA + " from NDA...");
+        restrictToNDADD = body;
+    });
+    
+
+    if (ndaSelectDialog)
+        ndaSelectDialog.hide();
+});
+ipcMain.on('closeNDASelectDialogCancel', function(event,arg) {
+    if (ndaSelectDialog)
+        ndaSelectDialog.hide();
+});
+
+ipcMain.on('ndaDDFromREDCap', function (event, arg) {
+    console.log("ask NDA for the list of data dictionaries...");
+    // curl -X GET --header 'Accept: application/json' 'https://ndar.nih.gov/api/datadictionary/v2/datastructure'
+    var headers = {
+        'User-Agent': 'Super Agent/0.0.1',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+    }
+    var url = 'https://ndar.nih.gov/api/datadictionary/v2/datastructure';
+    request({
+        method: 'GET',
+        url: url,
+        form: [],
+        headers: headers,
+        json: true
+    }, function (error, response, body) {
+        if (error || response.statusCode !== 200) {
+            // error case
+            //process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
+            win.send('alert', JSON.stringify({ response: response, error: error, body: body }));
+            callback("error");
+            return;
+        }
+        //console.log(JSON.stringify(body));
+        win.send('message', "read information from NDA...");
+        data = [];
+        // only add data that will be exported
+        for (var i = 0; i < body.length; i++) {
+            if (body[i]['status'] !== 'Published')
+                continue;
+            if (typeof body[i]['sources'] !== 'undefined' && body[i]['sources'].indexOf('ABCD') >= 0) {
+                data.push(body[i]);
+            }
+        }
+        ndaDD = data;
+
+        // call ndaSelectDialog again with the results
+        ndaSelectDialog.send('ndaDDFromREDCap', data);
+    });
+});
+
 ipcMain.on('openSetupDialog', function (event, arg) {
     console.log("start openSetupDialog...");
     if (setupDialog) {
@@ -117,7 +230,7 @@ ipcMain.on('openSetupDialog', function (event, arg) {
         titleBarStyle: 'hidden', 
         frame: false, 
         useContentSize: true,
-        width: 460,
+        width: 480,
         height: 420
     });
     setupDialog.loadURL(url.format({
@@ -1255,6 +1368,13 @@ ipcMain.on('exportForm', function(event, data) {
         form_name = v;
     }
 
+    // if we have a restrictToNDADD defined we should export only stuff that fits with this data dictionary (remove columns that are wrong)
+    if (restrictToNDA.length > 0) {
+        // use the short name for the data dictionary
+        form_name = restrictToNDA;
+        // we don't know the version number - always assume its user defined
+    }
+
     // structure of the data dictionary is:
     // ElementName
     // DataType
@@ -1269,9 +1389,29 @@ ipcMain.on('exportForm', function(event, data) {
     str = str + "subjectkey,GUID,,Required,,The NDAR Global Unique Identifier (GUID) for research subject,NDAR*,,\n";
     str = str + "eventname,String,60,Required,,The event name for which the data was collected,,,\n";
     var lastGoodLabel = '';
+    var missingItems = [];
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
         if (d['form_name'] == data['form']) {
+
+            if (restrictToNDA.length > 0) {
+                // check if this item is in the allowed export list
+                found = false;
+                for ( var j = 0; j < restrictToNDADD['dataElements'].length; j++) {
+                    if (d['field_name'] == restrictToNDADD['dataElements'][j]['name']) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    if (missingItems.indexOf(d['field_name']) < 0) {
+                        console.log("Info: Missing item " + d['field_name'] + " in NDA data dictionary " + restrictToNDA + ". Item will not be exported.");
+                        missingItems.push(d['field_name']);
+                    }
+                    continue;
+                }
+            }
+
             //console.log("item is: " + Object.keys(d));
             var size = "30"; // default, could be 60 or 200 as well
             var type = "String";
@@ -1508,6 +1648,8 @@ ipcMain.on('exportForm', function(event, data) {
             }
         }
     }
+    if (restrictToNDA.length != 0)
+        console.log("Total number of missing items in NDA dictionary: " + missingItems.length );
 
     fs.writeFile(filename, str, function(err) {
         if (err) {
