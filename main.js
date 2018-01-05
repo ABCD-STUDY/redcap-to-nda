@@ -846,6 +846,7 @@ ipcMain.on('exportData', function(event,data) {
 
     var items = [];
     var dateConversions = {};
+    var missingItems = []; // keep track of missing columns
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
         if (d['form_name'] == form) {
@@ -859,6 +860,35 @@ ipcMain.on('exportData', function(event,data) {
                 rstr = rstr + "Info: item " + d['field_name'] + " is descriptive or notes type and will not be exported\n";          
                 continue;
             }
+            // ignore items that are not in the NDA version of this instrument
+            if (restrictToNDA.length > 0) {
+                // check if this item is in the allowed export list
+                found = false;
+                var na = d['field_name'];
+                na = na.split('___')[0];
+                for ( var j = 0; j < restrictToNDADD['dataElements'].length; j++) {
+                    // we could have underscores in there as well
+                    var name = restrictToNDADD['dataElements'][j]['name'];
+                    name = name.split('___')[0];
+                    if (na == name) {
+                        found = true;
+                        break;
+                    }
+                    // check for translations as well
+                    if (restrictToNDADD['dataElements'][j]['translations'].indexOf(na) >= 0) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    if (missingItems.indexOf(d['field_name']) < 0) {
+                        rstr = sstr + "Info: Missing item " + d['field_name'] + " in NDA data dictionary " + restrictToNDA + ". Item will not be exported.";
+                        missingItems.push(d['field_name']);
+                    }
+                    continue;
+                }
+            }
+
             items.push(d['field_name']);
             // each item could have a parse_string assigned to it
             var flags = store.get('tag-' + d['field_name']);
@@ -874,6 +904,9 @@ ipcMain.on('exportData', function(event,data) {
         }
     }
     console.log("total number of items to pull from REDCap: " + items.length);
+    if (restrictToNDA.length > 0) {
+        console.log(" missing items on NDA (removed from export): " + missingItems.length);
+    }
 
     // do we need to get label data for BIOPORTAL entries as well?
     var bioportalVars = []; // pull these values as string instead of as number
