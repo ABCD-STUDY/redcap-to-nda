@@ -876,10 +876,10 @@ ipcMain.on('exportData', function(event,data) {
                         break;
                     }
                     // check for translations as well
-                    for (var k = 0; k < restrictToNDADD['dataElements'][j]['translations'].length; k++) {
-                        var naa = restrictToNDADD['dataElements'][j]['translations'][k];
+                    for (var k = 0; k < restrictToNDADD['dataElements'][j]['aliases'].length; k++) {
+                        var naa = restrictToNDADD['dataElements'][j]['aliases'][k];
                         naa = naa.split('___')[0];
-                        if (naa == name) {
+                        if (naa == na) {
                             found = true;
                             break;
                         }
@@ -889,7 +889,7 @@ ipcMain.on('exportData', function(event,data) {
                 }
                 if (!found) {
                     if (missingItems.indexOf(d['field_name']) < 0) {
-                        rstr = sstr + "Info: Missing item " + d['field_name'] + " in NDA data dictionary " + restrictToNDA + ". Item will not be exported.";
+                        rstr = rstr + "Info: Missing item " + d['field_name'] + " in NDA data dictionary " + restrictToNDA + ". Item will not be exported.";
                         missingItems.push(d['field_name']);
                     }
                     continue;
@@ -1448,10 +1448,10 @@ ipcMain.on('exportForm', function(event, data) {
                         break;
                     }
                     // check for translations as well
-                    for ( var k = 0; k < restrictToNDADD['dataElements'][j]['translations'].length; k++) {
-                        var naa = restrictToNDADD['dataElements'][j]['translations'][k];
+                    for ( var k = 0; k < restrictToNDADD['dataElements'][j]['aliases'].length; k++) {
+                        var naa = restrictToNDADD['dataElements'][j]['aliases'][k];
                         naa = naa.split('___')[0];
-                        if (naa == name) {
+                        if (naa == na) {
                             found = true;
                             break;
                         }
