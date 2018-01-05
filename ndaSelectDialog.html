@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Setup</title>
+    <link rel="stylesheet" href="css/photon.css">
+    <style>
+        .list-group-item:hover {
+          background-color: darkgray;
+        }
+    </style>
+  
+  </head>
+  <body>
+        <div class="window">
+            <header class="toolbar toolbar-header">
+                <h1 class="title">NDA Select Target Data Dictionary</h1>
+            </header>
+            <div class="window-content">
+                <div class="padded-more">
+                    <form>
+                        <input class="form-control" type="text" placeholder="Search" id="nda-search">
+                    </form>
+                    <div>
+                        <ul class="list-group" id="nda-select" style="height: 260px; overflow-y: scroll;"></ul>
+                    </div>
+                    <hr>                    
+                    <form>
+                        <div class="form-actions">
+                            <button class="btn btn-form btn-default" id="nda-select-dialog-cancel">Cancel</button>
+                            <button class="btn btn-form btn-primary" id="nda-select-dialog-ok">Select</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+         <script>
+                // You can also require other files to run in this process
+                require('./ndaSelectDialog.js')
+        </script>
+  </body>
+</html>
