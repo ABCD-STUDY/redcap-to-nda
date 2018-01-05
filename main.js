@@ -876,10 +876,16 @@ ipcMain.on('exportData', function(event,data) {
                         break;
                     }
                     // check for translations as well
-                    if (restrictToNDADD['dataElements'][j]['translations'].indexOf(na) >= 0) {
-                        found = true;
-                        break;
+                    for (var k = 0; k < restrictToNDADD['dataElements'][j]['translations'].length; k++) {
+                        var naa = restrictToNDADD['dataElements'][j]['translations'][k];
+                        naa = naa.split('___')[0];
+                        if (naa == name) {
+                            found = true;
+                            break;
+                        }
                     }
+                    if (found)
+                        break;
                 }
                 if (!found) {
                     if (missingItems.indexOf(d['field_name']) < 0) {
