@@ -968,7 +968,7 @@ ipcMain.on('exportData', function(event,data) {
             'fields[1]': 'redcap_event_name',
             'fields[2]': 'nda_year_1_inclusion',
             'fields[3]': 'asnt_timestamp',
-            'events[0]': current_event,            
+            //'events[0]': current_event,            
             'format': 'json',
             'type': 'flat',
             'rawOrLabel': getLabel?'label':'raw',
@@ -978,7 +978,17 @@ ipcMain.on('exportData', function(event,data) {
             'exportDataAccessGroups': false,
             'returnFormat': 'json'
         }
-        
+
+        // some data is only available in the baseline, lets add baseline here if we try to export screener data
+        var current_events = [];
+        current_events.push(current_event);
+        if (current_events.indexOf('baseline_year_1_arm_1') < 0) {
+            current_events.push('baseline_year_1_arm_1');
+        }
+        for (var i = 0; i < current_events.length; i++) {
+            data['events[' + i + ']'] = current_events[i];
+        }
+
         for (var i = 0; i < chunk.length; i++) {
             if (getLabel) {
                 var l = chunk[i].split("___BIOPORTAL")[0];
@@ -1033,11 +1043,11 @@ ipcMain.on('exportData', function(event,data) {
                     }
                     dat = dat2;
                 }
-                var found = false;
+                /*var found = false;
                 for (var j = 0; j < itemsPerRecord.length; j++) {
                     var item = itemsPerRecord[j];
                     if (item['id_redcap'] == data[i]['id_redcap'] && 
-                        item['redcap_event_name'] == current_event) {
+                        current_events.indexOf(item['redcap_event_name']) > -1) {
                         itemsPerRecord[j] = Object.assign({}, itemsPerRecord[j], dat); // copy the key/values from both into one
                         found = true;
                         break;
@@ -1045,7 +1055,8 @@ ipcMain.on('exportData', function(event,data) {
                 }
                 if (!found) {
                     itemsPerRecord.push(dat);
-                }
+                }*/
+                itemsPerRecord.push(dat); // will be merged below
             }
             callback("ok");
         });
@@ -1062,10 +1073,32 @@ ipcMain.on('exportData', function(event,data) {
             // we need to add some standard columns at the beginning that identify the dataset on NDA
             // subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
             
-            data = itemsPerRecord;
-	    if (restrictToNDA.length > 0) {
-		form_nda_name = restrictToNDA;
-	    }
+            // itemsPerRecord could have a mix of all the events in it, in that case we would end up with some data
+            // from the screener in a different row as data from the baseline, we should merge them together into
+            // a single row
+            data = {}; // create a single event set
+            for (var i = 0; i < itemsPerRecord.length; i++){
+                var d = itemsPerRecord[i];
+                if ( !(d['id_redcap'] in data)) {
+                    data[d['id_redcap']] = d;
+                } else { // this should not be needed anymore, the pull already merges using Object.assign
+                    var keys = Object.keys(d);
+                    for (var j = 0; j < keys.length; j++) {
+                        if (d[keys[j]] !== "") {
+                            data[d['id_redcap']][keys[j]] = d[keys[j]];
+                        }
+                    }
+                }
+            }
+            data = Object.keys(data).map(function(key) {
+                data[key]['redcap_event_name'] = current_event;
+                return data[key];
+            })
+
+            //data = itemsPerRecord;
+            if (restrictToNDA.length > 0) {
+                form_nda_name = restrictToNDA;
+            }
             str = "\"" + form_nda_name + "\"," + form_version + "\n"; // form name could contain commas 
             // add the header
             var keys = Object.keys(data[0]);
