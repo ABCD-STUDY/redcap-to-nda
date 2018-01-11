@@ -1080,11 +1080,15 @@ ipcMain.on('exportData', function(event,data) {
             for (var i = 0; i < itemsPerRecord.length; i++){
                 var d = itemsPerRecord[i];
                 if ( !(d['id_redcap'] in data)) {
-                    data[d['id_redcap']] = d;
+                    // lets do a deep copy here
+                    data[d['id_redcap']] = {};
+                    for ( var key in d ) {
+                        data[d['id_redcap']][key] = d[key];
+                    }
                 } else { // this should not be needed anymore, the pull already merges using Object.assign
                     var keys = Object.keys(d);
                     for (var j = 0; j < keys.length; j++) {
-                        if (d[keys[j]] !== "") {
+                        if (!(keys[j] in data[d['id_redcap']]) || d[keys[j]] !== "") {
                             data[d['id_redcap']][keys[j]] = d[keys[j]];
                         }
                     }
