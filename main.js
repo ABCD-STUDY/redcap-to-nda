@@ -1296,28 +1296,37 @@ ipcMain.on('exportData', function(event,data) {
                             }
                         }
            
-                        // check if the current value is bad, compared to the min/max values if they exist, set those values to empty and leave a record in rstr
-                        //for (var k = 0; k < datadictionary.length; k++) {
-                            if (name == d['field_name'] &&
-                                (d['text_validation_min'] !== "" || 
-                                 d['text_validation_max'] !== "")) {
-                                var mi = d['text_validation_min'];
-                                var ma = d['text_validation_max'];
-                                if (mi !== "") {
-                                    if (parseFloat(label) < mi) {
-                                        rstr = rstr + "Warning: value for " + name + " " + label + " < " + mi + " for " + data[i]['id_redcap'] + ". Value will be deleted!\n";
-                                        label = "";
-                                    }
+                        if (name == d['field_name'] &&
+                            (d['text_validation_min'] !== "" || 
+                             d['text_validation_max'] !== "")) {
+                            var mi = d['text_validation_min'];
+                            var ma = d['text_validation_max'];
+                            if (mi !== "") {
+                                if (parseFloat(label) < mi) {
+                                    rstr = rstr + "Warning: value for " + name + " " + label + " < " + mi + " for " + data[i]['id_redcap'] + ". Value will be deleted!\n";
+                                    label = "";
                                 }
-                                if (ma !== "") {
-                                    if (parseFloat(label) > ma) {
-                                        rstr = rstr + "Warning: value for " + name + " " + label + " > " + ma + " for " + data[i]['id_redcap'] + ". Value will be deleted!\n";
-                                        label = "";
-                                    }
-                                }
-                                //break; // if we find this the first time, skip the rest
                             }
-                        //}
+                            if (ma !== "") {
+                                if (parseFloat(label) > ma) {
+                                    rstr = rstr + "Warning: value for " + name + " " + label + " > " + ma + " for " + data[i]['id_redcap'] + ". Value will be deleted!\n";
+                                    label = "";
+                                }
+                            }
+                        }
+
+                        if (name == d['field_name'] &&
+                            d['field_type'] == "Integer") {
+                            if (!label.match(/^[0-9+-]*$/)) {
+                                rstr = rstr + "Warning: value not integer number for " + name + " \"" + label + "\" for " + data[i]['id_redcap'] + ". Consider deleting this value\n";
+                            }
+                        }
+                        if (name == d['field_name'] &&
+                            d['field_type'] == "Number") {
+                            if (!label.match(/^-?\d*\.?\d*$/)) {
+                                rstr = rstr + "Warning: value not floating point number for " + name + " \"" + label + "\" for " + data[i]['id_redcap'] + ". Consider deleting this value\n";
+                            }
+                        }
 
                         label = label.replace(/\"/g, "\"\"\"");
                         if (name == "id_redcap") {
