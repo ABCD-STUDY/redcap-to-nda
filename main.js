@@ -1316,15 +1316,17 @@ ipcMain.on('exportData', function(event,data) {
                         }
 
                         if (name == d['field_name'] &&
-                            d['field_type'] == "Integer") {
-                            if (!label.match(/^[0-9+-]*$/)) {
-                                rstr = rstr + "Warning: value not integer number for " + name + " \"" + label + "\" for " + data[i]['id_redcap'] + ". Consider deleting this value\n";
+                            d['text_validation_type_or_show_slider_number'] == "integer") {
+                            if (label.match(/^[0-9+-]*$/) === null) {
+                                rstr = rstr + "Warning: measure not integer valued in item " + name + " \"" + label + "\" for " + data[i]['id_redcap'] + ". Consider changing this value, it will be deleted.\n";
+                                label = "";
                             }
                         }
                         if (name == d['field_name'] &&
-                            d['field_type'] == "Number") {
-                            if (!label.match(/^-?\d*\.?\d*$/)) {
-                                rstr = rstr + "Warning: value not floating point number for " + name + " \"" + label + "\" for " + data[i]['id_redcap'] + ". Consider deleting this value\n";
+                            d['text_validation_type_or_show_slider_number'] == "number") {
+                            if (label.match(/^-?\d*\.?\d*$/) === null) {
+                                rstr = rstr + "Warning: measure not floating point valued in item " + name + " \"" + label + "\" for " + data[i]['id_redcap'] + ". Consider changing this value, it will be deleted.\n";
+                                label = "";
                             }
                         }
 
