@@ -830,6 +830,9 @@ function checkItem( item, form, data, callback ) {
 }
 
 ipcMain.on('openLoadJSONDialog', function(event,data) {
+    if (typeof data['filename'] == 'undefined') {
+        return;
+    }
     current_subject_json = data['filename'][0];
 });
 
@@ -916,10 +919,17 @@ ipcMain.on('exportData', function(event,data) {
                     continue;
                 }
             }
+            var flags = store.get('tag-' + d['field_name']);
+            if (typeof flags !== 'undefined') {
+                if (flags.indexOf('remove') !== -1) {
+                    rstr = rstr + "Info: item " + d['field_name'] + " is marked as 'remove' and will not be exported.\n";
+                    continue;
+                }
+            }
 
             items.push(d['field_name']);
+
             // each item could have a parse_string assigned to it
-            var flags = store.get('tag-' + d['field_name']);
             if (typeof flags !== 'undefined') {
                 if (flags.indexOf('date') !== -1) {
                     var parse_string = store.get('parse-' + d['field_name']);
