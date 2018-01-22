@@ -1359,6 +1359,19 @@ ipcMain.on('exportData', function(event,data) {
                                 var visit = moment(data[i]['asnt_timestamp'], 'YYYY-MM-DD HH:mm');
                                 interview_date = visit.format('MM/DD/YYYY');
                                 interview_age = visit.diff(dob, 'month', false); // use the dob and the asnt_timestamp
+                                // We have to fix the ages here because kids are included into the study
+                                // based on a real date but the dob is given to us at the 15th of the month only.
+                                // So if a kid is in the study and has interview_age of 107 we know that their 
+                                // birthday must have been in relation to the visit date (real date).
+                                // For now lets clamp the interview_age to 108 ... 131.
+                                if (interview_age < 108) {
+                                    rstr = rstr + "Warning: interview_age in month for " + pGUID + " is " + interview_age + " < 108. This could allow someone to guess the age by less than 30 days. Set age in month to 108.\n"; 
+                                    interview_age = 108;
+                                }
+                                if (interview_age > 131) {
+                                    rstr = rstr + "Warning: interview_age in month for " + pGUID + " is " + interview_age + " > 131. This could allow someone to guess the age by less than 30 days. Set age in month to 131.\n"; 
+                                    interview_age = 131;
+                                }
                             }
                             str = str + data[i][name] + "," + 
                                 data[i][name] + "," + 
