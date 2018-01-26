@@ -177,154 +177,242 @@
 		"remove"
 	],
 	"instrument-bal_testyouth": [
-		"Youth Alcohol Screen"
+		"Youth Alcohol Screen",
+		"1",
+		"yalcs"
 	],
 	"instrument-toxicology_test_dtyouth": [
-		"Youth Toxicology Test"
+		"Youth Toxicology Test",
+		"1",
+		"abcd_ytt"
 	],
 	"instrument-genetic_blood_rucdryouth": [
-		"Youth Genetic Blood (RUCDR)"
+		"Youth Genetic Blood (RUCDR)",
+		"1",
+		"biocf"
 	],
 	"instrument-hair_sample_hsyouth": [
-		"Youth Hair Sample"
+		"Youth Hair Sample",
+		"1",
+		"abcd_hers"
 	],
 	"instrument-eprime_data_upload": [
 		"Youth Eprime Data Upload"
 	],
 	"instrument-pubertal_hormone_saliva_psyouth": [
-		"Youth Pubertal Hormone Saliva (SPH)"
+		"Youth Pubertal Hormone Saliva (SPH)",
+		"1",
+		"sph"
 	],
 	"instrument-genetic_saliva_rucdryouth": [
-		"Youth Genetic Saliva (RUCDR)"
+		"Youth Genetic Saliva (RUCDR)",
+		"1",
+		"abcd_ygs"
 	],
 	"instrument-baby_teeth_parent": [
 		"Parent Baby Teeth (BBT)"
 	],
 	"instrument-rutgers_biosamplesdaic_use_only": [
-		"Rutgers Biosamples"
+		"Rutgers Biosamples",
+		"1",
+		"abcd_rb"
 	],
 	"instrument-hormone_saliva_salimatric_scores_daic_use_only": [
-		"Hormone Saliva Salimetric Scores"
+		"Hormone Saliva Salimetric Scores",
+		"1",
+		"abcd_hsss"
 	],
 	"instrument-ra_scanning_checklist_and_notes": [
-		"RA Scanning Checklist and Notes"
+		"RA Scanning Checklist and Notes",
+		"1",
+		"abcd_ra"
 	],
 	"instrument-pre_scan_questionnaireyouth_1": [
-		"Youth Pre Scan Questionnaire 1"
+		"Youth Pre Scan Questionnaire 1",
+		"1",
+		"abcd_ypre1"
 	],
 	"instrument-post_scan_questionnaireyouth_1": [
-		"Youth Post Scan Questionnaire 1"
+		"Youth Post Scan Questionnaire 1",
+		"1",
+		"abcd_ypsq1"
 	],
 	"instrument-pre_scan_questionnaireyouth_2": [
-		"Youth Pre Scan Questionnaire 2"
+		"Youth Pre Scan Questionnaire 2",
+		"1",
+		"abcd_ypre2"
 	],
 	"instrument-post_scan_questionnaireyouth_2": [
-		"Youth Post Scan Questionnaire  2"
+		"Youth Post Scan Questionnaire  2",
+		"1",
+		"abcd_ypsq2"
 	],
 	"instrument-mid_post_scan_questionnaireyouth": [
-		"Youth Monetary Incentive Delay Task Survey Post Scan Questionnaire"
+		"Youth Monetary Incentive Delay Task Survey Post Scan Questionnaire",
+		"1",
+		"abcd_monet"
 	],
 	"instrument-rec_memory_for_emo_nback": [
 		"Youth Recognition Memory for Emotional Nback Task Post Scan Questionnaire"
 	],
 	"instrument-y_rescan_mid_post_scan_questionnaire": [
-		"Youth Rescan Monetary Incentive Delay Task Survey Post Scan Questionnaire"
+		"Youth Rescan Monetary Incentive Delay Task Survey Post Scan Questionnaire",
+		"1",
+		"abcd_prepost"
 	],
 	"instrument-brief_problem_monitorteacher_formbpmt_for_ages_618": [
-		"Brief Problem Monitor-Teacher Form For Ages 6-18 (BPMT)"
+		"Brief Problem Monitor-Teacher Form For Ages 6-18 (BPMT)",
+		"1",
+		"abcd_bpmt"
 	],
 	"instrument-mri_qc_scores_daic_use_only": [
 		"MRI QC Scores"
 	],
 	"instrument-plus_day_1youth": [
-		"Youth Participant Last Use Survey Day 1 2 3 4 (PLUS)"
+		"Youth Participant Last Use Survey Day 1 2 3 4 (PLUS)",
+		"1",
+		"abcd_plus"
 	],
 	"instrument-plus_day_2parent": [
-		"Parent Participant Last Use Survey Day 2 3 4 (PLUS)"
+		"Parent Participant Last Use Survey Day 2 3 4 (PLUS)",
+		"1",
+		"plus"
 	],
 	"instrument-p_parent_rules_pr": [
-		"Parent Rules (PRQ)"
+		"Parent Rules (PRQ)",
+		"1",
+		"prq"
 	],
 	"instrument-su_community_risk_and_protection_parent": [
-		"Parent Community Risk & Protective Factors (CRPF)"
+		"Parent Community Risk & Protective Factors (CRPF)",
+		"1",
+		"abcd_crpf"
 	],
 	"instrument-sum_scores_su": [
 		"Sum Scores Substance Use"
 	],
 	"instrument-tlfb_calendar_scores_daic_use_only": [
-		"Timeline Follow-back Survey Calendar Scores (TLFB)"
+		"Timeline Follow-back Survey Calendar Scores (TLFB)",
+		"1",
+		"abcd_tlfb"
 	],
 	"instrument-anthropometrics_modified_phenx_antyouth": [
-		"Youth Anthropometrics Modified From PhenX (ANT)"
+		"Youth Anthropometrics Modified From PhenX (ANT)",
+		"1",
+		"abcd_ant"
 	],
 	"instrument-edinburgh_handedness_inventory_short_form": [
-		"Youth Edinburgh Handedness Inventory Short Form (EHIS)"
+		"Youth Edinburgh Handedness Inventory Short Form (EHIS)",
+		"1",
+		"abcd_ehis"
 	],
 	"instrument-snellen_vision_screener_visyouth": [
-		"Youth Snellen Vision Screener (SVS)"
+		"Youth Snellen Vision Screener (SVS)",
+		"1",
+		"abcd_svs"
 	],
 	"instrument-pubertal_development_scale_pdsmenstrual_historyyou": [
-		"Youth Pubertal Development Scale and Menstrual Cycle Survey History (PDMS)"
+		"Youth Pubertal Development Scale and Menstrual Cycle Survey History (PDMS)",
+		"1",
+		"abcd_ypdms"
 	],
 	"instrument-youth_risk_behavior_physical_activity_payouth": [
-		"Youth Youth Risk Behavior Survey Exercise Physical Activity (YRB)"
+		"Youth Youth Risk Behavior Survey Exercise Physical Activity (YRB)",
+		"1",
+		"abcd_yrb"
 	],
 	"instrument-screen_time_styouth": [
-		"Youth Screen Time Survey (STQ)"
+		"Youth Screen Time Survey (STQ)",
+		"1",
+		"abcd_stq"
 	],
 	"instrument-uppsshortphenxyouth": [
-		"UPPS-P for Children Short Form (ABCD-version)"
+		"UPPS-P for Children Short Form (ABCD-version)",
+		"1",
+		"abcd_upps"
 	],
 	"instrument-bisbasphenxyouth": [
-		"Youth Behavioral Inhibition/Behavioral Approach System Scales Modified from PhenX (BIS/BAS)"
+		"Youth Behavioral Inhibition/Behavioral Approach System Scales Modified from PhenX (BIS/BAS)",
+		"1",
+		"abcd_bisbas"
 	],
 	"instrument-youth_resiliency_scale_yrsyouth": [
-		"Youth Youth Resilience Scale (YRS)"
+		"Youth Youth Resilience Scale (YRS)",
+		"1",
+		"abcd_ysr"
 	],
 	"instrument-prodromal_psychosis_scale_pps_youth": [
-		"Youth Prodromal Psychosis Scale (PPS)"
+		"Youth Prodromal Psychosis Scale (PPS)",
+		"1",
+		"pps"
 	],
 	"instrument-ksads5background_items_youth": [
-		"Youth Diagnostic Interview for DSM-5 Background Items 5 (KSAD)"
+		"Youth Diagnostic Interview for DSM-5 Background Items 5 (KSAD)",
+		"1",
+		"abcd_yksad"
 	],
 	"instrument-medication_inventoryphenx_medsparent": [
-		"Parent Medications Survey Inventory Modified from PhenX (PMP"
+		"Parent Medications Survey Inventory Modified from PhenX (PMP",
+		"1",
+		"medsy"
 	],
 	"instrument-family_history_assessment_parent": [
 		"Parent Family History Assessment (FHX)"
 	],
 	"instrument-ksads5_background_items_parent": [
-		"Parent Diagnostic Interview for DSM-5 Background Items Full (KSAD)"
+		"Parent Diagnostic Interview for DSM-5 Background Items Full (KSAD)",
+		"1",
+		"dibf"
 	],
 	"instrument-demographicsdem_parent": [
-		"Parent Demographics Survey Modified from PhenX (PDEM)"
+		"Parent Demographics Survey Modified from PhenX (PDEM)",
+		"1",
+		"pdem"
 	],
 	"instrument-developmental_history_questionnaire_devhxparent": [
-		"Parent Developmental History Questionnaire (DHX)"
+		"Parent Developmental History Questionnaire (DHX)",
+		"1",
+		"dhx"
 	],
 	"instrument-medical_history_questionnaire_mhqparent": [
-		"Parent Medical History Questionnaire (MHX)"
+		"Parent Medical History Questionnaire (MHX)",
+		"1",
+		"abcd_mx"
 	],
 	"instrument-tbi_screenmodified_ohio_state_screen_tbiparent": [
-		"Parent Ohio State Traumatic Brain Injury Screen-Short Modified (OTBI)"
+		"Parent Ohio State Traumatic Brain Injury Screen-Short Modified (OTBI)",
+		"1",
+		"abcd_otbi"
 	],
 	"instrument-sports_activities_involvement_saiqparent": [
-		"Parent Sports and Activities Involvement Questionnaire (SAIQ)"
+		"Parent Sports and Activities Involvement Questionnaire (SAIQ)",
+		"1",
+		"abcd_saiq"
 	],
 	"instrument-pubertal_development_scale_pdsmenstrual_historypar": [
-		"Parent Pubertal Development Scale and Menstrual Cycle Survey History (PDMS)"
+		"Parent Pubertal Development Scale and Menstrual Cycle Survey History (PDMS)",
+		"1",
+		"abcd_ppdms"
 	],
 	"instrument-sleep_disturbance_scale_for_children_sdsparent": [
-		"Parent Sleep Disturbance Scale for Children (SDS)"
+		"Parent Sleep Disturbance Scale for Children (SDS)",
+		"1",
+		"abcd_sds"
 	],
 	"instrument-screen_time_stparent": [
-		"Parent Screen Time Survey (STQ)"
+		"Parent Screen Time Survey (STQ)",
+		"1",
+		"stq"
 	],
 	"instrument-p_ksadsdaic_use_only": [
-		"Parent Diagnostic Interview for DSM-5 Full (KSAD)"
+		"Parent Diagnostic Interview for DSM-5 Full (KSAD)",
+		"1",
+		"abcd_ksad"
 	],
 	"instrument-y_ksadsdaic_use_only": [
-		"Youth Diagnostic Interview for DSM-5 5 (KSAD)"
+		"Youth Diagnostic Interview for DSM-5 5 (KSAD)",
+		"1",
+		"abcd_ksad5"
 	],
 	"instrument-t_raw_ksadsdaic_use_only": [
 		"Youth Raw Diagnostic Interview for DSM-5 (KSAD)"
@@ -333,46 +421,70 @@
 		"Parent Raw Diagnostic Interview for DSM-5 (KSAD)"
 	],
 	"instrument-child_behavior_check_list_aseba_cbclparent": [
-		"Parent Child Behavior Checklist Scores Aseba (CBCL)"
+		"Parent Child Behavior Checklist Scores Aseba (CBCL)",
+		"1",
+		"abcd_cbcl"
 	],
 	"instrument-general_behavior_inventory_gbiparent": [
-		"Parent Parent General Behavior Inventory-Mania (PGBI)"
+		"Parent Parent General Behavior Inventory-Mania (PGBI)",
+		"1",
+		"abcd_pgbi"
 	],
 	"instrument-adult_self_report_aseba_asrparent": [
-		"Parent Adult Self Report Scores Aseba (ASR)"
+		"Parent Adult Self Report Scores Aseba (ASR)",
+		"1",
+		"pasr"
 	],
 	"instrument-sum_scores_mh_y": [
-		"Sum Scores Mental Health Youth"
+		"Sum Scores Mental Health Youth",
+		"1",
+		"abcd_mhy"
 	],
 	"instrument-sum_scores_mh_p": [
-		"Sum Scores Mental Health Parent"
+		"Sum Scores Mental Health Parent",
+		"1",
+		"abcd_mhp"
 	],
 	"instrument-sum_score_tbi": [
-		"Sum Scores Traumatic Brain Injury"
+		"Sum Scores Traumatic Brain Injury",
+		"1",
+		"abcd_tbi"
 	],
 	"instrument-nih_tbx_summary_scores_daic_use_only": [
-		"Youth NIH TB Summary Scores"
+		"Youth NIH TB Summary Scores",
+		"1",
+		"abcd_tbss"
 	],
 	"instrument-nihtbx_demo": [
-		"NIH TBX Demo"
+		"NIH TBX Demo",
+		"1",
+		"abcddemo"
 	],
 	"instrument-nihtbx_demo_rescore": [
-		"NIH TBX_ Demo Rescore"
+		"NIH TBX_ Demo Rescore",
+		"1",
+		"abcd_tbxdr"
 	],
 	"tag-nihtbx_demo_deviceid": [
-		"long"
+		"long",
+		"remove"
 	],
 	"tag-nihtbx_demo_name": [
-		"long"
+		"long",
+		"remove"
 	],
 	"instrument-little_man_task_daic_use_only": [
 		"Youth Little Man Task Raw Summary Scores Only (LMT)"
 	],
 	"instrument-little_man_task_score": [
-		"Youth Little Man Task Score (LMT)"
+		"Youth Little Man Task Score (LMT)",
+		"1",
+		"lmtp2"
 	],
 	"instrument-pearson_scores": [
-		"Pearson Scores"
+		"Pearson Scores",
+		"1",
+		"absd_ps"
 	],
 	"tag-pea_assessmentid": [
 		"long"
@@ -381,58 +493,94 @@
 		"long"
 	],
 	"instrument-cash_choice_task": [
-		"Youth Cash Choice Task (CCT)"
+		"Youth Cash Choice Task (CCT)",
+		"1",
+		"cct"
 	],
 	"instrument-prosocial_tendencies_pstyouth": [
-		"Youth Prosocial Behavior Survey (PST)"
+		"Youth Prosocial Behavior Survey (PST)",
+		"1",
+		"abcd_pts"
 	],
 	"instrument-acculturationmodified_phenx_actyouth": [
-		"Youth Acculturation Survey Modified from PhenX (ACC)"
+		"Youth Acculturation Survey Modified from PhenX (ACC)",
+		"1",
+		"yacc"
 	],
 	"instrument-parental_monitoring_pmyouth": [
-		"Youth Parental Monitoring Survey (PMQ)"
+		"Youth Parental Monitoring Survey (PMQ)",
+		"1",
+		"pmq"
 	],
 	"instrument-crpbi_acceptance_subscaleyouth": [
-		"Youth Acceptance Subscale from Children's Report of Parental Behavioral Inventory Short (ASQ)"
+		"Youth Acceptance Subscale from Children's Report of Parental Behavioral Inventory Short (ASQ)",
+		"1",
+		"crpbi"
 	],
 	"instrument-family_environment_conflict_scale_modified_phenx_f": [
-		"Youth Family Environment Scale-Family Conflict Subscale (FES)"
+		"Youth Family Environment Scale-Family Conflict Subscale (FES)",
+		"1",
+		"abcd_fes"
 	],
 	"instrument-neighborhood_safety_crimemodified_phenx_nscyouth": [
-		"Youth Neighborhood Safety/Crime Survey Modified from PhenX (NSC)"
+		"Youth Neighborhood Safety/Crime Survey Modified from PhenX (NSC)",
+		"1",
+		"abcd_nsc"
 	],
 	"instrument-school_risk_protective_factorsmodified_phenx_srpfy": [
-		"Youth School Risk & Protective Factors Survey Modified from PhenX (SRPF)"
+		"Youth School Risk & Protective Factors Survey Modified from PhenX (SRPF)",
+		"1",
+		"srpf"
 	],
 	"instrument-acculturationmodified_phenx_actparent": [
-		"Parent Acculturation Survey Modified from PhenX (ACC)"
+		"Parent Acculturation Survey Modified from PhenX (ACC)",
+		"1",
+		"pacc"
 	],
 	"instrument-mexican_american_cultural_values_scalemodifie_974c": [
-		"Parent Mexican American Cultural Values Scale Modified (MACV)"
+		"Parent Mexican American Cultural Values Scale Modified (MACV)",
+		"1",
+		"macv"
 	],
 	"instrument-neighborhood_safetycrimephenx_nscparent": [
-		"Parent Neighborhood Safety/Crime Survey Modified from PhenX (NSC)"
+		"Parent Neighborhood Safety/Crime Survey Modified from PhenX (NSC)",
+		"1",
+		"abcd_pnsc"
 	],
 	"instrument-multigroup_ethnic_identity_meimrparent": [
-		"Parent Multi-Group Ethnic Identity-Revised Survey (MEIM)"
+		"Parent Multi-Group Ethnic Identity-Revised Survey (MEIM)",
+		"1",
+		"abcd_meim"
 	],
 	"instrument-vancouver_index_of_acculturationviaparent": [
-		"Parent Vancouver Index of Acculturation-Short Survey (VIA)"
+		"Parent Vancouver Index of Acculturation-Short Survey (VIA)",
+		"1",
+		"abcd_via"
 	],
 	"instrument-family_environment_scale_family_conflict_subscalem": [
-		"Parent Family Environment Scale-Family Conflict Subscale (FES)"
+		"Parent Family Environment Scale-Family Conflict Subscale (FES)",
+		"1",
+		"fes"
 	],
 	"instrument-prosocial_tendencies_prostparent": [
-		"Parent Prosocial Behavior Survey (PST)"
+		"Parent Prosocial Behavior Survey (PST)",
+		"1",
+		"pts"
 	],
 	"instrument-sum_scores_c_e_y": [
-		"Sum Scores Culture & Environment Youth"
+		"Sum Scores Culture & Environment Youth",
+		"1",
+		"abcd_sscey"
 	],
 	"instrument-sum_scores_c_e_p": [
-		"Sum Scores Culture & Environment Parent"
+		"Sum Scores Culture & Environment Parent",
+		"1",
+		"abcd_sscep"
 	],
 	"instrument-mri_qc_raw_daic_use_only": [
-		"MRI QC Raw"
+		"MRI QC Raw",
+		"1",
+		"mriqc"
 	],
 	"instrument-freesvol01": [
 		"Freesvol01"
@@ -449,13 +597,7 @@
 	"tag-crpbi_other_y": [
 		"remove"
 	],
-	"tag-vancouver_q1_other_p": [
-		"remove"
-	],
 	"tag-barcode_id_redcap": [
-		"date"
-	],
-	"tag-baseline_visits_num": [
 		"date"
 	],
 	"parse-mriqc_date": [
@@ -570,8 +712,7 @@
 		"YYYY-MM-DD"
 	],
 	"tag-nihtbx_earlycomp_date": [
-		"date",
-		"remove"
+		"date"
 	],
 	"parse-nihtbx_earlycomp_date": [
 		"YYYY-MM-DD"
@@ -651,9 +792,6 @@
 	"tag-hair_dot_y": [
 		"date"
 	],
-	"tag-hormone_sal_last_meal_y": [
-		"date"
-	],
 	"tag-dna_saliva_recoll_date": [
 		"date"
 	],
@@ -702,7 +840,8 @@
 		"remove"
 	],
 	"tag-lmt_scr_assess_date": [
-		"date"
+		"date",
+		"remove"
 	],
 	"tag-mriqc_date": [
 		"date"
@@ -914,105 +1053,6 @@
 	"tag-accult_select_language": [
 		"label"
 	],
-	"tag-accult_p_intro": [
-		"label"
-	],
-	"tag-accult_q1_p": [
-		"label"
-	],
-	"tag-accult_q2_p": [
-		"label"
-	],
-	"tag-accult_q3_dropdwn_p": [
-		"label"
-	],
-	"tag-accult_q3_other_p": [
-		"label"
-	],
-	"tag-accult_q4_p": [
-		"label"
-	],
-	"tag-accult_q5_p": [
-		"label"
-	],
-	"tag-accult_q1_y": [
-		"label"
-	],
-	"tag-accult_q2_y": [
-		"label"
-	],
-	"tag-accult_q3_dropdwn_y": [
-		"label"
-	],
-	"tag-accult_q3_other_y": [
-		"label"
-	],
-	"tag-accult_q4_y": [
-		"label"
-	],
-	"tag-accult_q5_y": [
-		"label"
-	],
-	"tag-bisbas1_y": [
-		"label"
-	],
-	"tag-bisbas2_y": [
-		"label"
-	],
-	"tag-bisbas3_y": [
-		"label"
-	],
-	"tag-bisbas4_y": [
-		"label"
-	],
-	"tag-bisbas5_y": [
-		"label"
-	],
-	"tag-bisbas6_y": [
-		"label"
-	],
-	"tag-bisbas7_y": [
-		"label"
-	],
-	"tag-bisbas8_y": [
-		"label"
-	],
-	"tag-bisbas10_y": [
-		"label"
-	],
-	"tag-bisbas9_y": [
-		"label"
-	],
-	"tag-bisbas11_y": [
-		"label"
-	],
-	"tag-bisbas12_y": [
-		"label"
-	],
-	"tag-bisbas13_y": [
-		"label"
-	],
-	"tag-bisbas14_y": [
-		"label"
-	],
-	"tag-bisbas15_y": [
-		"label"
-	],
-	"tag-bisbas16_y": [
-		"label"
-	],
-	"tag-bisbas17_y": [
-		"label"
-	],
-	"tag-bisbas18_y": [
-		"label"
-	],
-	"tag-bisbas19_y": [
-		"label"
-	],
-	"tag-bisbas20_y": [
-		"label"
-	],
 	"tag-bis_y_ss_bis_sum": [
 		"label"
 	],
@@ -1154,9 +1194,6 @@
 	"tag-restscan_notes": [
 		"remove"
 	],
-	"tag-ra_scan_cl_prescr_order": [
-		"long"
-	],
 	"tag-ra_scan_check_list_rtmid": [
 		"long"
 	],
@@ -1182,9 +1219,6 @@
 		"remove"
 	],
 	"tag-demo_prtnr_job_v2": [
-		"remove"
-	],
-	"tag-pds_f5b_p": [
 		"remove"
 	],
 	"tag-wps_y_ss_num_present": [
@@ -1217,22 +1251,10 @@
 	"tag-nihtbx_earlycomp_itmcnt": [
 		"remove"
 	],
-	"tag-nihtbx_earlycomp_language": [
-		"remove"
-	],
 	"tag-nihtbx_earlycomp_computedscore": [
 		"remove"
 	],
-	"tag-nihtbx_earlycomp_uncorrected": [
-		"remove"
-	],
-	"tag-nihtbx_earlycomp_agecorrected": [
-		"remove"
-	],
 	"tag-nihtbx_earlycomp_fullycorrected": [
-		"remove"
-	],
-	"tag-nihtbx_earlycomp_v": [
 		"remove"
 	],
 	"tag-nihtbx_crystallized_rawscore": [
@@ -1265,10 +1287,4970 @@
 	"tag-tox1_dot_y": [
 		"date"
 	],
+	"instrument-adult_self_report_scores": [
+		"Parent Adult Self Report Scores (ASR)",
+		"1",
+		"abcd_asrs"
+	],
+	"tag-baseline_visits_num": [
+		"date"
+	],
+	"parse-baseline_visits_num": [
+		""
+	],
+	"parse-dti_proc_date": [
+		"YYYY-MM-DD"
+	],
+	"tag-dti_study_date": [
+		"date",
+		"remove"
+	],
+	"parse-dti_study_date": [
+		""
+	],
+	"tag-rsfm_procdate": [
+		"date"
+	],
+	"parse-rsfm_procdate": [
+		""
+	],
+	"tag-rsfm_studydate": [
+		"date"
+	],
+	"parse-rsfm_studydate": [
+		""
+	],
+	"tag-rsfm_cgor_studydate": [
+		"date"
+	],
+	"parse-rsfm_cgor_studydate": [
+		""
+	],
+	"parse-rsfm_cgor_procdate": [
+		""
+	],
+	"tag-rsfm_cgor_procdate": [
+		"date"
+	],
+	"parse-rsfm_cor_procdate": [
+		""
+	],
+	"tag-rsfm_cor_studydate": [
+		"date"
+	],
+	"parse-rsfm_cor_studydate": [
+		""
+	],
+	"instrument-mri_beh_nback_daic_use_only": [
+		"MRI Behavior N-Back (DAIC Use Only)",
+		"1",
+		"abcd_mrinback"
+	],
+	"instrument-mri_beh_mid_daic_use_only": [
+		"MRI Behavior MID (DAIC Use Only)",
+		"1",
+		"abcd_mid"
+	],
+	"instrument-mri_beh_sst_daic_use_only": [
+		"MRI Behavior SST (DAIC Use Only)",
+		"1",
+		"abcd_sst"
+	],
+	"instrument-mri_rest_temp_var": [
+		"MRI Resting State Temporal Variance (DAIC Use Only)",
+		"1",
+		"abcd_mrirstv"
+	],
+	"instrument-mri_rest_cor_network_gordon": [
+		"MRI Resting State Correlation with Gordon Parcellations (DAIC Use Only)"
+	],
+	"instrument-mri_rest_cor_network": [
+		"MRI Resting State Correlation between Networks (DAIC Use Only)",
+		"1",
+		"abcd_betnet"
+	],
+	"instrument-substance_use_interviewyouth": [
+		"Y_Substance Use Interviewyouth",
+		"1",
+		"abcd_ysu"
+	],
+	"instrument-screener": [
+		"Screener",
+		"1",
+		"abcd_screen"
+	],
+	"tag-famhx4b_p": [
+		"clearcheckboxes"
+	],
+	"tag-famhx_4c_p": [
+		"clearcheckboxes"
+	],
+	"tag-famhx_4d_p": [
+		"clearcheckboxes"
+	],
+	"tag-famhx_4e_p": [
+		"clearcheckboxes"
+	],
+	"tag-famhx_4f_p": [
+		"clearcheckboxes"
+	],
+	"tag-famhx4a_p": [
+		"clearcheckboxes"
+	],
+	"tag-q4g_pat_uncle1_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4g_pat_uncle2_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4g_pat_uncle3_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4g_pat_uncle4_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4g_pat_uncle5_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4h_pat_aunt1_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4h_pat_aunt2_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4h_pat_aunt3_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4h_pat_aunt4_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4h_pat_aunt5_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4i_mat_uncle1_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4i_mat_uncle2_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4i_mat_uncle3_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4i_mat_uncle4_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4i_mat_uncle5_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4j_mat_aunt1_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4j_mat_aunt2_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4j_mat_aunt3_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4j_mat_aunt4_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4j_mat_aunt5_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4k_full_sib_young1_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4k_full_sib_young2_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4k_full_sib_young3_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4k_full_sib_young4_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4k_full_sib_young5_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4l_full_sib_old1_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4l_full_sib_old2_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4l_full_sib_old3_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4l_full_sib_old4_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4l_full_sib_old5_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4m_half_sib_young1_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4m_half_sib_young2_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4m_half_sib_young3_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4m_half_sib_young4_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4m_half_sib_young5_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4n_half_sib_old1_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4n_half_sib_old2_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4n_half_sib_old3_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4n_half_sib_old4_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4n_half_sib_old5_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4m_full_sib_same1_alc": [
+		"clearcheckboxes"
+	],
+	"tag-q4m_full_sib_same2_alc": [
+		"clearcheckboxes"
+	],
+	"tag-fam_history_alc_describe": [
+		"clearcheckboxes"
+	],
+	"tag-fam_history_q5a_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-fam_history_q5b_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-fam_history_q5c_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-fam_history_q5d_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-fam_history_q5e_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-fam_history_q5f_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5g_pat_uncle1_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5g_pat_uncle2_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5g_pat_uncle3_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5g_pat_uncle4_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5g_pat_uncle5_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5h_pat_aunt1_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5h_pat_aunt2_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5h_pat_aunt3_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5h_pat_aunt4_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5h_pat_aunt5_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5i_mat_uncle1_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5i_mat_uncle2_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5i_mat_uncle3_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5i_mat_uncle4_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5i_mat_uncle5_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5j_mat_aunt1_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5j_mat_aunt2_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5j_mat_aunt3_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5j_mat_aunt4_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5j_mat_aunt5_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5k_full_sib_young1_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5k_full_sib_young2_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5k_full_sib_young3_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5k_full_sib_young4_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5k_full_sib_young5_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5l_full_sib_old1_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5l_full_sib_old2_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5l_full_sib_old3_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5l_full_sib_old4_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5l_full_sib_old5_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5m_half_sib_young1_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5m_half_sib_young2_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5m_half_sib_young3_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5m_half_sib_young4_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5m_half_sib_young5_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5n_half_sib_old1_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5n_half_sib_old2_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5n_half_sib_old3_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5n_half_sib_old4_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5n_half_sib_old5_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5m_full_sib_same1_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-q5m_full_sib_same2_drugs": [
+		"clearcheckboxes"
+	],
+	"tag-kbi_y_det_reason": [
+		"clearcheckboxes"
+	],
+	"tag-rtg_saliva_ruid": [
+		"remove"
+	],
 	"tag-meim_id_p": [
 		"remove"
 	],
-	"instrument-adult_self_report_scores": [
-		"Parent Adult Self Report Scores (ASR)"
+	"tag-fsv_procdate": [
+		"date"
+	],
+	"parse-fsv_procdate": [
+		""
+	],
+	"tag-fsv_studydate": [
+		"date"
+	],
+	"parse-fsv_studydate": [
+		""
+	],
+	"instrument-mri_rest_cor_network_sub": [
+		"MRI Resting State Correlation between Networks and Subcortical ROIs (DAIC Use Only)",
+		"",
+		""
+	],
+	"tag-ra_scan_cl_prescr_order": [
+		"long"
+	],
+	"instrument-mri_mid_avg_beta_gordon": [
+		"MRI MID Average Beta Weights in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_mid_avg_beta_roi": [
+		"MRI MID Average Beta Weights in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_mid_avg_tstat_gordon": [
+		"MRI MID Average T-Stats in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_mid_avg_tstat_roi": [
+		"MRI MID Average T-Stats in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_mid_run1_beta_gordon": [
+		"MRI MID Run 1 Beta Weights in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_mid_run1_beta_roi": [
+		"MRI MID Run 1 Beta Weights in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_mid_run1_tstat_gordon": [
+		"MRI MID Run 1 T-Stats in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_mid_run1_tstat_roi": [
+		"MRI MID Run 1 T-Stats in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_mid_run2_beta_gordon": [
+		"MRI MID Run 2 Beta Weights in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_mid_run2_beta_roi": [
+		"MRI MID Run 2 Beta Weights in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_mid_run2_tstat_gordon": [
+		"MRI MID Run 2 T-Stats in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_mid_run2_tstat_roi": [
+		"MRI MID Run 2 T-Stats in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_nback_avg_beta_gordon": [
+		"MRI nBack Average Beta Weights in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_nback_avg_beta_roi": [
+		"MRI nBack Average Beta Weights in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_nback_avg_tstat_gordon": [
+		"MRI nBack Average T-Stats in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_nback_avg_tstat_roi": [
+		"MRI nBack Average T-Stats in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_nback_run1_beta_gordon": [
+		"MRI nBack Run 1 Beta Weights in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_nback_run1_beta_roi": [
+		"MRI nBack Run 1 Beta Weights in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_nback_run1_tstat_gordon": [
+		"MRI nBack Run 1 T-Stats in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_nback_run1_tstat_roi": [
+		"MRI nBack Run 1 T-Stats in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_nback_run2_beta_gordon": [
+		"MRI nBack Run 2 Beta Weights in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_nback_run2_beta_roi": [
+		"MRI nBack Run 2 Beta Weights in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_nback_run2_tstat_gordon": [
+		"MRI nBack Run 2 T-Stats in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_nback_run2_tstat_roi": [
+		"MRI nBack Run 2 T-Stats in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_sst_avg_beta_gordon": [
+		"MRI SST Average Beta Weigths in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_sst_avg_beta_roi": [
+		"MRI SST Average Beta Weights in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_sst_avg_tstat_gordon": [
+		"MRI SST Average T-Stats in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_sst_avg_tstat_roi": [
+		"MRI SST Average T-Stats in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_sst_run1_beta_gordon": [
+		"MRI SST Run 1 Beta Weights in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_sst_run1_beta_roi": [
+		"MRI SST Run 1 Beta Weights in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_sst_run1_tstat_gordon": [
+		"MRI SST Run 1 T-Stats in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_sst_run1_tstat_roi": [
+		"MRI SST Run 1 T-Stats in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_sst_run2_beta_gordon": [
+		"MRI SST Run 2 Beta Weights in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_sst_run2_beta_roi": [
+		"MRI SST Run 2 Beta Weights in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"instrument-mri_sst_run2_tstat_gordon": [
+		"MRI SST Run 2 T-Stats in Gordon Parcels",
+		"",
+		""
+	],
+	"instrument-mri_sst_run2_tstat_roi": [
+		"MRI SST Run 2 T-Stats in ASEG and APARC ROIs",
+		"",
+		""
+	],
+	"tag-pls1_med1_rxnorm": [
+		"huge"
+	],
+	"tag-pls1_med2_rxnorm": [
+		"huge"
+	],
+	"tag-pls1_med3_rxnorm": [
+		"huge"
+	],
+	"tag-pls1_med4_rxnorm": [
+		"huge"
+	],
+	"tag-pls1_med5_rxnorm": [
+		"huge"
+	],
+	"tag-pls2_med1_rxnorm": [
+		"huge"
+	],
+	"tag-pls2_med2_rxnorm": [
+		"huge"
+	],
+	"tag-pls2_med3_rxnorm": [
+		"huge"
+	],
+	"tag-pls2_med4_rxnorm": [
+		"huge"
+	],
+	"tag-pls2_med5_rxnorm": [
+		"huge"
+	],
+	"tag-pls2_med6_rxnorm": [
+		"huge"
+	],
+	"tag-pls2_med7_rxnorm_2": [
+		"huge"
+	],
+	"tag-pls3_med1": [
+		"huge"
+	],
+	"tag-pls3_med2": [
+		"huge"
+	],
+	"tag-pls3_med3": [
+		"huge"
+	],
+	"tag-pls3_med4": [
+		"huge"
+	],
+	"tag-pls3_med5": [
+		"huge"
+	],
+	"tag-pls4_med1": [
+		"huge"
+	],
+	"tag-pls4_med2": [
+		"huge"
+	],
+	"tag-pls4_med3": [
+		"huge"
+	],
+	"tag-pls4_med4": [
+		"huge"
+	],
+	"tag-pls4_med5": [
+		"huge"
+	],
+	"tag-dna_blood_recoll_date": [
+		"date"
+	],
+	"parse-dna_blood_recoll_date": [
+		""
+	],
+	"tag-anthro_weight_a_location": [
+		"branching2notes"
+	],
+	"tag-demo_race_notes_v2": [
+		"branching2notes"
+	],
+	"tag-prnt_race_notes_v2": [
+		"branching2notes",
+		"remove"
+	],
+	"tag-devhx_9_other1_name_2": [
+		"branching2notes"
+	],
+	"tag-naas_pride": [
+		"branching2notes"
+	],
+	"tag-naas_self_rating": [
+		"branching2notes"
+	],
+	"tag-naas_birthplace": [
+		"branching2notes"
+	],
+	"tag-naas_traditions": [
+		"branching2notes"
+	],
+	"tag-naas_raised": [
+		"branching2notes"
+	],
+	"tag-naas_comm_contact": [
+		"branching2notes"
+	],
+	"instrument-fsurf_qc_daic_use_only": [
+		"FreeSurfer QC",
+		"1",
+		"freesqc"
+	],
+	"tag-rsfm_cor_procdate": [
+		"date"
+	],
+	"tag-scrn_hr_score0": [
+		"remove"
+	],
+	"tag-scrn_hr_score1": [
+		"remove"
+	],
+	"tag-scrn_hr_score2": [
+		"remove"
+	],
+	"tag-devhx_8_rxnorm_med1": [
+		"huge"
+	],
+	"tag-devhx_8_rxnorm_med2": [
+		"huge"
+	],
+	"tag-devhx_8_rxnorm_med3": [
+		"clearcheckboxes"
+	],
+	"tag-devhx_9_med1_rxnorm": [
+		"huge"
+	],
+	"tag-devhx_9_med2_rxnorm": [
+		"huge"
+	],
+	"tag-devhx_9_med3_rxnorm": [
+		"huge"
+	],
+	"tag-devhx_9_med4_rxnorm": [
+		"huge"
+	],
+	"tag-devhx_9_med5_rxnorm": [
+		"huge"
+	],
+	"tag-med1_rxnorm_p": [
+		"huge"
+	],
+	"tag-med2_rxnorm_p": [
+		"huge"
+	],
+	"tag-med3_rxnorm_p": [
+		"huge"
+	],
+	"tag-med4_rxnorm_p": [
+		"huge"
+	],
+	"tag-med5_rxnorm_p": [
+		"huge"
+	],
+	"tag-med6_rxnorm_p": [
+		"huge"
+	],
+	"tag-med7_rxnorm_p": [
+		"huge"
+	],
+	"tag-med8_rxnorm_p": [
+		"huge"
+	],
+	"tag-med9_rxnorm_p": [
+		"huge"
+	],
+	"tag-med10_rxnorm_p": [
+		"huge"
+	],
+	"tag-med11_rxnorm_p": [
+		"huge"
+	],
+	"tag-med12_rxnorm_p": [
+		"huge"
+	],
+	"tag-med13_rxnorm_p": [
+		"huge"
+	],
+	"tag-med14_rxnorm_p": [
+		"huge"
+	],
+	"tag-med15_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_1_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_2_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_3_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_4_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_5_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_6_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_7_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_8_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_9_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_10_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_11_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_12_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_13_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_14_rxnorm_p": [
+		"huge"
+	],
+	"tag-med_otc_15_rxnorm_p": [
+		"huge"
+	],
+	"tag-pls2_p_med1_rxnorm": [
+		"huge"
+	],
+	"tag-pls2_p_med2_rxnorm": [
+		"huge"
+	],
+	"tag-pls2_p_med3_rxnorm": [
+		"huge"
+	],
+	"tag-pls2_p_med4_rxnorm": [
+		"huge"
+	],
+	"tag-pls2_p_med5_rxnorm": [
+		"huge"
+	],
+	"tag-pls3_med1_rxnorm_p": [
+		"huge"
+	],
+	"tag-pls3_med2_rxnorm_p": [
+		"huge"
+	],
+	"tag-pls3_med3_rxnorm_p": [
+		"huge"
+	],
+	"tag-pls3_med4_rxnorm_p": [
+		"huge"
+	],
+	"tag-pls3_med5_rxnorm_p": [
+		"huge"
+	],
+	"tag-pls4_med1_rxnorm_p": [
+		"huge"
+	],
+	"tag-pls4_med2_rxnorm_p": [
+		"huge"
+	],
+	"tag-pls4_med3_rxnorm_p": [
+		"huge"
+	],
+	"tag-pls4_med4_rxnorm_p": [
+		"huge"
+	],
+	"tag-pls4_med5_rxnorm_p": [
+		"huge"
+	],
+	"instrument-mri_beh_rec_daic_use_only": [
+		"MRI Behavior REC (DAIC Use Only)",
+		"1",
+		"mribrec01"
+	],
+	"parse-mri_rsi_procdate": [
+		"YYYY-MM-DD"
+	],
+	"tag-mri_rsi_studydate": [
+		"date",
+		"remove"
+	],
+	"parse-mri_rsi_studydate": [
+		""
+	],
+	"tag-ksads_import_id_p": [
+		"huge"
+	],
+	"tag-ksads_import_id_t": [
+		"huge"
+	],
+	"tag-kbi_p_c_services_checklist": [
+		"clearcheckboxes"
+	],
+	"tag-dti_subj_id": [
+		"remove"
+	],
+	"tag-dti_proc_date": [
+		"date"
+	],
+	"tag-beh_nback_subj_id": [
+		"remove"
+	],
+	"tag-beh_sst_subj_id": [
+		"remove"
+	],
+	"tag-beh_mid_subj_id": [
+		"remove"
+	],
+	"tag-hormone_sal_last_meal_y": [
+		"remove"
+	],
+	"parse-tlfb_cal_scr_assess_date": [
+		"YYYY-MM-DD"
+	],
+	"tag-mri_rsi_subj_id": [
+		"remove"
+	],
+	"tag-mri_rsi_procdate": [
+		"date"
+	],
+	"tag-iqc_t1_1_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_t1_1_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_t1_2_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_t1_3_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_t1_3_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_t2_1_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_t2_1_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_t2_2_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_t2_2_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_t2_3_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_t2_3_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_dmri_1_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_dmri_1_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_dmri_1_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_dmri_1_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_dmri_2_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_dmri_2_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_dmri_2_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_dmri_2_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_dmri_3_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_dmri_3_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_dmri_3_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_dmri_3_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_1_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_1_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_1_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_1_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_2_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_2_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_2_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_2_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_3_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_3_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_3_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_3_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_4_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_4_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_4_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_4_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_5_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_5_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_5_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_5_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_6_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_6_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_6_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_6_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_7_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_7_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_7_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_7_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_8_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_8_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_8_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_8_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_9_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_9_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_9_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_9_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_10_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_10_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_10_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_10_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_11_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_11_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_11_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_11_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_12_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_12_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_12_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_rsfmri_12_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_1_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_1_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_1_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_1_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_2_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_2_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_2_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_2_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_3_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_3_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_3_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_3_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_4_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_4_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_4_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_4_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_5_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_5_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_5_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_5_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_6_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_6_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_6_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_mid_6_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_1_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_1_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_1_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_1_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_2_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_2_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_2_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_2_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_3_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_3_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_3_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_3_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_4_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_4_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_4_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_4_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_5_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_5_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_5_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_5_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_6_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_6_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_6_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_sst_6_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_1_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_1_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_1_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_1_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_2_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_2_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_2_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_2_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_3_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_3_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_3_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_4_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_4_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_4_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_4_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_5_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_5_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_5_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_5_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_6_fm_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_6_fm_pc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_6_qc_notes": [
+		"remove"
+	],
+	"tag-iqc_nback_6_pc_notes": [
+		"remove"
+	],
+	"tag-nihtbx_picvocab_rawscore": [
+		"remove"
+	],
+	"tag-nihtbx_picvocab_theta": [
+		"remove"
+	],
+	"tag-nihtbx_picvocab_itmcnt": [
+		"remove"
+	],
+	"tag-nihtbx_picvocab_computedscore": [
+		"remove"
+	],
+	"tag-nihtbx_flanker_rawscore": [
+		"remove"
+	],
+	"tag-nihtbx_flanker_theta": [
+		"remove"
+	],
+	"tag-nihtbx_flanker_itmcnt": [
+		"remove"
+	],
+	"tag-nihtbx_flanker_computedscore": [
+		"remove"
+	],
+	"tag-nihtbx_list_rawscore": [
+		"remove"
+	],
+	"tag-nihtbx_list_theta": [
+		"remove"
+	],
+	"tag-nihtbx_list_itmcnt": [
+		"remove"
+	],
+	"tag-nihtbx_list_computedscore": [
+		"remove"
+	],
+	"tag-nihtbx_cardsort_rawscore": [
+		"remove"
+	],
+	"tag-nihtbx_cardsort_theta": [
+		"remove"
+	],
+	"tag-nihtbx_cardsort_itmcnt": [
+		"remove"
+	],
+	"tag-nihtbx_cardsort_computedscore": [
+		"remove"
+	],
+	"tag-nihtbx_pattern_rawscore": [
+		"remove"
+	],
+	"tag-nihtbx_pattern_theta": [
+		"remove"
+	],
+	"tag-nihtbx_pattern_itmcnt": [
+		"remove"
+	],
+	"tag-nihtbx_pattern_computedscore": [
+		"remove"
+	],
+	"tag-nihtbx_picture_rawscore": [
+		"remove"
+	],
+	"tag-nihtbx_picture_theta": [
+		"remove"
+	],
+	"tag-nihtbx_picture_itmcnt": [
+		"remove"
+	],
+	"tag-nihtbx_picture_computedscore": [
+		"remove"
+	],
+	"tag-nihtbx_reading_rawscore": [
+		"remove"
+	],
+	"tag-nihtbx_reading_theta": [
+		"remove"
+	],
+	"tag-nihtbx_reading_itmcnt": [
+		"remove"
+	],
+	"tag-nihtbx_reading_computedscore": [
+		"remove"
+	],
+	"tag-nihtbx_totalcomp_computedscore": [
+		"remove"
+	],
+	"tag-nihtbx_totalcomp_itmcnt": [
+		"remove"
+	],
+	"tag-nihtbx_totalcomp_theta": [
+		"remove"
+	],
+	"tag-nihtbx_totalcomp_rawscore": [
+		"remove"
+	],
+	"tag-nihtbx_cryst_computedscore": [
+		"remove"
+	],
+	"tag-nihtbx_cryst_itmcnt": [
+		"remove"
+	],
+	"tag-nihtbx_cryst_theta": [
+		"remove"
+	],
+	"tag-nihtbx_cryst_rawscore": [
+		"remove"
+	],
+	"tag-nihtbx_fluidcomp_computedscore": [
+		"remove"
+	],
+	"tag-nihtbx_fluidcomp_itmcnt": [
+		"remove"
+	],
+	"tag-nihtbx_fluidcomp_theta": [
+		"remove"
+	],
+	"tag-nihtbx_fluidcomp_rawscore": [
+		"remove"
+	],
+	"tag-nihtbx_demo_gender": [
+		"remove"
+	],
+	"tag-scrn_height": [
+		"remove"
+	],
+	"tag-scrn_weight": [
+		"remove"
+	],
+	"tag-reshist_addr1_id": [
+		"remove"
+	],
+	"tag-reshist_addr2_id": [
+		"remove"
+	],
+	"tag-reshist_addr3_id": [
+		"remove"
+	],
+	"tag-reshist_addr4_id": [
+		"remove"
+	],
+	"tag-reshist_addr5_id": [
+		"remove"
+	],
+	"tag-reshist_addr6_id": [
+		"remove"
+	],
+	"tag-reshist_addr1_status": [
+		"long"
+	],
+	"tag-reshist_addr2_status": [
+		"long"
+	],
+	"tag-reshist_addr5_status": [
+		"long"
+	],
+	"tag-reshist_addr3_status": [
+		"long"
+	],
+	"tag-reshist_addr4_status": [
+		"long"
+	],
+	"tag-reshist_addr6_status": [
+		"long"
+	],
+	"tag-demo_prnt_job_v2_refuse": [
+		"remove"
+	],
+	"tag-demo_prnt_indust_v26_refuse": [
+		"remove"
+	],
+	"tag-demo_prtnr_job_v2_dk": [
+		"remove"
+	],
+	"tag-demo_prtnr_indus_v29_dk": [
+		"remove"
+	],
+	"tag-demo_gender_notes_p": [
+		"remove"
+	],
+	"tag-demo_relig2_v2": [
+		"remove"
+	],
+	"tag-prnt_gender_notes_v2": [
+		"remove"
+	],
+	"tag-naas_mom_id": [
+		"branching2notes"
+	],
+	"tag-naas_id": [
+		"branching2notes"
+	],
+	"tag-demo_prnt_empl_notes_v2": [
+		"remove"
+	],
+	"tag-prtnr_empl_notes_v2": [
+		"remove"
+	],
+	"tag-demo_ct3_v2_other": [
+		"remove"
+	],
+	"instrument-residential_history_derived_scores_daic_use_only": [
+		"Residential History Derived Scores (DAIC Use Only)",
+		"1",
+		"abcd_rhds"
+	],
+	"tag-nihtbx_picvocab_fullycorrected": [
+		"remove"
+	],
+	"tag-nihtbx_flanker_fullycorrected": [
+		"remove"
+	],
+	"tag-nihtbx_list_fullycorrected": [
+		"remove"
+	],
+	"tag-nihtbx_cardsort_fullycorrected": [
+		"remove"
+	],
+	"tag-nihtbx_pattern_fullycorrected": [
+		"remove"
+	],
+	"tag-nihtbx_picture_fullycorrected": [
+		"remove"
+	],
+	"tag-nihtbx_reading_fullycorrected": [
+		"remove"
+	],
+	"tag-nihtbx_fluidcomp_fullycorrected": [
+		"remove"
+	],
+	"tag-nihtbx_cryst_fullycorrected": [
+		"remove"
+	],
+	"tag-nihtbx_totalcomp_fullycorrected": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_fail": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_pin": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_deviceid": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_name": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_education": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_mothereduc": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_fathereduc": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_guardianeduc": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_startlevel": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_gender": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_hand": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_race": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_ethnicity": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_assessname": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_rawdccs": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_dccsaccuracy": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_dccsreactiontime": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_computeddccs": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_fulltdccs": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_rawflanker": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_flankeraccuracy": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_flankerreactiontime": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_computedflanker": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_fulltflanker": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_rawpsm": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_thetapsm": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_computedpsm": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_fulltpsm": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_rawpatterncomp": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_computedpatterncomp": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_fulltpatterncomp": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_rawlistsort": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_fulltlistsort": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_thetaengread": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_computedengread": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_fulltengread": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_thetaengvocab": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_computedengvocab": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_fulltengvocab": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_fulltfluid": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_fulltcrystal": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_fullttotal": [
+		"remove"
+	],
+	"tag-nihtbx_demo_rescore_fulltearly": [
+		"remove"
+	],
+	"tag-pea_ravlt_sd_tc": [
+		"remove"
+	],
+	"tag-pea_ravlt_ld_tc": [
+		"remove"
+	],
+	"tag-lmt_rt_00": [
+		"remove"
+	],
+	"tag-lmt_stimulus_00": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_00": [
+		"remove"
+	],
+	"tag-lmt_trial_type_00": [
+		"remove"
+	],
+	"tag-lmt_trial_index_00": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_00": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_00": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_00": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_00": [
+		"remove"
+	],
+	"tag-lmt_correct_00": [
+		"remove"
+	],
+	"tag-lmt_skipped_00": [
+		"remove"
+	],
+	"tag-lmt_key_press_00": [
+		"remove"
+	],
+	"tag-lmt_rt_01": [
+		"remove"
+	],
+	"tag-lmt_stimulus_01": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_01": [
+		"remove"
+	],
+	"tag-lmt_trial_type_01": [
+		"remove"
+	],
+	"tag-lmt_trial_index_01": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_01": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_01": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_01": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_01": [
+		"remove"
+	],
+	"tag-lmt_correct_01": [
+		"remove"
+	],
+	"tag-lmt_skipped_01": [
+		"remove"
+	],
+	"tag-lmt_key_press_01": [
+		"remove"
+	],
+	"tag-lmt_rt_02": [
+		"remove"
+	],
+	"tag-lmt_stimulus_02": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_02": [
+		"remove"
+	],
+	"tag-lmt_trial_type_02": [
+		"remove"
+	],
+	"tag-lmt_trial_index_02": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_02": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_02": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_02": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_02": [
+		"remove"
+	],
+	"tag-lmt_correct_02": [
+		"remove"
+	],
+	"tag-lmt_skipped_02": [
+		"remove"
+	],
+	"tag-lmt_key_press_02": [
+		"remove"
+	],
+	"tag-lmt_rt_03": [
+		"remove"
+	],
+	"tag-lmt_stimulus_03": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_03": [
+		"remove"
+	],
+	"tag-lmt_trial_type_03": [
+		"remove"
+	],
+	"tag-lmt_trial_index_03": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_03": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_03": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_03": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_03": [
+		"remove"
+	],
+	"tag-lmt_correct_03": [
+		"remove"
+	],
+	"tag-lmt_skipped_03": [
+		"remove"
+	],
+	"tag-lmt_key_press_03": [
+		"remove"
+	],
+	"tag-lmt_rt_04": [
+		"remove"
+	],
+	"tag-lmt_stimulus_04": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_04": [
+		"remove"
+	],
+	"tag-lmt_trial_type_04": [
+		"remove"
+	],
+	"tag-lmt_trial_index_04": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_04": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_04": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_04": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_04": [
+		"remove"
+	],
+	"tag-lmt_correct_04": [
+		"remove"
+	],
+	"tag-lmt_skipped_04": [
+		"remove"
+	],
+	"tag-lmt_key_press_04": [
+		"remove"
+	],
+	"tag-lmt_rt_05": [
+		"remove"
+	],
+	"tag-lmt_stimulus_05": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_05": [
+		"remove"
+	],
+	"tag-lmt_trial_type_05": [
+		"remove"
+	],
+	"tag-lmt_trial_index_05": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_05": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_05": [
+		"remove"
+	],
+	"tag-lmt_key_press_84": [
+		"remove"
+	],
+	"tag-lmt_skipped_84": [
+		"remove"
+	],
+	"tag-lmt_correct_84": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_84": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_84": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_84": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_84": [
+		"remove"
+	],
+	"tag-lmt_trial_index_84": [
+		"remove"
+	],
+	"tag-lmt_trial_type_84": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_84": [
+		"remove"
+	],
+	"tag-lmt_stimulus_84": [
+		"remove"
+	],
+	"tag-lmt_rt_84": [
+		"remove"
+	],
+	"tag-lmt_key_press_83": [
+		"remove"
+	],
+	"tag-lmt_skipped_83": [
+		"remove"
+	],
+	"tag-lmt_correct_83": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_83": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_83": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_83": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_83": [
+		"remove"
+	],
+	"tag-lmt_trial_index_83": [
+		"remove"
+	],
+	"tag-lmt_trial_type_83": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_83": [
+		"remove"
+	],
+	"tag-lmt_stimulus_83": [
+		"remove"
+	],
+	"tag-lmt_rt_83": [
+		"remove"
+	],
+	"tag-lmt_key_press_82": [
+		"remove"
+	],
+	"tag-lmt_skipped_82": [
+		"remove"
+	],
+	"tag-lmt_correct_82": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_82": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_82": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_82": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_82": [
+		"remove"
+	],
+	"tag-lmt_trial_index_82": [
+		"remove"
+	],
+	"tag-lmt_trial_type_82": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_82": [
+		"remove"
+	],
+	"tag-lmt_stimulus_82": [
+		"remove"
+	],
+	"tag-lmt_rt_82": [
+		"remove"
+	],
+	"tag-lmt_key_press_81": [
+		"remove"
+	],
+	"tag-lmt_skipped_81": [
+		"remove"
+	],
+	"tag-lmt_correct_81": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_81": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_81": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_81": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_81": [
+		"remove"
+	],
+	"tag-lmt_trial_index_81": [
+		"remove"
+	],
+	"tag-lmt_trial_type_81": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_81": [
+		"remove"
+	],
+	"tag-lmt_stimulus_81": [
+		"remove"
+	],
+	"tag-lmt_rt_81": [
+		"remove"
+	],
+	"tag-lmt_key_press_80": [
+		"remove"
+	],
+	"tag-lmt_skipped_80": [
+		"remove"
+	],
+	"tag-lmt_correct_80": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_80": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_80": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_80": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_80": [
+		"remove"
+	],
+	"tag-lmt_trial_index_80": [
+		"remove"
+	],
+	"tag-lmt_trial_type_80": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_80": [
+		"remove"
+	],
+	"tag-lmt_stimulus_80": [
+		"remove"
+	],
+	"tag-lmt_rt_80": [
+		"remove"
+	],
+	"tag-lmt_key_press_79": [
+		"remove"
+	],
+	"tag-lmt_skipped_79": [
+		"remove"
+	],
+	"tag-lmt_correct_79": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_79": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_79": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_79": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_79": [
+		"remove"
+	],
+	"tag-lmt_trial_index_79": [
+		"remove"
+	],
+	"tag-lmt_trial_type_79": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_79": [
+		"remove"
+	],
+	"tag-lmt_stimulus_79": [
+		"remove"
+	],
+	"tag-lmt_rt_79": [
+		"remove"
+	],
+	"tag-lmt_key_press_78": [
+		"remove"
+	],
+	"tag-lmt_skipped_78": [
+		"remove"
+	],
+	"tag-lmt_correct_78": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_78": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_78": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_78": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_78": [
+		"remove"
+	],
+	"tag-lmt_trial_index_78": [
+		"remove"
+	],
+	"tag-lmt_trial_type_78": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_78": [
+		"remove"
+	],
+	"tag-lmt_stimulus_78": [
+		"remove"
+	],
+	"tag-lmt_rt_78": [
+		"remove"
+	],
+	"tag-lmt_key_press_77": [
+		"remove"
+	],
+	"tag-lmt_skipped_77": [
+		"remove"
+	],
+	"tag-lmt_correct_77": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_77": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_77": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_77": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_77": [
+		"remove"
+	],
+	"tag-lmt_trial_index_77": [
+		"remove"
+	],
+	"tag-lmt_trial_type_77": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_77": [
+		"remove"
+	],
+	"tag-lmt_stimulus_77": [
+		"remove"
+	],
+	"tag-lmt_rt_77": [
+		"remove"
+	],
+	"tag-lmt_key_press_76": [
+		"remove"
+	],
+	"tag-lmt_skipped_76": [
+		"remove"
+	],
+	"tag-lmt_correct_76": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_76": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_76": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_76": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_76": [
+		"remove"
+	],
+	"tag-lmt_trial_index_76": [
+		"remove"
+	],
+	"tag-lmt_trial_type_76": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_76": [
+		"remove"
+	],
+	"tag-lmt_stimulus_76": [
+		"remove"
+	],
+	"tag-lmt_rt_76": [
+		"remove"
+	],
+	"tag-lmt_key_press_75": [
+		"remove"
+	],
+	"tag-lmt_skipped_75": [
+		"remove"
+	],
+	"tag-lmt_correct_75": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_75": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_75": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_75": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_75": [
+		"remove"
+	],
+	"tag-lmt_trial_index_75": [
+		"remove"
+	],
+	"tag-lmt_trial_type_75": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_75": [
+		"remove"
+	],
+	"tag-lmt_stimulus_75": [
+		"remove"
+	],
+	"tag-lmt_rt_75": [
+		"remove"
+	],
+	"tag-lmt_key_press_74": [
+		"remove"
+	],
+	"tag-lmt_skipped_74": [
+		"remove"
+	],
+	"tag-lmt_correct_74": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_74": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_74": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_74": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_74": [
+		"remove"
+	],
+	"tag-lmt_trial_index_74": [
+		"remove"
+	],
+	"tag-lmt_trial_type_74": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_74": [
+		"remove"
+	],
+	"tag-lmt_stimulus_74": [
+		"remove"
+	],
+	"tag-lmt_rt_74": [
+		"remove"
+	],
+	"tag-lmt_key_press_73": [
+		"remove"
+	],
+	"tag-lmt_skipped_73": [
+		"remove"
+	],
+	"tag-lmt_correct_73": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_73": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_73": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_73": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_73": [
+		"remove"
+	],
+	"tag-lmt_trial_index_73": [
+		"remove"
+	],
+	"tag-lmt_trial_type_73": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_73": [
+		"remove"
+	],
+	"tag-lmt_stimulus_73": [
+		"remove"
+	],
+	"tag-lmt_rt_73": [
+		"remove"
+	],
+	"tag-lmt_key_press_72": [
+		"remove"
+	],
+	"tag-lmt_skipped_72": [
+		"remove"
+	],
+	"tag-lmt_correct_72": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_72": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_72": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_72": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_72": [
+		"remove"
+	],
+	"tag-lmt_trial_index_72": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_72": [
+		"remove"
+	],
+	"tag-lmt_trial_type_72": [
+		"remove"
+	],
+	"tag-lmt_stimulus_72": [
+		"remove"
+	],
+	"tag-lmt_rt_72": [
+		"remove"
+	],
+	"tag-lmt_key_press_71": [
+		"remove"
+	],
+	"tag-lmt_skipped_71": [
+		"remove"
+	],
+	"tag-lmt_correct_71": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_71": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_71": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_71": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_71": [
+		"remove"
+	],
+	"tag-lmt_trial_index_71": [
+		"remove"
+	],
+	"tag-lmt_trial_type_71": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_71": [
+		"remove"
+	],
+	"tag-lmt_stimulus_71": [
+		"remove"
+	],
+	"tag-lmt_rt_71": [
+		"remove"
+	],
+	"tag-lmt_key_press_70": [
+		"remove"
+	],
+	"tag-lmt_skipped_70": [
+		"remove"
+	],
+	"tag-lmt_correct_70": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_70": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_70": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_70": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_70": [
+		"remove"
+	],
+	"tag-lmt_trial_index_70": [
+		"remove"
+	],
+	"tag-lmt_trial_type_70": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_70": [
+		"remove"
+	],
+	"tag-lmt_stimulus_70": [
+		"remove"
+	],
+	"tag-lmt_rt_70": [
+		"remove"
+	],
+	"tag-lmt_key_press_69": [
+		"remove"
+	],
+	"tag-lmt_skipped_69": [
+		"remove"
+	],
+	"tag-lmt_correct_69": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_69": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_69": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_69": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_69": [
+		"remove"
+	],
+	"tag-lmt_trial_index_69": [
+		"remove"
+	],
+	"tag-lmt_trial_type_69": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_69": [
+		"remove"
+	],
+	"tag-lmt_stimulus_69": [
+		"remove"
+	],
+	"tag-lmt_rt_69": [
+		"remove"
+	],
+	"tag-lmt_key_press_68": [
+		"remove"
+	],
+	"tag-lmt_skipped_68": [
+		"remove"
+	],
+	"tag-lmt_correct_68": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_68": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_68": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_68": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_68": [
+		"remove"
+	],
+	"tag-lmt_trial_index_68": [
+		"remove"
+	],
+	"tag-lmt_trial_type_68": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_68": [
+		"remove"
+	],
+	"tag-lmt_stimulus_68": [
+		"remove"
+	],
+	"tag-lmt_rt_68": [
+		"remove"
+	],
+	"tag-lmt_key_press_67": [
+		"remove"
+	],
+	"tag-lmt_skipped_67": [
+		"remove"
+	],
+	"tag-lmt_correct_67": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_67": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_67": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_67": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_67": [
+		"remove"
+	],
+	"tag-lmt_trial_index_67": [
+		"remove"
+	],
+	"tag-lmt_trial_type_67": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_67": [
+		"remove"
+	],
+	"tag-lmt_stimulus_67": [
+		"remove"
+	],
+	"tag-lmt_rt_67": [
+		"remove"
+	],
+	"tag-lmt_key_press_66": [
+		"remove"
+	],
+	"tag-lmt_skipped_66": [
+		"remove"
+	],
+	"tag-lmt_correct_66": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_66": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_66": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_66": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_66": [
+		"remove"
+	],
+	"tag-lmt_trial_index_66": [
+		"remove"
+	],
+	"tag-lmt_trial_type_66": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_66": [
+		"remove"
+	],
+	"tag-lmt_stimulus_66": [
+		"remove"
+	],
+	"tag-lmt_rt_66": [
+		"remove"
+	],
+	"tag-lmt_key_press_65": [
+		"remove"
+	],
+	"tag-lmt_skipped_65": [
+		"remove"
+	],
+	"tag-lmt_correct_65": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_65": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_65": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_65": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_65": [
+		"remove"
+	],
+	"tag-lmt_trial_index_65": [
+		"remove"
+	],
+	"tag-lmt_trial_type_65": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_65": [
+		"remove"
+	],
+	"tag-lmt_stimulus_65": [
+		"remove"
+	],
+	"tag-lmt_rt_65": [
+		"remove"
+	],
+	"tag-lmt_key_press_64": [
+		"remove"
+	],
+	"tag-lmt_skipped_64": [
+		"remove"
+	],
+	"tag-lmt_correct_64": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_64": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_64": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_64": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_64": [
+		"remove"
+	],
+	"tag-lmt_trial_index_64": [
+		"remove"
+	],
+	"tag-lmt_trial_type_64": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_64": [
+		"remove"
+	],
+	"tag-lmt_stimulus_64": [
+		"remove"
+	],
+	"tag-lmt_rt_64": [
+		"remove"
+	],
+	"tag-lmt_key_press_63": [
+		"remove"
+	],
+	"tag-lmt_skipped_63": [
+		"remove"
+	],
+	"tag-lmt_correct_63": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_63": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_63": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_63": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_63": [
+		"remove"
+	],
+	"tag-lmt_trial_index_63": [
+		"remove"
+	],
+	"tag-lmt_trial_type_63": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_63": [
+		"remove"
+	],
+	"tag-lmt_stimulus_63": [
+		"remove"
+	],
+	"tag-lmt_rt_63": [
+		"remove"
+	],
+	"tag-lmt_key_press_62": [
+		"remove"
+	],
+	"tag-lmt_skipped_62": [
+		"remove"
+	],
+	"tag-lmt_correct_62": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_62": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_62": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_62": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_62": [
+		"remove"
+	],
+	"tag-lmt_trial_index_62": [
+		"remove"
+	],
+	"tag-lmt_trial_type_62": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_62": [
+		"remove"
+	],
+	"tag-lmt_stimulus_62": [
+		"remove"
+	],
+	"tag-lmt_rt_62": [
+		"remove"
+	],
+	"tag-lmt_key_press_61": [
+		"remove"
+	],
+	"tag-lmt_skipped_61": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_61": [
+		"remove"
+	],
+	"tag-lmt_correct_61": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_61": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_61": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_61": [
+		"remove"
+	],
+	"tag-lmt_trial_index_61": [
+		"remove"
+	],
+	"tag-lmt_trial_type_61": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_61": [
+		"remove"
+	],
+	"tag-lmt_stimulus_61": [
+		"remove"
+	],
+	"tag-lmt_rt_61": [
+		"remove"
+	],
+	"tag-lmt_key_press_60": [
+		"remove"
+	],
+	"tag-lmt_skipped_60": [
+		"remove"
+	],
+	"tag-lmt_correct_60": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_60": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_60": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_60": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_60": [
+		"remove"
+	],
+	"tag-lmt_trial_index_60": [
+		"remove"
+	],
+	"tag-lmt_trial_type_60": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_60": [
+		"remove"
+	],
+	"tag-lmt_stimulus_60": [
+		"remove"
+	],
+	"tag-lmt_rt_60": [
+		"remove"
+	],
+	"tag-lmt_key_press_59": [
+		"remove"
+	],
+	"tag-lmt_skipped_59": [
+		"remove"
+	],
+	"tag-lmt_correct_59": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_59": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_59": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_59": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_59": [
+		"remove"
+	],
+	"tag-lmt_trial_index_59": [
+		"remove"
+	],
+	"tag-lmt_trial_type_59": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_59": [
+		"remove"
+	],
+	"tag-lmt_stimulus_59": [
+		"remove"
+	],
+	"tag-lmt_rt_59": [
+		"remove"
+	],
+	"tag-lmt_key_press_58": [
+		"remove"
+	],
+	"tag-lmt_skipped_58": [
+		"remove"
+	],
+	"tag-lmt_correct_58": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_58": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_58": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_58": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_58": [
+		"remove"
+	],
+	"tag-lmt_trial_index_58": [
+		"remove"
+	],
+	"tag-lmt_trial_type_58": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_58": [
+		"remove"
+	],
+	"tag-lmt_stimulus_58": [
+		"remove"
+	],
+	"tag-lmt_rt_58": [
+		"remove"
+	],
+	"tag-lmt_key_press_57": [
+		"remove"
+	],
+	"tag-lmt_skipped_57": [
+		"remove"
+	],
+	"tag-lmt_correct_57": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_57": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_57": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_57": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_57": [
+		"remove"
+	],
+	"tag-lmt_trial_index_57": [
+		"remove"
+	],
+	"tag-lmt_trial_type_57": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_57": [
+		"remove"
+	],
+	"tag-lmt_stimulus_57": [
+		"remove"
+	],
+	"tag-lmt_rt_57": [
+		"remove"
+	],
+	"tag-lmt_key_press_56": [
+		"remove"
+	],
+	"tag-lmt_skipped_56": [
+		"remove"
+	],
+	"tag-lmt_correct_56": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_56": [
+		"remove"
+	],
+	"tag-lmt_key_press_55": [
+		"remove"
+	],
+	"tag-lmt_rt_56": [
+		"remove"
+	],
+	"tag-lmt_stimulus_56": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_56": [
+		"remove"
+	],
+	"tag-lmt_trial_type_56": [
+		"remove"
+	],
+	"tag-lmt_trial_index_56": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_56": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_56": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_56": [
+		"remove"
+	],
+	"tag-lmt_key_press_54": [
+		"remove"
+	],
+	"tag-lmt_rt_55": [
+		"remove"
+	],
+	"tag-lmt_stimulus_55": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_55": [
+		"remove"
+	],
+	"tag-lmt_trial_type_55": [
+		"remove"
+	],
+	"tag-lmt_trial_index_55": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_55": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_55": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_55": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_55": [
+		"remove"
+	],
+	"tag-lmt_correct_55": [
+		"remove"
+	],
+	"tag-lmt_skipped_55": [
+		"remove"
+	],
+	"tag-lmt_rt_54": [
+		"remove"
+	],
+	"tag-lmt_stimulus_54": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_54": [
+		"remove"
+	],
+	"tag-lmt_trial_type_54": [
+		"remove"
+	],
+	"tag-lmt_trial_index_54": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_54": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_54": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_54": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_54": [
+		"remove"
+	],
+	"tag-lmt_correct_54": [
+		"remove"
+	],
+	"tag-lmt_skipped_54": [
+		"remove"
+	],
+	"tag-lmt_skipped_52": [
+		"remove"
+	],
+	"tag-lmt_key_press_52": [
+		"remove"
+	],
+	"tag-lmt_rt_53": [
+		"remove"
+	],
+	"tag-lmt_stimulus_53": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_53": [
+		"remove"
+	],
+	"tag-lmt_trial_type_53": [
+		"remove"
+	],
+	"tag-lmt_trial_index_53": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_53": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_53": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_53": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_53": [
+		"remove"
+	],
+	"tag-lmt_correct_53": [
+		"remove"
+	],
+	"tag-lmt_skipped_53": [
+		"remove"
+	],
+	"tag-lmt_key_press_53": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_51": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_51": [
+		"remove"
+	],
+	"tag-lmt_correct_51": [
+		"remove"
+	],
+	"tag-lmt_skipped_51": [
+		"remove"
+	],
+	"tag-lmt_key_press_51": [
+		"remove"
+	],
+	"tag-lmt_rt_52": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_52": [
+		"remove"
+	],
+	"tag-lmt_stimulus_52": [
+		"remove"
+	],
+	"tag-lmt_trial_type_52": [
+		"remove"
+	],
+	"tag-lmt_trial_index_52": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_52": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_52": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_52": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_52": [
+		"remove"
+	],
+	"tag-lmt_correct_52": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_51": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_51": [
+		"remove"
+	],
+	"tag-lmt_trial_index_51": [
+		"remove"
+	],
+	"tag-lmt_trial_type_51": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_51": [
+		"remove"
+	],
+	"tag-lmt_stimulus_51": [
+		"remove"
+	],
+	"tag-lmt_rt_51": [
+		"remove"
+	],
+	"tag-lmt_key_press_50": [
+		"remove"
+	],
+	"tag-lmt_skipped_50": [
+		"remove"
+	],
+	"tag-lmt_correct_50": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_50": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_50": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_50": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_50": [
+		"remove"
+	],
+	"tag-lmt_trial_index_50": [
+		"remove"
+	],
+	"tag-lmt_trial_type_50": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_50": [
+		"remove"
+	],
+	"tag-lmt_stimulus_50": [
+		"remove"
+	],
+	"tag-lmt_rt_50": [
+		"remove"
+	],
+	"tag-lmt_key_press_49": [
+		"remove"
+	],
+	"tag-lmt_skipped_49": [
+		"remove"
+	],
+	"tag-lmt_correct_49": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_49": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_49": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_49": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_49": [
+		"remove"
+	],
+	"tag-lmt_trial_index_49": [
+		"remove"
+	],
+	"tag-lmt_trial_type_49": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_49": [
+		"remove"
+	],
+	"tag-lmt_stimulus_49": [
+		"remove"
+	],
+	"tag-lmt_rt_49": [
+		"remove"
+	],
+	"tag-lmt_key_press_48": [
+		"remove"
+	],
+	"tag-lmt_skipped_48": [
+		"remove"
+	],
+	"tag-lmt_correct_48": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_48": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_48": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_48": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_48": [
+		"remove"
+	],
+	"tag-lmt_trial_index_48": [
+		"remove"
+	],
+	"tag-lmt_trial_type_48": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_48": [
+		"remove"
+	],
+	"tag-lmt_stimulus_48": [
+		"remove"
+	],
+	"tag-lmt_rt_48": [
+		"remove"
+	],
+	"tag-lmt_key_press_47": [
+		"remove"
+	],
+	"tag-lmt_skipped_47": [
+		"remove"
+	],
+	"tag-lmt_correct_47": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_47": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_47": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_47": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_47": [
+		"remove"
+	],
+	"tag-lmt_trial_index_47": [
+		"remove"
+	],
+	"tag-lmt_trial_type_47": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_47": [
+		"remove"
+	],
+	"tag-lmt_stimulus_47": [
+		"remove"
+	],
+	"tag-lmt_rt_47": [
+		"remove"
+	],
+	"tag-lmt_key_press_46": [
+		"remove"
+	],
+	"tag-lmt_skipped_46": [
+		"remove"
+	],
+	"tag-lmt_correct_46": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_46": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_46": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_46": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_46": [
+		"remove"
+	],
+	"tag-lmt_trial_index_46": [
+		"remove"
+	],
+	"tag-lmt_trial_type_46": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_46": [
+		"remove"
+	],
+	"tag-lmt_stimulus_46": [
+		"remove"
+	],
+	"tag-lmt_rt_46": [
+		"remove"
+	],
+	"tag-lmt_key_press_45": [
+		"remove"
+	],
+	"tag-lmt_skipped_45": [
+		"remove"
+	],
+	"tag-lmt_correct_45": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_45": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_45": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_45": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_45": [
+		"remove"
+	],
+	"tag-lmt_trial_index_45": [
+		"remove"
+	],
+	"tag-lmt_trial_type_45": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_45": [
+		"remove"
+	],
+	"tag-lmt_stimulus_45": [
+		"remove"
+	],
+	"tag-lmt_rt_45": [
+		"remove"
+	],
+	"tag-lmt_key_press_44": [
+		"remove"
+	],
+	"tag-lmt_skipped_44": [
+		"remove"
+	],
+	"tag-lmt_correct_44": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_44": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_44": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_44": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_44": [
+		"remove"
+	],
+	"tag-lmt_trial_index_44": [
+		"remove"
+	],
+	"tag-lmt_trial_type_44": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_44": [
+		"remove"
+	],
+	"tag-lmt_stimulus_44": [
+		"remove"
+	],
+	"tag-lmt_rt_44": [
+		"remove"
+	],
+	"tag-lmt_key_press_43": [
+		"remove"
+	],
+	"tag-lmt_skipped_43": [
+		"remove"
+	],
+	"tag-lmt_correct_43": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_43": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_43": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_43": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_43": [
+		"remove"
+	],
+	"tag-lmt_trial_index_43": [
+		"remove"
+	],
+	"tag-lmt_trial_type_43": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_43": [
+		"remove"
+	],
+	"tag-lmt_stimulus_43": [
+		"remove"
+	],
+	"tag-lmt_rt_43": [
+		"remove"
+	],
+	"tag-lmt_key_press_42": [
+		"remove"
+	],
+	"tag-lmt_skipped_42": [
+		"remove"
+	],
+	"tag-lmt_correct_42": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_42": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_42": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_42": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_42": [
+		"remove"
+	],
+	"tag-lmt_trial_index_42": [
+		"remove"
+	],
+	"tag-lmt_trial_type_42": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_42": [
+		"remove"
+	],
+	"tag-lmt_stimulus_42": [
+		"remove"
+	],
+	"tag-lmt_rt_42": [
+		"remove"
+	],
+	"tag-lmt_key_press_41": [
+		"remove"
+	],
+	"tag-lmt_skipped_41": [
+		"remove"
+	],
+	"tag-lmt_correct_41": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_41": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_41": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_40": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_40": [
+		"remove"
+	],
+	"tag-lmt_correct_40": [
+		"remove"
+	],
+	"tag-lmt_skipped_40": [
+		"remove"
+	],
+	"tag-lmt_key_press_40": [
+		"remove"
+	],
+	"tag-lmt_rt_41": [
+		"remove"
+	],
+	"tag-lmt_stimulus_41": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_41": [
+		"remove"
+	],
+	"tag-lmt_trial_type_41": [
+		"remove"
+	],
+	"tag-lmt_trial_index_41": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_41": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_41": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_40": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_40": [
+		"remove"
+	],
+	"tag-lmt_trial_index_40": [
+		"remove"
+	],
+	"tag-lmt_trial_type_40": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_40": [
+		"remove"
+	],
+	"tag-lmt_stimulus_40": [
+		"remove"
+	],
+	"tag-lmt_rt_40": [
+		"remove"
+	],
+	"tag-lmt_key_press_39": [
+		"remove"
+	],
+	"tag-lmt_skipped_39": [
+		"remove"
+	],
+	"tag-lmt_correct_39": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_39": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_39": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_39": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_39": [
+		"remove"
+	],
+	"tag-lmt_trial_index_39": [
+		"remove"
+	],
+	"tag-lmt_trial_type_39": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_39": [
+		"remove"
+	],
+	"tag-lmt_stimulus_39": [
+		"remove"
+	],
+	"tag-lmt_skipped_37": [
+		"remove"
+	],
+	"tag-lmt_key_press_37": [
+		"remove"
+	],
+	"tag-lmt_rt_38": [
+		"remove"
+	],
+	"tag-lmt_stimulus_38": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_38": [
+		"remove"
+	],
+	"tag-lmt_trial_type_38": [
+		"remove"
+	],
+	"tag-lmt_trial_index_38": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_38": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_38": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_38": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_38": [
+		"remove"
+	],
+	"tag-lmt_correct_38": [
+		"remove"
+	],
+	"tag-lmt_skipped_38": [
+		"remove"
+	],
+	"tag-lmt_key_press_38": [
+		"remove"
+	],
+	"tag-lmt_rt_39": [
+		"remove"
+	],
+	"tag-lmt_correct_37": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_37": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_37": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_37": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_37": [
+		"remove"
+	],
+	"tag-lmt_trial_index_37": [
+		"remove"
+	],
+	"tag-lmt_trial_type_37": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_37": [
+		"remove"
+	],
+	"tag-lmt_stimulus_37": [
+		"remove"
+	],
+	"tag-lmt_rt_37": [
+		"remove"
+	],
+	"tag-lmt_key_press_36": [
+		"remove"
+	],
+	"tag-lmt_skipped_36": [
+		"remove"
+	],
+	"tag-lmt_correct_36": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_36": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_36": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_36": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_36": [
+		"remove"
+	],
+	"tag-lmt_trial_index_36": [
+		"remove"
+	],
+	"tag-lmt_trial_type_36": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_36": [
+		"remove"
+	],
+	"tag-lmt_stimulus_36": [
+		"remove"
+	],
+	"tag-lmt_rt_36": [
+		"remove"
+	],
+	"tag-lmt_key_press_35": [
+		"remove"
+	],
+	"tag-lmt_skipped_35": [
+		"remove"
+	],
+	"tag-lmt_correct_35": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_35": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_35": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_35": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_35": [
+		"remove"
+	],
+	"tag-lmt_trial_index_35": [
+		"remove"
+	],
+	"tag-lmt_stimulus_34": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_34": [
+		"remove"
+	],
+	"tag-lmt_trial_type_34": [
+		"remove"
+	],
+	"tag-lmt_trial_index_34": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_34": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_34": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_34": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_34": [
+		"remove"
+	],
+	"tag-lmt_correct_34": [
+		"remove"
+	],
+	"tag-lmt_skipped_34": [
+		"remove"
+	],
+	"tag-lmt_key_press_34": [
+		"remove"
+	],
+	"tag-lmt_rt_35": [
+		"remove"
+	],
+	"tag-lmt_stimulus_35": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_35": [
+		"remove"
+	],
+	"tag-lmt_trial_type_35": [
+		"remove"
+	],
+	"tag-lmt_rt_34": [
+		"remove"
+	],
+	"tag-lmt_key_press_33": [
+		"remove"
+	],
+	"tag-lmt_skipped_33": [
+		"remove"
+	],
+	"tag-lmt_correct_33": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_33": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_33": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_33": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_33": [
+		"remove"
+	],
+	"tag-lmt_trial_index_33": [
+		"remove"
+	],
+	"tag-lmt_trial_type_33": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_33": [
+		"remove"
+	],
+	"tag-lmt_stimulus_33": [
+		"remove"
+	],
+	"tag-lmt_rt_33": [
+		"remove"
+	],
+	"tag-lmt_key_press_32": [
+		"remove"
+	],
+	"tag-lmt_skipped_32": [
+		"remove"
+	],
+	"tag-lmt_correct_32": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_32": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_32": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_32": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_32": [
+		"remove"
+	],
+	"tag-lmt_trial_index_32": [
+		"remove"
+	],
+	"tag-lmt_trial_type_32": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_32": [
+		"remove"
+	],
+	"tag-lmt_stimulus_32": [
+		"remove"
+	],
+	"tag-lmt_rt_32": [
+		"remove"
+	],
+	"tag-lmt_key_press_31": [
+		"remove"
+	],
+	"tag-lmt_skipped_31": [
+		"remove"
+	],
+	"tag-lmt_correct_31": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_31": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_31": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_31": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_31": [
+		"remove"
+	],
+	"tag-lmt_trial_index_31": [
+		"remove"
+	],
+	"tag-lmt_trial_type_31": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_31": [
+		"remove"
+	],
+	"tag-lmt_stimulus_31": [
+		"remove"
+	],
+	"tag-lmt_rt_31": [
+		"remove"
+	],
+	"tag-lmt_key_press_30": [
+		"remove"
+	],
+	"tag-lmt_skipped_30": [
+		"remove"
+	],
+	"tag-lmt_correct_30": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_30": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_30": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_30": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_30": [
+		"remove"
+	],
+	"tag-lmt_trial_index_30": [
+		"remove"
+	],
+	"tag-lmt_trial_type_30": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_30": [
+		"remove"
+	],
+	"tag-lmt_stimulus_30": [
+		"remove"
+	],
+	"tag-lmt_rt_30": [
+		"remove"
+	],
+	"tag-lmt_key_press_29": [
+		"remove"
+	],
+	"tag-lmt_skipped_29": [
+		"remove"
+	],
+	"tag-lmt_correct_29": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_29": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_29": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_29": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_29": [
+		"remove"
+	],
+	"tag-lmt_trial_index_29": [
+		"remove"
+	],
+	"tag-lmt_trial_type_29": [
+		"remove"
+	],
+	"tag-lmt_stimulus_28": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_28": [
+		"remove"
+	],
+	"tag-lmt_trial_type_28": [
+		"remove"
+	],
+	"tag-lmt_trial_index_28": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_28": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_28": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_28": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_28": [
+		"remove"
+	],
+	"tag-lmt_correct_28": [
+		"remove"
+	],
+	"tag-lmt_skipped_28": [
+		"remove"
+	],
+	"tag-lmt_key_press_28": [
+		"remove"
+	],
+	"tag-lmt_rt_29": [
+		"remove"
+	],
+	"tag-lmt_stimulus_29": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_29": [
+		"remove"
+	],
+	"tag-lmt_rt_28": [
+		"remove"
+	],
+	"tag-lmt_key_press_27": [
+		"remove"
+	],
+	"tag-lmt_skipped_27": [
+		"remove"
+	],
+	"tag-lmt_correct_27": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_27": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_27": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_27": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_27": [
+		"remove"
+	],
+	"tag-lmt_trial_index_27": [
+		"remove"
+	],
+	"tag-lmt_trial_type_27": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_27": [
+		"remove"
+	],
+	"tag-lmt_stimulus_27": [
+		"remove"
+	],
+	"tag-lmt_rt_27": [
+		"remove"
+	],
+	"tag-lmt_key_press_26": [
+		"remove"
+	],
+	"tag-lmt_skipped_26": [
+		"remove"
+	],
+	"tag-lmt_correct_26": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_26": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_26": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_26": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_26": [
+		"remove"
+	],
+	"tag-lmt_trial_index_26": [
+		"remove"
+	],
+	"tag-lmt_trial_type_26": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_26": [
+		"remove"
+	],
+	"tag-lmt_stimulus_26": [
+		"remove"
+	],
+	"tag-lmt_rt_26": [
+		"remove"
+	],
+	"tag-lmt_key_press_25": [
+		"remove"
+	],
+	"tag-lmt_skipped_25": [
+		"remove"
+	],
+	"tag-lmt_correct_25": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_25": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_25": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_25": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_25": [
+		"remove"
+	],
+	"tag-lmt_trial_index_25": [
+		"remove"
+	],
+	"tag-lmt_trial_type_25": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_25": [
+		"remove"
+	],
+	"tag-lmt_stimulus_25": [
+		"remove"
+	],
+	"tag-lmt_rt_25": [
+		"remove"
+	],
+	"tag-lmt_key_press_24": [
+		"remove"
+	],
+	"tag-lmt_skipped_24": [
+		"remove"
+	],
+	"tag-lmt_correct_24": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_24": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_24": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_24": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_24": [
+		"remove"
+	],
+	"tag-lmt_trial_index_24": [
+		"remove"
+	],
+	"tag-lmt_trial_type_24": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_24": [
+		"remove"
+	],
+	"tag-lmt_stimulus_24": [
+		"remove"
+	],
+	"tag-lmt_rt_24": [
+		"remove"
+	],
+	"tag-lmt_key_press_23": [
+		"remove"
+	],
+	"tag-lmt_skipped_23": [
+		"remove"
+	],
+	"tag-lmt_correct_23": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_23": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_23": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_23": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_23": [
+		"remove"
+	],
+	"tag-lmt_trial_index_23": [
+		"remove"
+	],
+	"tag-lmt_trial_type_23": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_23": [
+		"remove"
+	],
+	"tag-lmt_stimulus_23": [
+		"remove"
+	],
+	"tag-lmt_rt_23": [
+		"remove"
+	],
+	"tag-lmt_key_press_22": [
+		"remove"
+	],
+	"tag-lmt_skipped_22": [
+		"remove"
+	],
+	"tag-lmt_correct_22": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_22": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_22": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_22": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_22": [
+		"remove"
+	],
+	"tag-lmt_trial_index_22": [
+		"remove"
+	],
+	"tag-lmt_trial_type_22": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_22": [
+		"remove"
+	],
+	"tag-lmt_stimulus_22": [
+		"remove"
+	],
+	"tag-lmt_rt_22": [
+		"remove"
+	],
+	"tag-lmt_key_press_21": [
+		"remove"
+	],
+	"tag-lmt_skipped_21": [
+		"remove"
+	],
+	"tag-lmt_correct_21": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_21": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_21": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_21": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_21": [
+		"remove"
+	],
+	"tag-lmt_trial_index_21": [
+		"remove"
+	],
+	"tag-lmt_trial_type_21": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_21": [
+		"remove"
+	],
+	"tag-lmt_stimulus_21": [
+		"remove"
+	],
+	"tag-lmt_rt_21": [
+		"remove"
+	],
+	"tag-lmt_key_press_20": [
+		"remove"
+	],
+	"tag-lmt_skipped_20": [
+		"remove"
+	],
+	"tag-lmt_correct_20": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_20": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_20": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_20": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_20": [
+		"remove"
+	],
+	"tag-lmt_trial_index_20": [
+		"remove"
+	],
+	"tag-lmt_trial_type_20": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_20": [
+		"remove"
+	],
+	"tag-lmt_stimulus_20": [
+		"remove"
+	],
+	"tag-lmt_rt_20": [
+		"remove"
+	],
+	"tag-lmt_key_press_19": [
+		"remove"
+	],
+	"tag-lmt_skipped_19": [
+		"remove"
+	],
+	"tag-lmt_correct_19": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_19": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_19": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_19": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_19": [
+		"remove"
+	],
+	"tag-lmt_trial_index_19": [
+		"remove"
+	],
+	"tag-lmt_trial_type_19": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_19": [
+		"remove"
+	],
+	"tag-lmt_stimulus_19": [
+		"remove"
+	],
+	"tag-lmt_rt_19": [
+		"remove"
+	],
+	"tag-lmt_key_press_18": [
+		"remove"
+	],
+	"tag-lmt_skipped_18": [
+		"remove"
+	],
+	"tag-lmt_correct_18": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_18": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_18": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_18": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_18": [
+		"remove"
+	],
+	"tag-lmt_trial_index_18": [
+		"remove"
+	],
+	"tag-lmt_trial_type_18": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_18": [
+		"remove"
+	],
+	"tag-lmt_stimulus_18": [
+		"remove"
+	],
+	"tag-lmt_rt_18": [
+		"remove"
+	],
+	"tag-lmt_key_press_17": [
+		"remove"
+	],
+	"tag-lmt_skipped_17": [
+		"remove"
+	],
+	"tag-lmt_correct_17": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_17": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_17": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_17": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_17": [
+		"remove"
+	],
+	"tag-lmt_trial_index_17": [
+		"remove"
+	],
+	"tag-lmt_trial_type_17": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_17": [
+		"remove"
+	],
+	"tag-lmt_stimulus_17": [
+		"remove"
+	],
+	"tag-lmt_rt_17": [
+		"remove"
+	],
+	"tag-lmt_key_press_16": [
+		"remove"
+	],
+	"tag-lmt_skipped_16": [
+		"remove"
+	],
+	"tag-lmt_correct_16": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_16": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_16": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_16": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_16": [
+		"remove"
+	],
+	"tag-lmt_trial_index_16": [
+		"remove"
+	],
+	"tag-lmt_trial_type_16": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_16": [
+		"remove"
+	],
+	"tag-lmt_stimulus_16": [
+		"remove"
+	],
+	"tag-lmt_rt_16": [
+		"remove"
+	],
+	"tag-lmt_key_press_15": [
+		"remove"
+	],
+	"tag-lmt_skipped_15": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_15": [
+		"remove"
+	],
+	"tag-lmt_correct_15": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_15": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_15": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_15": [
+		"remove"
+	],
+	"tag-lmt_trial_index_15": [
+		"remove"
+	],
+	"tag-lmt_trial_type_15": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_15": [
+		"remove"
+	],
+	"tag-lmt_stimulus_15": [
+		"remove"
+	],
+	"tag-lmt_rt_15": [
+		"remove"
+	],
+	"tag-lmt_key_press_14": [
+		"remove"
+	],
+	"tag-lmt_skipped_14": [
+		"remove"
+	],
+	"tag-lmt_correct_14": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_14": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_14": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_14": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_14": [
+		"remove"
+	],
+	"tag-lmt_trial_index_14": [
+		"remove"
+	],
+	"tag-lmt_trial_type_14": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_14": [
+		"remove"
+	],
+	"tag-lmt_stimulus_14": [
+		"remove"
+	],
+	"tag-lmt_rt_14": [
+		"remove"
+	],
+	"tag-lmt_key_press_13": [
+		"remove"
+	],
+	"tag-lmt_skipped_13": [
+		"remove"
+	],
+	"tag-lmt_correct_13": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_13": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_13": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_13": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_13": [
+		"remove"
+	],
+	"tag-lmt_trial_index_13": [
+		"remove"
+	],
+	"tag-lmt_trial_type_13": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_13": [
+		"remove"
+	],
+	"tag-lmt_stimulus_13": [
+		"remove"
+	],
+	"tag-lmt_rt_13": [
+		"remove"
+	],
+	"tag-lmt_key_press_12": [
+		"remove"
+	],
+	"tag-lmt_skipped_12": [
+		"remove"
+	],
+	"tag-lmt_correct_12": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_12": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_12": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_12": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_12": [
+		"remove"
+	],
+	"tag-lmt_trial_index_12": [
+		"remove"
+	],
+	"tag-lmt_trial_type_12": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_12": [
+		"remove"
+	],
+	"tag-lmt_stimulus_12": [
+		"remove"
+	],
+	"tag-lmt_rt_12": [
+		"remove"
+	],
+	"tag-lmt_key_press_11": [
+		"remove"
+	],
+	"tag-lmt_skipped_11": [
+		"remove"
+	],
+	"tag-lmt_correct_11": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_11": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_11": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_11": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_11": [
+		"remove"
+	],
+	"tag-lmt_trial_index_11": [
+		"remove"
+	],
+	"tag-lmt_trial_type_11": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_11": [
+		"remove"
+	],
+	"tag-lmt_stimulus_11": [
+		"remove"
+	],
+	"tag-lmt_rt_11": [
+		"remove"
+	],
+	"tag-lmt_key_press_10": [
+		"remove"
+	],
+	"tag-lmt_skipped_10": [
+		"remove"
+	],
+	"tag-lmt_correct_10": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_10": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_10": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_10": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_10": [
+		"remove"
+	],
+	"tag-lmt_trial_index_10": [
+		"remove"
+	],
+	"tag-lmt_trial_type_10": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_10": [
+		"remove"
+	],
+	"tag-lmt_stimulus_10": [
+		"remove"
+	],
+	"tag-lmt_rt_10": [
+		"remove"
+	],
+	"tag-lmt_key_press_09": [
+		"remove"
+	],
+	"tag-lmt_skipped_09": [
+		"remove"
+	],
+	"tag-lmt_correct_09": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_09": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_09": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_09": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_09": [
+		"remove"
+	],
+	"tag-lmt_trial_index_09": [
+		"remove"
+	],
+	"tag-lmt_trial_type_09": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_09": [
+		"remove"
+	],
+	"tag-lmt_stimulus_09": [
+		"remove"
+	],
+	"tag-lmt_rt_09": [
+		"remove"
+	],
+	"tag-lmt_key_press_08": [
+		"remove"
+	],
+	"tag-lmt_skipped_08": [
+		"remove"
+	],
+	"tag-lmt_correct_08": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_08": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_08": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_08": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_08": [
+		"remove"
+	],
+	"tag-lmt_trial_index_08": [
+		"remove"
+	],
+	"tag-lmt_trial_type_08": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_08": [
+		"remove"
+	],
+	"tag-lmt_stimulus_08": [
+		"remove"
+	],
+	"tag-lmt_rt_08": [
+		"remove"
+	],
+	"tag-lmt_key_press_07": [
+		"remove"
+	],
+	"tag-lmt_skipped_07": [
+		"remove"
+	],
+	"tag-lmt_correct_07": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_07": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_07": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_07": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_07": [
+		"remove"
+	],
+	"tag-lmt_trial_index_07": [
+		"remove"
+	],
+	"tag-lmt_trial_type_07": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_07": [
+		"remove"
+	],
+	"tag-lmt_stimulus_07": [
+		"remove"
+	],
+	"tag-lmt_rt_07": [
+		"remove"
+	],
+	"tag-lmt_key_press_06": [
+		"remove"
+	],
+	"tag-lmt_skipped_06": [
+		"remove"
+	],
+	"tag-lmt_correct_06": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_06": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_06": [
+		"remove"
+	],
+	"tag-lmt_internal_node_id_06": [
+		"remove"
+	],
+	"tag-lmt_time_elapsed_06": [
+		"remove"
+	],
+	"tag-lmt_trial_index_06": [
+		"remove"
+	],
+	"tag-lmt_trial_type_06": [
+		"remove"
+	],
+	"tag-lmt_button_pressed_06": [
+		"remove"
+	],
+	"tag-lmt_stimulus_06": [
+		"remove"
+	],
+	"tag-lmt_rt_06": [
+		"remove"
+	],
+	"tag-lmt_key_press_05": [
+		"remove"
+	],
+	"tag-lmt_skipped_05": [
+		"remove"
+	],
+	"tag-lmt_is_data_element_05": [
+		"remove"
+	],
+	"tag-lmt_stimulus_type_05": [
+		"remove"
+	],
+	"tag-lmt_correct_05": [
+		"remove"
+	],
+	"tag-lmt_import_ok": [
+		"remove"
+	],
+	"tag-lmt_subject_id": [
+		"remove"
+	],
+	"tag-lmt_assessment_date": [
+		"remove"
+	],
+	"parse-lmt_server_date": [
+		"yyyy-mm-dd"
+	],
+	"tag-lmt_server_date": [
+		"date"
+	],
+	"tag-cbcl_scr_syn_anxdep_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_syn_withdep_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_syn_somatic_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_syn_social_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_syn_thought_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_syn_attention_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_syn_rulebreak_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_syn_aggressive_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_syn_internal_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_syn_external_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_syn_totprob_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_dsm5_depress_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_dsm5_anxdisord_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_dsm5_somaticpr_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_dsm5_adhd_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_dsm5_opposit_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_dsm5_conduct_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_07_sct_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_07_ocd_m": [
+		"huge"
+	],
+	"tag-cbcl_scr_07_stress_m": [
+		"huge"
+	],
+	"tag-nihtbx_demo_pin": [
+		"remove"
+	],
+	"tag-nihtbx_demo_education": [
+		"remove"
+	],
+	"tag-nihtbx_demo_mothereduc": [
+		"remove"
+	],
+	"tag-nihtbx_demo_fathereduc": [
+		"remove"
+	],
+	"tag-nihtbx_demo_guardianeduc": [
+		"remove"
+	],
+	"tag-mrif_findings_recode_status": [
+		"remove"
+	],
+	"tag-mrif_findings_level4": [
+		"remove"
+	],
+	"tag-mrif_findings_level3": [
+		"remove"
+	],
+	"tag-mrif_findings_level2": [
+		"remove"
+	],
+	"tag-mrif_t1_sent": [
+		"remove"
+	],
+	"tag-mrif_t2_sent": [
+		"remove"
+	],
+	"tag-mrif_unpack_gap": [
+		"remove"
+	],
+	"tag-mrif_daic2rad_gap": [
+		"remove"
+	],
+	"tag-mrif_radreview_gap": [
+		"remove"
+	],
+	"tag-mrif_t2_unpackdate": [
+		"remove"
+	],
+	"tag-mrif_t1_unpackdate": [
+		"remove"
+	],
+	"tag-mrif_t2_studydate": [
+		"remove"
+	],
+	"tag-mrif_t1_studydate": [
+		"remove"
+	],
+	"tag-mrif_follow_dte": [
+		"remove"
+	],
+	"tag-mrif_not_dte": [
+		"remove"
+	],
+	"tag-mrif_scan_read_dte": [
+		"remove"
+	],
+	"tag-mrif_ready_review": [
+		"remove"
+	],
+	"tag-mrif_daic2rad_send": [
+		"remove"
+	],
+	"tag-mrif_other_notes": [
+		"remove"
+	],
+	"tag-mrif_reader": [
+		"remove"
+	],
+	"tag-mrif_note": [
+		"remove"
+	],
+	"tag-nihtbx_demo_startlevel": [
+		"remove"
+	],
+	"tag-nihtbx_demo_hand": [
+		"remove"
+	],
+	"tag-nihtbx_demo_race": [
+		"remove"
+	],
+	"tag-nihtbx_demo_ethnicity": [
+		"remove"
+	],
+	"tag-nihtbx_demo_assessname": [
+		"remove"
+	],
+	"instrument-child_behavior_check_list_scores": [
+		"Child Behavior Check List Scores",
+		"1",
+		"abcd_cbcls"
+	],
+	"instrument-mr_incidence_findings": [
+		"MR Findings",
+		"1",
+		"abcd_mrfindings"
+	],
+	"tag-tlfb_cal_scr_assess_date": [
+		"date"
+	],
+	"tag-rtg_monozygotic": [
+		"remove"
+	],
+	"tag-tlfb_other_txt": [
+		"remove"
 	]
 }
