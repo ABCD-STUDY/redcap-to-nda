@@ -13,7 +13,7 @@ All of the information above are gathered by an interactive process that starts 
 
 ### Restrictions
 
-The scope of measures or items in REDCap is by project. This means that an item name has to be unique across all the instruments of that project. On NDA the item scope is only the instrument itself. It it possible to create the same item in several instruments. Because of this conditional logic in REDCap can reference items in other instruments but on NDA this is not possible.
+The scope of measures or items in REDCap is by project. This means that an item name has to be unique across all the instruments of that project. On NDA the item scope is only the instrument itself. It is therefore possible to create the same item in several instruments. Because of this conditional logic in REDCap can reference items in other instruments of the same project - but on NDA this is not possible.
 
 REDCap's data dictionaries are used for two purposes. Foremost they are used to code for the instruments used during data collection. These instruments contain the minute details in which questions are rendered towards the participant. They are order-dependent as sections of instructions can be interspersed with compact response matrices referencing higher-level instructions. They can also contain pictures or videos especially suited to convey levels of pain or stress. The primary focus of these instruments is to be self-sufficient and complete, and to allow for a controlled administration of an instrument across different cohorts, instances of REDCap and projects.
 
