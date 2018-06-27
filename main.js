@@ -747,6 +747,23 @@ function checkEntryNumber( item, data, callback ) {
     (callback)( status + " " + result, status );
 }
 
+function checkEntryInteger( item, data, callback ) {
+    var result = "";
+    for (var i = 0; i < data.length; i++) {
+        if (data[i][item].match(/[+-]?[0-9]/) === null) {
+             result = result + "is-integer-validation at " + data[i][item].length + ",";
+        }
+    }
+    status = "good";
+    if (result.length > 0) {
+        status = "bad";
+    } else {
+        result = "no integer conversion error found";
+    }
+
+    (callback)( status + " " + result, status );
+}
+
 
 function checkItem( item, form, data, callback ) {
     // ask REDCap for data and check
@@ -765,6 +782,12 @@ function checkItem( item, form, data, callback ) {
             }
             if (d['field_type'] == "text" && d['text_validation_type_or_show_slider_number'] == "number") {
                 checkEntryNumber(item, data, function(result, status) {
+                    (callback)( result, status );
+                });
+                return;
+            }
+            if (d['field_type'] == "text" && d['text_validation_type_or_show_slider_number'] == "integer") {
+                checkEntryInteger(item, data, function(result, status) {
                     (callback)( result, status );
                 });
                 return;
@@ -867,8 +890,8 @@ ipcMain.on('exportData', function(event,data) {
         var d = datadictionary[i];
         if (d['form_name'] == form) {
             // ignore HIDDEN
-            if (typeof d['field_annotation'] !== 'undefined' && d['field_annotation'].indexOf("@HIDDEN") !== -1) {
-                rstr = rstr + "Info: item " + d['field_name'] + " has @HIDDEN annotation and will not be exported\n";
+            if (typeof d['field_annotation'] !== 'undefined' && d['field_annotation'].indexOf("@HIDDEN") !== -1 && d['field_annotation'].indexOf("@SHARED") === -1) {
+                rstr = rstr + "Info: item " + d['field_name'] + " has @HIDDEN annotation (and no @SHARED annotation) and will not be exported\n";
                 continue;
             }
             if (typeof d['field_type'] !== 'undefined'
@@ -1947,7 +1970,7 @@ function getDataDictionary( token ) {
         for(var e in body) {
             entry = body[e];
             // skip values that are hidden
-            if (typeof entry['field_annotation'] !== 'undefined' && entry['field_annotation'].indexOf("@HIDDEN") !== -1) {
+            if (typeof entry['field_annotation'] !== 'undefined' && entry['field_annotation'].indexOf("@HIDDEN") !== -1 && entry['field_annotation'].indexOf("@SHARED") === -1) {
                 continue;
             }
             datadictionary.push(entry);
