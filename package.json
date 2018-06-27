@@ -1,6 +1,6 @@
 {
   "name": "redcap2ndar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert REDCap data dictionaries and data to NDA spreadsheets",
   "main": "main.js",
   "scripts": {
