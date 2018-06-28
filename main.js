@@ -1388,9 +1388,11 @@ ipcMain.on('exportData', function(event,data) {
                                 var visit = moment(data[i]['asnt_timestamp'], 'YYYY-MM-DD HH:mm');
                                 if (typeof dob == 'undefined') {
                                     rstr = rstr + "Error: date of birth (dob) for " + pGUID + " cannot be read (" + subject_json[pGUID]['dob'] + ") as YYY-MM-DD.";
+                                    dob = '';
                                 }
                                 if (typeof interview_age == 'undefined') {
                                     rstr = rstr + "Error: interview_age for " + pGUID + " cannot be read (" + subject_json[pGUID]['asnt_timestamp'] + ") as YYY-MM-DD HH:mm.";
+                                    interview_age = '';
                                 }
                                 interview_date = visit.format('MM/DD/YYYY');
                                 interview_age = visit.diff(dob, 'month', false); // use the dob and the asnt_timestamp
