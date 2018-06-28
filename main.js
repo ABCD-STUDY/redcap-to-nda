@@ -844,6 +844,12 @@ function checkItem( item, form, data, callback ) {
                 });
                 return;
             }
+            if (d['field_type'] == "calc") {
+                checkEntryNumber(item, data, function(result, status) {
+                    (callback)( result, status );
+                });
+                return;
+            }
         }
     }
 
@@ -1380,6 +1386,12 @@ ipcMain.on('exportData', function(event,data) {
                                 gender = subject_json[pGUID]['gender'];
                                 var dob = moment(subject_json[pGUID]['dob'], 'YYYY-MM-DD');
                                 var visit = moment(data[i]['asnt_timestamp'], 'YYYY-MM-DD HH:mm');
+                                if (typeof dob == 'undefined') {
+                                    rstr = rstr + "Error: date of birth (dob) for " + pGUID + " cannot be read (" + subject_json[pGUID]['dob'] + ") as YYY-MM-DD.";
+                                }
+                                if (typeof interview_age == 'undefined') {
+                                    rstr = rstr + "Error: interview_age for " + pGUID + " cannot be read (" + subject_json[pGUID]['asnt_timestamp'] + ") as YYY-MM-DD HH:mm.";
+                                }
                                 interview_date = visit.format('MM/DD/YYYY');
                                 interview_age = visit.diff(dob, 'month', false); // use the dob and the asnt_timestamp
                                 // We have to fix the ages here because kids are included into the study
@@ -1673,7 +1685,8 @@ ipcMain.on('exportForm', function(event, data) {
             if (d['field_type'] == "number") {
                 type = "Float";
             }
-              if (d['field_type'] == "calc") {
+            if (d['field_type'] == "calc") {
+                type = "Float";
                 notes = "Calculation: " + d['select_choices_or_calculations'];
                 notes = notes + (d['field_note'].length>0?" | " + unHTML(d['field_note']):"");
                 notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
