@@ -1740,9 +1740,12 @@ ipcMain.on('exportForm', function(event, data) {
             // check if we have a longer flag for this field_name
             var flags = store.get('tag-' + d['field_name']);
             var flag_date = false; // do we have a date to parse?
+            var flag_recommended = false; // should this field be recommended instead of conditional?
             if (typeof flags !== 'undefined') {
                 if (flags.indexOf('remove') !== -1)
                     continue; // ignore this entry in the data dictionary
+                if (flags.indexOf('recommended') !== -1)
+                    flag_recommended = true; // maybe we don't want to have a condition mentioned here, make those recommended
                 if (flags.indexOf('long') !== -1)
                     size = "60"
                 if (flags.indexOf('huge') !== -1)
@@ -1824,7 +1827,7 @@ ipcMain.on('exportForm', function(event, data) {
                     str = str + d['field_name'] + "___" + (parts[0]) + "," + 
                         type + "," + 
                         size + "," + 
-                        ((condition !== '')?"Conditional":"Recommended") + "," +
+                        ((condition !== '' && !flag_recommended)?"Conditional":"Recommended") + "," +
                         condition + "," +  
                         "\"" + label + " (" + sanitized_choice + ")\"," + 
                         range + "," + 
@@ -1838,7 +1841,7 @@ ipcMain.on('exportForm', function(event, data) {
                 str = str + d['field_name'] + "," + 
                    type + "," + 
                    size + "," + 
-                   ((condition !== '')?"Conditional":"Recommended") + "," + 
+                   ((condition !== '' && !flag_recommended)?"Conditional":"Recommended") + "," + 
                    condition + "," +  
                    "\"" + label + "\"," + 
                    range + "," + 
