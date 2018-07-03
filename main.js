@@ -1686,9 +1686,11 @@ ipcMain.on('exportForm', function(event, data) {
             }
             if (d['field_type'] == "number") {
                 type = "Float";
+                size = "";
             }
             if (d['field_type'] == "calc") {
                 type = "Float";
+                size = "";
                 notes = "Calculation: " + d['select_choices_or_calculations'];
                 notes = notes + (d['field_note'].length>0?" | " + unHTML(d['field_note']):"");
                 notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
