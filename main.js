@@ -1116,7 +1116,10 @@ ipcMain.on('exportData', function(event,data) {
             // from the screener in a different row as data from the baseline, we should merge them together into
             // a single row
             data = {}; // create a single event set
-            for (var i = 0; i < itemsPerRecord.length; i++){
+            for (var i = 0; i < itemsPerRecord.length; i++) {
+                if (0 === (i%10000)) {
+                    console.log("create event set: " + i + "/" + itemsPerRecord.length);
+                }
                 var d = itemsPerRecord[i];
                 if ( !(d['id_redcap'] in data)) {
                     // lets do a deep copy here
