@@ -1199,6 +1199,7 @@ ipcMain.on('exportData', function(event,data) {
 
             var skipkeys = [];
             var count = 0;
+            console.log("Create csv file content...");
             for ( var j = 0; j < sortedKeys.length; j++) {
                 var k = sortedKeys[j];
                 if (k == 'id_redcap') {
@@ -1229,6 +1230,7 @@ ipcMain.on('exportData', function(event,data) {
                 count = count + 1;
             }
             str = str + "\n";
+            console.log("Write csv file header ...");
             try {
                 fs.writeFileSync(filename, str);
             } catch(e) {
@@ -1436,6 +1438,7 @@ ipcMain.on('exportData', function(event,data) {
                     }
                 }
             }
+            console.log("Write out report...");
             try {
                 fs.writeFile(report, rstr, function(err) {
                     if (err) {
