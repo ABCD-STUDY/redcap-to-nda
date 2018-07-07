@@ -1139,6 +1139,7 @@ ipcMain.on('exportData', function(event,data) {
                 //    }
                 //}
             }
+            console.log("make event name the current event...");
             data = Object.keys(data).map(function(key) {
                 data[key]['redcap_event_name'] = current_event;
                 return data[key];
@@ -1155,15 +1156,18 @@ ipcMain.on('exportData', function(event,data) {
             //console.log("sort these keys: " + JSON.stringify(keys));
             // sort does this in place... shouldn't this be just keys.sort?
             var sortedKeys = keys;
+            console.log("start sorting the keys...");
             sortedKeys.sort(function(a,b) {
                 var idxA = -1;
                 var idxB = -1;
                 var astr = a;
                 var bstr = b;
+                var asplit = a.split('___');
+                var bsplit = b.split('___');
                 for (var i = 0; i < datadictionary.length; i++) {
                     // checkbox?
-                    if (a.split('___').length === 2) {
-                        astr = a.split('___')[0];
+                    if (asplit.length === 2) {
+                        astr = asplit[0];
                     }
                     if (datadictionary[i]['field_name'] == astr) {
                         idxA = i;
@@ -1172,8 +1176,8 @@ ipcMain.on('exportData', function(event,data) {
                 }
                 for (var i = 0; i < datadictionary.length; i++) {
                     // checkbox?
-                    if (b.split('___').length === 2) {
-                        bstr = b.split('___')[0];
+                    if (bsplit.length === 2) {
+                        bstr = bsplit[0];
                     }
                     if (datadictionary[i]['field_name'] == bstr) {
                         idxB = i;
@@ -1185,6 +1189,7 @@ ipcMain.on('exportData', function(event,data) {
 
             // read in the additional subject information from the current_subject_json
             subject_json = {};
+            console.log("read subject information...");
             if (current_subject_json == "") {
                 console.log("Error: no current_subject_json file specified");
             } else {
