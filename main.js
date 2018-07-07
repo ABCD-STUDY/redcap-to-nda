@@ -1124,17 +1124,20 @@ ipcMain.on('exportData', function(event,data) {
                 if ( !(d['id_redcap'] in data)) {
                     // lets do a deep copy here
                     data[d['id_redcap']] = {};
-                    for ( var key in d ) {
+                }
+                for ( var key in d ) {
+                    if (!(key in data[d['id_redcap']]) || d[key] !== "") {
                         data[d['id_redcap']][key] = d[key];
                     }
-                } else { // this should not be needed anymore, the pull already merges using Object.assign
-                    var keys = Object.keys(d);
-                    for (var j = 0; j < keys.length; j++) {
-                        if (!(keys[j] in data[d['id_redcap']]) || d[keys[j]] !== "") {
-                            data[d['id_redcap']][keys[j]] = d[keys[j]];
-                        }
-                    }
                 }
+                //} else { // this should not be needed anymore, the pull already merges using Object.assign
+                //    var keys = Object.keys(d);
+                //    for (var j = 0; j < keys.length; j++) {
+                //        if (!(keys[j] in data[d['id_redcap']]) || d[keys[j]] !== "") {
+                //            data[d['id_redcap']][keys[j]] = d[keys[j]];
+                //        }
+                //    }
+                //}
             }
             data = Object.keys(data).map(function(key) {
                 data[key]['redcap_event_name'] = current_event;
