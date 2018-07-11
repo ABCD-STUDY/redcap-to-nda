@@ -230,7 +230,8 @@ jQuery(document).ready(function() {
     jQuery('#export-current-form-button').on('click', function() {
         //var dialog = remote.require('dialog');
         dialog.showSaveDialog({ defaultPath: current_form + "_dictionary.csv" }, function (filename) {
-            ipcRenderer.send('exportForm', { form: current_form, filename: filename });
+            if (typeof filename !== 'undefined')
+                ipcRenderer.send('exportForm', { form: current_form, filename: filename });
         });
     });
 
@@ -245,7 +246,8 @@ jQuery(document).ready(function() {
 
     jQuery('#export-current-form-data-button').on('click', function() {
         dialog.showSaveDialog({ defaultPath: current_form + "_data.csv" }, function (filename) {
-            ipcRenderer.send('exportData', { form: current_form, filename: filename });
+            if (typeof filename !== 'undefined')
+                ipcRenderer.send('exportData', { form: current_form, filename: filename });
         });
     });
 

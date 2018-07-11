@@ -1194,7 +1194,18 @@ ipcMain.on('exportData', function(event,data) {
                 console.log("Error: no current_subject_json file specified");
             } else {
                 if (fs.existsSync(current_subject_json)) {
-                    var sj = JSON.parse(fs.readFileSync(current_subject_json, 'utf8'));
+                    var sj = [];
+                    try {
+                        sj = JSON.parse(fs.readFileSync(current_subject_json, 'utf8'));
+                    } catch (e) {
+                        if (e instanceof SyntaxError) {
+                          // Output expected SyntaxErrors.
+                          console.log(e);
+                        } else {
+                          // Output unexpected Errors.
+                          console.log(e, false);
+                        }
+                    }
                     // get the pGUID as key
                     for(var j = 0; j < sj.length; j++) {
                         subject_json[sj[j]['pGUID']] = sj[j];
