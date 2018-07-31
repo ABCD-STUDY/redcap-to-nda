@@ -211,7 +211,7 @@ ipcMain.on('ndaDDFromREDCap', function (event, arg) {
         for (var i = 0; i < body.length; i++) {
             if (body[i]['status'] !== 'Published')
                 continue;
-            if (typeof body[i]['sources'] !== 'undefined' && body[i]['sources'].indexOf('ABCD') >= 0) {
+            if (typeof body[i]['sources'] !== 'undefined' && body[i]['sources'].indexOf('ABCD RELEASE 1.1') >= 0) {
                 data.push(body[i]);
             }
         }
