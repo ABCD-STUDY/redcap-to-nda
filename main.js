@@ -209,8 +209,10 @@ ipcMain.on('ndaDDFromREDCap', function (event, arg) {
         data = [];
         // only add data that will be exported
         for (var i = 0; i < body.length; i++) {
-            if (body[i]['status'] !== 'Published')
+            if (body[i]['status'] !== 'Published') {
+                win.send('message', 'this instrument is not published yet: ' + JSON.stringify(body[i]) + '. Only published instruments will be available');
                 continue;
+            }
             if (typeof body[i]['sources'] !== 'undefined' && body[i]['sources'].indexOf('ABCD Release 1.1') >= 0) {
                 data.push(body[i]);
             }
