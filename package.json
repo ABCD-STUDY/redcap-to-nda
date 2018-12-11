@@ -12,8 +12,8 @@
   "author": "Hauke Bartsch",
   "license": "ISC",
   "devDependencies": {
-      "electron": "^1.8.1",
-      "electron-builder": "^19.56.2"
+    "electron": "^1.8.8",
+    "electron-builder": "^19.56.2"
   },
   "build": {
     "appId": "com.electron.redcap2nda",
@@ -23,14 +23,14 @@
   },
   "postinstall": "./node-modules/.bin/electron-builder install-app-deps",
   "dependencies": {
-    "async": "^2.6.0",
+    "async": "^2.6.1",
     "electron-store": "^1.3.0",
     "fs": "0.0.1-security",
     "jquery": "^3.3.1",
-    "moment": "^2.20.1",
+    "moment": "^2.22.2",
     "path": "^0.12.7",
     "phonon": "^1.4.9",
-    "request": "^2.83.0",
+    "request": "^2.88.0",
     "striptags": "^3.1.1",
     "url": "^0.11.0"
   }

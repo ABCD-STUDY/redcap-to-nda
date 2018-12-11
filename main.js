@@ -31,7 +31,8 @@ let token
 let current_event
 let current_url = 'https://abcd-rc.ucsd.edu/redcap/api/';
 let current_subject_json = ''; // the name of an additional file that contains subject information (pGUID, 'gender')
-let instrumentEventMapping
+let current_subject_json_data = [] // the content of an additional file that contains subject information (pGUID, 'gender', 'dob', 'interview_age...')
+let instrumentEventMapping = {};
 let restrictToNDA = ''
 let restrictToNDADD = []
 let removeAnyText = false
@@ -267,7 +268,7 @@ ipcMain.on('closeSetupDialogOk', function(event, arg) {
         current_url = arg.url;
         // the current_subject_json has already been set by the callback from the open dialog
         //current_subject_json = arg.subject_json;
-        console.log("closed setup DIALOG after ok: " + token + " " + event + " " + current_url + " " + current_subject_json);
+        console.log("closed setup DIALOG after ok: " + token + " " + event + " " + current_url); // + " " + current_subject_json);
 
         // now populate the list with the instruments
         updateInstrumentList( current_event );
@@ -544,6 +545,8 @@ Array.prototype.chunk = function ( n ) {
 ipcMain.on('checkData', function(event, data) {
     var form = data['form'];
     //console.log("check the data for this form: " + form);
+    // assume that we have access to current_subject_json_data
+    var subject_json = current_subject_json_data.reduce(function(acc, a) { acc[a['pGUID']] = a; return acc; }, {});
 
     // we cannot ask for all items at the same time, we don't have enough memory on the server to get those back
     // lets chunk the items in the form
@@ -563,7 +566,10 @@ ipcMain.on('checkData', function(event, data) {
             'token': token,
             'content': 'record',
             //'forms[0]': form,
-            'events[0]': current_event,
+            'events[0]': "baseline_year_1_arm_1",
+            'events[1]': "6_month_follow_up_arm_1",
+            'events[2]': "1_year_follow_up_y_arm_1",
+            'events[3]': "18_month_follow_up_arm_1",
             'format': 'json',
             'type': 'flat',
             'rawOrLabel': 'raw',
@@ -604,8 +610,10 @@ ipcMain.on('checkData', function(event, data) {
             data = [];
             // only add data that will be exported
             for(var i = 0; i < body.length; i++) {
-                if (body['nda_year_1_inclusion___1'] !== "1")
+                //if (body['nda_year_1_inclusion___1'] !== "1")
+                if (!(body['id_redcap'] in subject_json)) {
                     continue;
+                }
                 data.push(body[i]);
             }
 
@@ -865,6 +873,27 @@ ipcMain.on('openLoadJSONDialog', function(event,data) {
         return;
     }
     current_subject_json = data['filename'][0];
+
+    // read in the json, store the content in current_subject_json_data
+    // read with fs.readFileSync 
+    var fileName = fs.readFileSync(current_subject_json);
+    //var fileName = current_subject_json
+
+    if (fs.existsSync(fileName)) {
+        var sj = [];
+        try {
+            sj = JSON.parse(fs.readFileSync(fileName, 'utf8'));
+        } catch (e) {
+            if (e instanceof SyntaxError) {
+              // Output expected SyntaxErrors.
+              console.log(e);
+            } else {
+              // Output unexpected Errors.
+              console.log(e, false);
+            }
+        }
+        current_subject_json_data = sj;
+    }
 });
 
 ipcMain.on('exportData', function(event,data) {
@@ -890,6 +919,25 @@ ipcMain.on('exportData', function(event,data) {
         if (typeof v[2] !== 'undefined')
             form_nda_name = v[2];
     }
+
+    // what are the events this instrument should be querried for
+    var master_list_events = [ "baseline_year_1_arm_1", "6_month_follow_up_arm_1", "1_year_follow_up_y_arm_1", "18_month_follow_up_arm_1"]
+    //console.log(JSON.stringify(instrumentEventMapping));
+    for(var i = 0; i < master_list_events.length; i++) {
+        var event = master_list_events[i];
+        found = false;
+        for (obj in instrumentEventMapping) {
+            var v = instrumentEventMapping[obj];
+            if (v['unique_event_name'] == event && v['form'] == form ) {
+                found = true; 
+            }
+        }
+        if(!found) {
+            delete master_list_events[i];
+        }
+    }
+    // filter out deleted events (Object.values())
+    master_list_events = Object.keys(master_list_events).map(function(a) { if (typeof master_list_events[a] !== 'undefined') return master_list_events[a]; });
 
     var items = [];
     var dateConversions = {};
@@ -992,7 +1040,9 @@ ipcMain.on('exportData', function(event,data) {
 
     //console.log("erstes Element is: " + items[0]);
     var itemsPerRecord = [];
-    var queue = async.queue(function(chunk, callback) {
+    var queue = async.queue(function(options, callback) {
+        var chunk = options['chunk'][0];
+        var current_events = options['events'];
         // do we have a BIOPORTAL chunk here?
         var getLabel = false;
         if (chunk[0].indexOf("___BIOPORTAL") > 0) {
@@ -1007,9 +1057,12 @@ ipcMain.on('exportData', function(event,data) {
             //'forms[0]': form,
             'fields[0]': 'id_redcap',
             'fields[1]': 'redcap_event_name',
-            'fields[2]': 'nda_year_1_inclusion',
-            'fields[3]': 'asnt_timestamp',
-            //'events[0]': current_event,            
+            //   'fields[2]': 'nda_year_1_inclusion',
+            //'fields[3]': 'asnt_timestamp',
+            //'events[0]': "baseline_year_1_arm_1",
+            //'events[1]': "6_month_follow_up_arm_1",
+            //'events[2]': "1_year_follow_up_y_arm_1",
+            //'events[3]': "18_month_follow_up_arm_1",           
             'format': 'json',
             'type': 'flat',
             'rawOrLabel': getLabel?'label':'raw',
@@ -1019,27 +1072,29 @@ ipcMain.on('exportData', function(event,data) {
             'exportDataAccessGroups': false,
             'returnFormat': 'json'
         }
-
-        // some data is only available in the baseline, lets add baseline here if we try to export screener data
-        var current_events = [];
-        current_events.push(current_event);
-        if (current_events.indexOf('baseline_year_1_arm_1') < 0) {
-            current_events.push('baseline_year_1_arm_1');
+        
+        if ( current_event != "ALL") {
+            // in this case we don't want to use current_events (master list of events for this form)
+            // instead we use the current event only
+            current_events = [current_event];
         }
+
+
         for (var i = 0; i < current_events.length; i++) {
             data['events[' + i + ']'] = current_events[i];
         }
+        
 
         for (var i = 0; i < chunk.length; i++) {
             if (getLabel) {
                 var l = chunk[i].split("___BIOPORTAL")[0];
-                data['fields[' + (i + 4) + ']'] = l;
+                data['fields[' + (i + 2) + ']'] = l;
             } else {
-                data['fields[' + (i + 4) + ']'] = chunk[i];
+                data['fields[' + (i + 2) + ']'] = chunk[i];
             }
         }
         //console.log("got chunk of size " + chunk.length + " call: " + JSON.stringify(data));
-        
+        console.log("ask for these scores from REDCap: " + JSON.stringify(data));      
         var headers = {
             'User-Agent':       'Super Agent/0.0.1',
             'Content-Type':     'application/x-www-form-urlencoded'
@@ -1077,14 +1132,14 @@ ipcMain.on('exportData', function(event,data) {
                             k2[j] == 'nda_year_1_inclusion___1' || 
                             k2[j] == 'redcap_event_name') {
                             dat2['id_redcap'] = dat['id_redcap'];
-                            dat2['redcap_event_name'] = current_event;
+                            // dat2['redcap_event_name'] = current_event;
                         } else {
                             dat2[k2[j] + '___BIOPORTAL'] = dat[k2[j]];
                         }
                     }
                     dat = dat2;
                 }
-                /*var found = false;
+                var found = false;
                 for (var j = 0; j < itemsPerRecord.length; j++) {
                     var item = itemsPerRecord[j];
                     if (item['id_redcap'] == data[i]['id_redcap'] && 
@@ -1096,7 +1151,7 @@ ipcMain.on('exportData', function(event,data) {
                 }
                 if (!found) {
                     itemsPerRecord.push(dat);
-                }*/
+                }
                 itemsPerRecord.push(dat); // will be merged below
             }
             callback("ok");
@@ -1138,14 +1193,16 @@ ipcMain.on('exportData', function(event,data) {
                 //        if (!(keys[j] in data[d['id_redcap']]) || d[keys[j]] !== "") {
                 //            data[d['id_redcap']][keys[j]] = d[keys[j]];
                 //        }
-                //    }
+                //    }c
                 //}
             }
-            console.log("make event name the current event...");
+            //console.log("make event name the current event...");
+            //console.log(data)
             data = Object.keys(data).map(function(key) {
-                data[key]['redcap_event_name'] = current_event;
+                //data[key]['redcap_event_name'] = current_event;
                 return data[key];
             })
+            //console.log(data)
 
             //data = itemsPerRecord;
             if (restrictToNDA.length > 0) {
@@ -1153,24 +1210,49 @@ ipcMain.on('exportData', function(event,data) {
             }
             str = "\"" + form_nda_name + "\"," + form_version + "\n"; // form name could contain commas 
             // add the header
+            //console.log(data[0])
+            //console.log(Object.keys(data[0]))
             var keys = Object.keys(data[0]);
             // sort keys by order in datadictionary
             //console.log("sort these keys: " + JSON.stringify(keys));
             // sort does this in place... shouldn't this be just keys.sort?
-            var sortedKeys = keys;
+            var sortedKeys = keys; //[];
+
+            /*for(var i = 0; i < keys.length; i++){
+                s = keys[i];
+                var ssplit = s.split('___');
+                if (ssplit.length === 2){
+                    s = ssplit[0]
+                }
+                var flag = false
+                for (var j = 0; j < datadictionary.length; j++){
+                    if (datadictionary[j]['field_name'] == s){
+                        flag = true 
+                        break
+                    }
+                }
+                if(flag){
+                    sortedKeys.push(s)
+                }
+            }*/
+            
             console.log("start sorting the keys...");
-            sortedKeys.sort(function(a,b) {
+            sortedKeys.sort(function(a,b) { // TODO FIX THIS; make sure it matches the datadicgtionary 
                 var idxA = -1;
                 var idxB = -1;
                 var astr = a;
                 var bstr = b;
                 var asplit = a.split('___');
                 var bsplit = b.split('___');
+
+                if (asplit.length === 2) {
+                    astr = asplit[0];
+                }
+                if (bsplit.length === 2) {
+                    bstr = bsplit[0];
+                }
                 for (var i = 0; i < datadictionary.length; i++) {
-                    // checkbox?
-                    if (asplit.length === 2) {
-                        astr = asplit[0];
-                    }
+                    //console.log(datadictionary[i]['field_name'])
                     if (datadictionary[i]['field_name'] == astr) {
                         idxA = i;
                         break;
@@ -1178,9 +1260,6 @@ ipcMain.on('exportData', function(event,data) {
                 }
                 for (var i = 0; i < datadictionary.length; i++) {
                     // checkbox?
-                    if (bsplit.length === 2) {
-                        bstr = bsplit[0];
-                    }
                     if (datadictionary[i]['field_name'] == bstr) {
                         idxB = i;
                         break;
@@ -1261,7 +1340,14 @@ ipcMain.on('exportData', function(event,data) {
             var ds = {}; // a cache for data dictionary entries - gets filled during the first iteration
             var flags_cache = {}; // a cache for the flags
             for ( var i = 0; i < data.length; i++) {
-                if (data[i]['nda_year_1_inclusion___1'] == "1") {
+                // check instead if data[i]['id_redcap'] is in subjects_json as a key
+                // check if data[i]['redcap_event_name'] is in subjects_json[pGUID].interview_age + ""
+                //var interview_age_key = "interview_age_" + data[i]['redcap_event_name'];
+                interview_event = data[i]['redcap_event_name']
+                //console.log(interview_age_key)
+                if ( (data[i]['id_redcap'] in subject_json) && (data[i]['redcap_event_name'] in subject_json[data[i]['id_redcap']])) {
+                //if((data[i]['id_redcap'] in subject_json)) {
+                // if (data[i]['nda_year_1_inclusion___1'] == "1") {
                     // export this participants data
                     str = "";
                     if (i % 100 == 0) {
@@ -1398,7 +1484,7 @@ ipcMain.on('exportData', function(event,data) {
                         label = label.replace(/\"/g, "\"\"\"");
                         if (name == "id_redcap") {
                             // we need more: subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
-                            interview_date = data[i]['asnt_timestamp'];
+                            //interview_date = data[i]['asnt_timestamp']; // TODO FIX THIS; update to use values in release2.0json
                             interview_age = ""; // in month
                             gender = "";
                             found = false;
@@ -1420,18 +1506,26 @@ ipcMain.on('exportData', function(event,data) {
                                     rstr = rstr + "Error: interview_age for " + pGUID + " cannot be read (" + subject_json[pGUID]['asnt_timestamp'] + ") as YYY-MM-DD HH:mm.";
                                     interview_age = '';
                                 }
-                                interview_date = visit.format('MM/DD/YYYY');
-                                interview_age = visit.diff(dob, 'month', false); // use the dob and the asnt_timestamp
+                                interview_date = subject_json[pGUID][interview_event]["interview_date"];
+                                // use the interview age from this entry
+                                interview_age = subject_json[pGUID][interview_event]["interview_age"];
+                                //console.log(interview_age_key)
+                                //console.log(interview_age)
+                                if (typeof interview_age === 'undefined') {
+                                    rstr = rstr + "Error: no interview_age value " + interview_event + " for participant " + pGUID + "\n";
+                                }
+                                //interview_age = visit.diff(dob, 'month', false); // use the dob and the asnt_timestamp
+
                                 // We have to fix the ages here because kids are included into the study
                                 // based on a real date but the dob is given to us at the 15th of the month only.
                                 // So if a kid is in the study and has interview_age of 107 we know that their 
                                 // birthday must have been in relation to the visit date (real date).
                                 // For now lets clamp the interview_age to 108 ... 131.
-                                if (interview_age < 108) {
+                                if (data[i]['redcap_event_name'] == 'baseline_year_1_arm_1' && interview_age < 108) {
                                     rstr = rstr + "Warning: interview_age in month for " + pGUID + " is " + interview_age + " < 108. This could allow someone to guess the age by less than 30 days. Set age in month to 108.\n"; 
                                     interview_age = 108;
                                 }
-                                if (interview_age > 131) {
+                                if (data[i]['redcap_event_name'] == 'baseline_year_1_arm_1' && interview_age > 131) {
                                     rstr = rstr + "Warning: interview_age in month for " + pGUID + " is " + interview_age + " > 131. This could allow someone to guess the age by less than 30 days. Set age in month to 131.\n"; 
                                     interview_age = 131;
                                 }
@@ -1475,7 +1569,7 @@ ipcMain.on('exportData', function(event,data) {
     };
     var chunks = items.chunk(20); // get 20 items at the same time from REDCap
     for (var i = 0; i < chunks.length; i++) {
-        queue.push([chunks[i]],
+        queue.push({ 'chunk': [chunks[i]], "events": master_list_events },
             (function(counter, maxCounter) {
                 return function(err) {
                     console.log("finished getting data for chunk: " + counter + " with " + err);
@@ -1488,7 +1582,7 @@ ipcMain.on('exportData', function(event,data) {
     if (bioportalVars.length > 0) { // don't do this now
         var chunks = bioportalVars.chunk(20);
         for (var i = 0; i < chunks.length; i++) {
-            queue.push([chunks[i]],
+            queue.push({ 'chunk': [chunks[i]], "events": master_list_events },
                 (function (counter, maxCounter) {
                     return function (err) {
                         console.log("finished getting data for BIOPORTAL chunk: " + counter + " with " + err);
@@ -1953,6 +2047,7 @@ function getEvents( token ) {
 }
 
 function getInstrumentEventMapping( token ) {
+    instrumentEventMapping = {};
     var data = {
         'token': token,
         'content': 'formEventMapping',
@@ -1981,8 +2076,6 @@ function getInstrumentEventMapping( token ) {
         instrumentEventMapping = body;
     });
 }
-
-
 
 function getDataDictionary( token ) {
     var data = {
