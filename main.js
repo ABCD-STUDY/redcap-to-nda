@@ -36,6 +36,7 @@ let instrumentEventMapping = {};
 let restrictToNDA = ''
 let restrictToNDADD = []
 let removeAnyText = false
+let anyErrorDownloading = { 'errors': [], 'numOk': 0, 'numBad': 0 }
 
 function createWindow () {
   // Create the browser window.
@@ -905,6 +906,7 @@ ipcMain.on('exportData', function(event,data) {
     var report = data['filename'];
     report = path.join(path.dirname(report), path.basename(report, path.extname(report)) + "_report.txt");
     var rstr = "### Data Export Report " + form + "\n\n";
+    anyErrorDownloading = false;
 
     // what is the name of this instrument?
     var form_name = instrumentLabels[form];
@@ -1162,7 +1164,10 @@ ipcMain.on('exportData', function(event,data) {
     var allChunksSend = false;
     queue.drain = function() {
         console.log("drain called...");
-        if (allChunksSend) {
+        if (allChunksSend && anyErrorDownloading['numBad'] > 0) {
+            win.send("message", "Error: there was a download error, we will not create the output files because there might be missing data.");
+        }
+        if (allChunksSend && anyErrorDownloading['numBad'] == 0) {
             console.log("finished getting data from redcap at this point, save itemsPerRecord to file: " + filename);
             var rxnorm_cache = {};
 
@@ -1567,15 +1572,26 @@ ipcMain.on('exportData', function(event,data) {
             win.send('message', "done with save...");
         }
     };
+    // initialize the download error tracker
+    anyErrorDownloading = { 'errors': [], 'numOk': 0, 'numBad': 0 }
+    // todo on drain we should display the errors --- or refuse to drain!
+
     var chunks = items.chunk(20); // get 20 items at the same time from REDCap
     for (var i = 0; i < chunks.length; i++) {
         queue.push({ 'chunk': [chunks[i]], "events": master_list_events },
-            (function(counter, maxCounter) {
+            (function(counter, maxCounter, anyErrorDownloading) {
                 return function(err) {
                     console.log("finished getting data for chunk: " + counter + " with " + err);
-                    win.send('message', "got data for chunk " + counter + "/" + maxCounter);
+                    if (err == 'ok') {
+                        anyErrorDownloading['numOk']++;
+                        win.send('message', "got data for chunk " + counter + "/" + maxCounter);
+                    } else {
+                        anyErrorDownloading['numBad']++;
+                        anyErrorDownloading['errors'].push(err);
+                        win.send('message', "ERROR on download " + counter + "/" + maxCounter);
+                    }
                 };
-            })(i, chunks.length)
+            })(i, chunks.length, anyErrorDownloading)
         );
     }
     // if we have bioportal code, ask for those values as well here
@@ -1586,9 +1602,16 @@ ipcMain.on('exportData', function(event,data) {
                 (function (counter, maxCounter) {
                     return function (err) {
                         console.log("finished getting data for BIOPORTAL chunk: " + counter + " with " + err);
-                        win.send('message', "got data for BIOPORTAL chunk " + counter + "/" + maxCounter);
+                        if (err == "ok") {
+                            anyErrorDownloading['numOk']++;
+                           win.send('message', "got data for BIOPORTAL chunk " + counter + "/" + maxCounter);
+                        } else {
+                            anyErrorDownloading['numBad']++;
+                            anyErrorDownloading['errors'].push(err);
+                           win.send('message', "Error getting BIOPORTAL chunk " + counter + "/" + maxCounter);
+                        }
                     };
-                })(i, chunks.length)
+                })(i, chunks.length, anyErrorDownloading)
             );
         }
     }
