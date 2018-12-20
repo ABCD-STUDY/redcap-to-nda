@@ -42,6 +42,15 @@ jQuery(document).ready(function() {
         });        
         return false;
     });
+    jQuery('#nda-aliases').on('click', function() {
+        dialog.showOpenDialog({ properties: ['openFile'], extensions: ['csv'], defaultPath: "aliases.csv" }, function (filename) {
+            ipcRenderer.send('openLoadCSVDialog', { filename: filename });
+            jQuery('#nda-aliases-filename').text(filename);
+        });        
+        return false;
+    });
+
+
     jQuery('#setup-dialog-cancel').on('click', function() {
         ipcRenderer.send('closeSetupDialogCancel', "");
         return false;

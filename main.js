@@ -6,6 +6,7 @@ const url       = require('url')
 const striptags = require('striptags')
 const Store     = require('electron-store');
 const moment    = require('moment');
+const csv       = require('csvtojson');
 const store = new Store();
 
 module.paths.push(path.resolve('node_modules'));
@@ -66,12 +67,7 @@ function createWindow () {
         { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
         { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
         { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-    ]}, {
-    label: "Import",
-    submenu: [
-        { label: "Import Aliases", accelerator: "", selector: "importAliases:" }
-    ]
-    }
+    ]}
   ];
 
   //Menu.setApplicationMenu(Menu.buildFromTemplate(template));
@@ -246,7 +242,7 @@ ipcMain.on('openSetupDialog', function (event, arg) {
         frame: false, 
         useContentSize: true,
         width: 480,
-        height: 460
+        height: 560
     });
     setupDialog.loadURL(url.format({
         pathname: path.join(__dirname, 'setupDialog.html'),
@@ -347,7 +343,7 @@ ipcMain.on('closeGetDateStringDialogOk', function(event, arg) {
 /////////////////////////////////////////////////////////////////////
 
 
-ipcMain.on('openImportAliasDialog', function ( event, arg) {
+ipcMain.on('openGetImportAliasDialog', function ( event, arg) {
     console.log("start openImportAliasDialog... with argument: " + JSON.stringify(arg));
     var item = arg['item'];
     if (getImportAliasDialog) {
@@ -964,6 +960,89 @@ ipcMain.on('openLoadJSONDialog', function(event,data) {
         current_subject_json_data = sj;
     }
 });
+
+ipcMain.on('openLoadCSVDialog', function(event,data) {
+    if (typeof data['filename'] == 'undefined') {
+        return;
+    }
+    current_aliases_csv = data['filename'][0];
+
+    // read with fs.readFileSync 
+    var fileName = fs.readFileSync(current_aliases_csv);
+    //var fileName = current_subject_json
+    console.log("got called for LoadCSVDialog");
+
+    if (fs.existsSync(current_aliases_csv)) {
+        var sj = [];
+        try {
+            sj = csv().fromFile(current_aliases_csv).then( function(data) {
+                console.log("got data from csv: " + JSON.stringify(data));
+                /**
+                 * [
+                 * 	{a:"1", b:"2", c:"3"},
+                 * 	{a:"4", b:"5". c:"6"}
+                 * ]
+                 */ 
+                // import into tags
+                if (data.length > 0) {
+                    var keys = Object.keys(data[0]);
+                    if (! 'redcap' in keys) {
+                        console.log("Error: did not find column redcap in data");
+                        return;
+                    }
+                    if (! 'aliases' in keys) {
+                        console.log("Error: did not find column aliases in data");
+                        return;
+                    }
+                    for (var i = 0; i < data.length; i++) { 
+                        var k = data[i]['redcap'];
+                        var d = data[i]['aliases'];
+                        // does the field name exist?
+                        var found = false;
+                        for (var j = 0; j < datadictionary.length; j++) {
+                            //console.log("keys: " + Object.keys(datadictionary[j]));
+                            if (datadictionary[j].field_name === k) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            console.log("Error: alias for item: " + d + " cannot be set. Field is not in data dictionary.");
+                            continue;
+                        }
+                        // don't import if it does not exist
+                        var vv = store.get('alias-' + k); // do we have a date field here instead of a string?            
+                        if (typeof vv === 'undefined') { // add an alias to the data dictionary
+                            vv = "";
+                        }
+                        var aliases = vv + " " + d;
+                        // remove duplicates (twice import?)
+                        var s = new Set(aliases.trim().split(" ").filter(function(a) { if (a === "") return false; return true; }));
+                        aliases = [...s].join(" ");
+                        console.log("Import Aliases: set key " + k + " to: " + aliases);
+                        store.set('alias-' + k, aliases);
+                        // and mark that we have an alias here
+                        var vv = store.get('tag-' + k);
+                        if (typeof vv !== 'undefined' && vv.indexOf('alias') == -1) {
+                            store.set('tag-' + k, vv + " alias");
+                        } else {
+                            store.set('tag-' + k, "alias");
+                        }
+                    }
+                }
+            });
+        } catch (e) {
+            if (e instanceof SyntaxError) {
+              // Output expected SyntaxErrors.
+              console.log(e);
+            } else {
+              // Output unexpected Errors.
+              console.log(e, false);
+            }
+        }
+    }
+});
+
 
 ipcMain.on('exportData', function(event,data) {
     var filename = data['filename'];
