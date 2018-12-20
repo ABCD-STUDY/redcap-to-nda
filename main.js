@@ -25,6 +25,7 @@ let setupDialog
 let ndaSelectDialog
 let changeLabelDialog
 let getDateStringDialog
+let getImportAliasDialog
 let datadicationary
 let instrumentLabels
 let token
@@ -65,7 +66,12 @@ function createWindow () {
         { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
         { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
         { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-    ]}
+    ]}, {
+    label: "Import",
+    submenu: [
+        { label: "Import Aliases", accelerator: "", selector: "importAliases:" }
+    ]
+    }
   ];
 
   //Menu.setApplicationMenu(Menu.buildFromTemplate(template));
@@ -337,6 +343,68 @@ ipcMain.on('closeGetDateStringDialogOk', function(event, arg) {
         store.set('parse-' + item, [parse]);
     }
 });
+
+/////////////////////////////////////////////////////////////////////
+
+
+ipcMain.on('openImportAliasDialog', function ( event, arg) {
+    console.log("start openImportAliasDialog... with argument: " + JSON.stringify(arg));
+    var item = arg['item'];
+    if (getImportAliasDialog) {
+        getImportAliasDialog.show();
+        var alias = store.get('alias-' + item);
+        console.log("get value from store for " + 'alias-' + item + " IS: " + alias);
+        getImportAliasDialog.send('changeAlias', { alias: alias, item: arg['item'] });
+        return;
+    }
+    getImportAliasDialog = new BrowserWindow({ 
+        parent: win, 
+        modal: true, 
+        show: false, 
+        titleBarStyle: 'hidden', 
+        frame: false, 
+        useContentSize: true,
+        width: 460,
+        height: 350  
+    });
+    getImportAliasDialog.loadURL(url.format({
+        pathname: path.join(__dirname, 'getImportAliasDialog.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+    getImportAliasDialog.once('ready-to-show', function() { 
+        getImportAliasDialog.show();
+        var alias = store.get('alias-' + arg['item']);
+        getImportAliasDialog.send('changeAlias', { alias: alias, item: arg['item'] }); 
+    });
+    console.log("done with getImportAliasDialog...");
+    getImportAliasDialog.on('closed', function() {
+        console.log("getImportAliasDialog was closed");
+    });
+});
+
+ipcMain.on('closeGetImportAliasDialogCancel', function(event, arg) {
+    if (getImportAliasDialog) {
+        getImportAliasDialog.hide();
+        console.log("closed import alias DIALOG after cancel");
+    }
+});
+
+ipcMain.on('closeGetImportAliasDialogOk', function(event, arg) {
+    if (getImportAliasDialog) {
+        getImportAliasDialog.hide();
+        alias  = arg.alias;
+        item   = arg.item;
+        console.log("closed import alias DIALOG after ok: " + alias + " " + item + " save now: " + 'parse-' + item + " with value: " + alias);
+        // we need to store the parse now
+        store.set('alias-' + item, [alias]);
+    }
+});
+
+
+
+/////////////////////////////////////////////////////////////////////
+
 
 
 ipcMain.on('openChangeLabelDialog', function (event, arg) {
@@ -1911,7 +1979,13 @@ ipcMain.on('exportForm', function(event, data) {
                     notes = notes.trim();
                     condition = "";
                 }
-            }
+                if (flags.indexOf('alias') !== -1) { // copy the conditional logic to the notes section
+                    var vv = store.get('alias-' + d['field_name']); // do we have a date field here instead of a string?            
+                    if (typeof vv !== 'undefined') { // add an alias to the data dictionary
+                        aliases = aliases + " " + vv;
+                    }
+                }
+            }   
             if (flag_date) { // if we should parse a date we also need the parse string (stored in the parse- variable)
                 var vv = store.get('parse-' + d['field_name']); // do we have a date field here instead of a string?            
                 if (typeof vv !== 'undefined') { // conversion to date requested

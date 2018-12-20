@@ -72,7 +72,8 @@ ipcRenderer.on('updateItems', function(event, data) {
         '<button class="btn btn-default tag" value="label" title="Export as label not as number">V</button>' +
         '<button class="btn btn-default tag" value="clearcheckboxes" title="Remove checkbox fields if none set">X</button>' +
         '<button class="btn btn-default tag" value="branching2notes" title="Copy branching logic information to notes section">N</button>' +
-        '<button class="btn btn-default tag" value="recommended" title="If a condition exists, make this field recommended, not conditional">R</button>'
+        '<button class="btn btn-default tag" value="recommended" title="If a condition exists, make this field recommended, not conditional">R</button>' +
+        '<button class="btn btn-default tag" value="alias" title="Add an alias for this item name">A</button>'
     );
     jQuery('#current-items-list div.tag-group').each(function() {
         // try to get the tags for this item
@@ -277,6 +278,9 @@ jQuery(document).ready(function() {
             // for a date field we need some input
             if (tag == 'date') {
                 ipcRenderer.send('openGetDateStringDialog', { 'item': item });
+            }
+            if (tag == 'alias') {
+                ipcRenderer.send('openGetImportAliasDialog', { 'item': item });
             }
         }
 

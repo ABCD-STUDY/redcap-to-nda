@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Item Alias</title>
+    <link rel="stylesheet" href="css/photon.css">
+  </head>
+  <body>
+        <div class="window">
+            <header class="toolbar toolbar-header">
+                <h1 class="title">Specify an alias field for this item</h1>
+            </header>
+            <div class="window-content">
+                <div class="padded-more">
+                    <form>
+                        <div class="form-group">
+                          <label>Alias String</label>
+                          <input type="text" class="form-control" id="get-import-alias-dialog-alias">
+                        </div>
+                        <hr>
+                        <div class="form-actions">
+                            <button class="btn btn-form btn-default" id="get-import-alias-dialog-cancel">Cancel</button>
+                            <button class="btn btn-form btn-primary" id="get-import-alias-dialog-ok">OK</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+         <script>
+                // You can also require other files to run in this process
+                require('./getImportAliasDialog.js')
+        </script>
+  </body>
+</html>
