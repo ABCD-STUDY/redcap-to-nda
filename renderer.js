@@ -179,6 +179,10 @@ ipcRenderer.on('message', function(event, data) {
 //
 jQuery(document).ready(function() {
 
+    jQuery('#open-import-alias-dialog').on('click', function() {
+
+    });
+
     jQuery('#open-setup-dialog').on('click', function() {
         console.log('open another dialog and get values for connectivity to REDCap');
         ipcRenderer.send('openSetupDialog', "");

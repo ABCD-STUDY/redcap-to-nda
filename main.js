@@ -1018,7 +1018,7 @@ ipcMain.on('openLoadCSVDialog', function(event,data) {
                         var aliases = vv + " " + d;
                         // remove duplicates (twice import?)
                         var s = new Set(aliases.trim().split(" ").filter(function(a) { if (a === "") return false; return true; }));
-                        aliases = [...s].join(" ");
+                        aliases = [...s].join(" ").trim();
                         console.log("Import Aliases: set key " + k + " to: " + aliases);
                         store.set('alias-' + k, aliases);
                         // and mark that we have an alias here
@@ -2061,7 +2061,7 @@ ipcMain.on('exportForm', function(event, data) {
                 if (flags.indexOf('alias') !== -1) { // copy the conditional logic to the notes section
                     var vv = store.get('alias-' + d['field_name']); // do we have a date field here instead of a string?            
                     if (typeof vv !== 'undefined') { // add an alias to the data dictionary
-                        aliases = aliases + " " + vv;
+                        aliases = (aliases + " " + vv).trim();
                     }
                 }
             }   
