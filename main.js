@@ -1,12 +1,17 @@
 //import { Packager } from 'electron-builder/out/packager';
 
-const {app, BrowserWindow, ipcMain, Menu} = require('electron')
-const path      = require('path')
-const url       = require('url')
+const {
+    app,
+    BrowserWindow,
+    ipcMain,
+    Menu
+} = require('electron')
+const path = require('path')
+const url = require('url')
 const striptags = require('striptags')
-const Store     = require('electron-store');
-const moment    = require('moment');
-const csv       = require('csvtojson');
+const Store = require('electron-store');
+const moment = require('moment');
+const csv = require('csvtojson');
 const store = new Store();
 
 module.paths.push(path.resolve('node_modules'));
@@ -31,6 +36,7 @@ let datadicationary
 let instrumentLabels
 let token
 let current_event
+let current_form
 let current_url = 'https://abcd-rc.ucsd.edu/redcap/api/';
 let current_subject_json = ''; // the name of an additional file that contains subject information (pGUID, 'gender')
 let current_subject_json_data = [] // the content of an additional file that contains subject information (pGUID, 'gender', 'dob', 'interview_age...')
@@ -38,53 +44,99 @@ let instrumentEventMapping = {};
 let restrictToNDA = ''
 let restrictToNDADD = []
 let removeAnyText = false
-let anyErrorDownloading = { 'errors': [], 'numOk': 0, 'numBad': 0 }
+let anyErrorDownloading = {
+    'errors': [],
+    'numOk': 0,
+    'numBad': 0
+}
 
-function createWindow () {
-  // Create the browser window.
-  win = new BrowserWindow({width: 1100, height: 700, "webPreferences" : { devTools: true } });
+function createWindow() {
+    // Create the browser window.
+    win = new BrowserWindow({
+        width: 1100,
+        height: 700,
+        "webPreferences": {
+            devTools: true
+        }
+    });
 
-  // and load the index.html of the app.
-  win.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }));
+    // and load the index.html of the app.
+    win.loadURL(url.format({
+        pathname: path.join(__dirname, 'index.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
 
-  var template = [{
-    label: "Application",
-    submenu: [
-        { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
-        { type: "separator" },
-        { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
-    ]}, {
-    label: "Edit",
-    submenu: [
-        { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-        { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
-        { type: "separator" },
-        { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-        { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-        { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-        { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-    ]}
-  ];
+    var template = [{
+        label: "Application",
+        submenu: [{
+                label: "About Application",
+                selector: "orderFrontStandardAboutPanel:"
+            },
+            {
+                type: "separator"
+            },
+            {
+                label: "Quit",
+                accelerator: "Command+Q",
+                click: function () {
+                    app.quit();
+                }
+            }
+        ]
+    }, {
+        label: "Edit",
+        submenu: [{
+                label: "Undo",
+                accelerator: "CmdOrCtrl+Z",
+                selector: "undo:"
+            },
+            {
+                label: "Redo",
+                accelerator: "Shift+CmdOrCtrl+Z",
+                selector: "redo:"
+            },
+            {
+                type: "separator"
+            },
+            {
+                label: "Cut",
+                accelerator: "CmdOrCtrl+X",
+                selector: "cut:"
+            },
+            {
+                label: "Copy",
+                accelerator: "CmdOrCtrl+C",
+                selector: "copy:"
+            },
+            {
+                label: "Paste",
+                accelerator: "CmdOrCtrl+V",
+                selector: "paste:"
+            },
+            {
+                label: "Select All",
+                accelerator: "CmdOrCtrl+A",
+                selector: "selectAll:"
+            }
+        ]
+    }];
 
-  //Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+    //Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
-  // Open the DevTools.
-  //win.webContents.openDevTools()
+    // Open the DevTools.
+    //win.webContents.openDevTools()
 
-  // Emitted when the window is closed.
-  win.on('closed', () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    win = null
-  })
+    // Emitted when the window is closed.
+    win.on('closed', () => {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        win = null
+    })
 
-  // show some information about the program location for the local file:
-  console.log("store location for local file: " + app.getPath('userData'));
+    // show some information about the program location for the local file:
+    console.log("store location for local file: " + app.getPath('userData'));
 }
 
 // This method will be called when Electron has finished
@@ -94,19 +146,19 @@ app.on('ready', createWindow)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+    // On macOS it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform !== 'darwin') {
+        app.quit()
+    }
 })
 
 app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (win === null) {
-    createWindow()
-  }
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (win === null) {
+        createWindow()
+    }
 })
 
 // In this file you can include the rest of your app's specific main process
@@ -119,14 +171,14 @@ ipcMain.on('openNDASelectDialog', function (event, arg) {
         ndaSelectDialog.show();
         return;
     }
-    ndaSelectDialog = new BrowserWindow({ 
-        parent: win, 
-        modal: true, 
-        show: false, 
-        titleBarStyle: 'hidden', 
-        frame: false, 
+    ndaSelectDialog = new BrowserWindow({
+        parent: win,
+        modal: true,
+        show: false,
+        titleBarStyle: 'hidden',
+        frame: false,
         useContentSize: true,
-        width: 630,
+        width: 730,
         height: 410
     });
     ndaSelectDialog.loadURL(url.format({
@@ -134,18 +186,22 @@ ipcMain.on('openNDASelectDialog', function (event, arg) {
         protocol: 'file:',
         slashes: true
     }));
-    ndaSelectDialog.once('ready-to-show', function() { ndaSelectDialog.show(); });
+    ndaSelectDialog.once('ready-to-show', function () {
+        ndaSelectDialog.show();
+    });
     console.log("done with openNDASelectDialog...");
-    ndaSelectDialog.on('closed', function() {
+    ndaSelectDialog.on('closed', function () {
         console.log("ndaSelectDialog was closed");
     });
 });
 
-ipcMain.on('closeNDASelectDialogOk', function(event,arg) {
+ipcMain.on('closeNDASelectDialogOk', function (event, arg) {
     //console.log("got to set a new Value as :" + arg['shortName']);
     restrictToNDA = arg['shortName'];
     // indicate in the interface that there is a value for this now
-    win.send('ndaSelectButtonTextChange', { 'shortName': arg['shortName'] });
+    win.send('ndaSelectButtonTextChange', {
+        'shortName': arg['shortName']
+    });
 
     // get the data dictionary for this short name
     restrictToNDADD = [];
@@ -167,7 +223,11 @@ ipcMain.on('closeNDASelectDialogOk', function(event,arg) {
             if (error || response.statusCode !== 200) {
                 // error case
                 //process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
-                win.send('alert', JSON.stringify({ response: response, error: error, body: body }));
+                win.send('alert', JSON.stringify({
+                    response: response,
+                    error: error,
+                    body: body
+                }));
                 callback("error");
                 return;
             }
@@ -175,15 +235,64 @@ ipcMain.on('closeNDASelectDialogOk', function(event,arg) {
             win.send('message', "read data dictionary for " + restrictToNDA + " from NDA...");
             restrictToNDADD = body;
         });
-    }    
+    }
 
     if (ndaSelectDialog)
         ndaSelectDialog.hide();
 });
-ipcMain.on('closeNDASelectDialogCancel', function(event,arg) {
+ipcMain.on('closeNDASelectDialogCancel', function (event, arg) {
     if (ndaSelectDialog)
         ndaSelectDialog.hide();
 });
+
+ipcMain.on('closeNDASelectDialogVerify', function (event, arg) {
+    //console.log("got to set a new Value as :" + arg['shortName']);
+    // restrictToNDA = arg['shortName'];
+    // indicate in the interface that there is a value for this now
+    //win.send('ndaSelectButtonTextChange', {
+    //    'shortName': arg['shortName']
+    //});
+
+    // get the data dictionary for this short name
+    // restrictToNDADD = [];
+    // curl -X GET --header 'Accept: application/json' 'https://ndar.nih.gov/api/datadictionary/v2/datastructure/abcd_psb01'
+    var headers = {
+        'User-Agent': 'Super Agent/0.0.1',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+    }
+    var url = 'https://ndar.nih.gov/api/datadictionary/v2/datastructure/' + arg['shortName'];
+    request({
+        method: 'GET',
+        url: url,
+        form: [],
+        headers: headers,
+        json: true
+    }, function (error, response, body) {
+        if (error || response.statusCode !== 200) {
+            // error case
+            //process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
+            win.send('alert', JSON.stringify({
+                response: response,
+                error: error,
+                body: body
+            }));
+            callback("error");
+            return;
+        }
+        //console.log(JSON.stringify(body));
+        win.send('message', "read data dictionary for " + restrictToNDA + " from NDA...");
+        // now check against the selected instrument to verify 
+        var txt = verify(current_form, body);
+        console.log("Verification: " + txt);
+
+        // restrictToNDADD = body;
+    });
+
+    if (ndaSelectDialog)
+        ndaSelectDialog.hide();
+});
+
 
 ipcMain.on('ndaDDFromREDCap', function (event, arg) {
     console.log("ask NDA for the list of data dictionaries...");
@@ -204,7 +313,11 @@ ipcMain.on('ndaDDFromREDCap', function (event, arg) {
         if (error || response.statusCode !== 200) {
             // error case
             //process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
-            win.send('alert', JSON.stringify({ response: response, error: error, body: body }));
+            win.send('alert', JSON.stringify({
+                response: response,
+                error: error,
+                body: body
+            }));
             callback("error");
             return;
         }
@@ -234,12 +347,12 @@ ipcMain.on('openSetupDialog', function (event, arg) {
         setupDialog.show();
         return;
     }
-    setupDialog = new BrowserWindow({ 
-        parent: win, 
-        modal: true, 
-        show: false, 
-        titleBarStyle: 'hidden', 
-        frame: false, 
+    setupDialog = new BrowserWindow({
+        parent: win,
+        modal: true,
+        show: false,
+        titleBarStyle: 'hidden',
+        frame: false,
         useContentSize: true,
         width: 480,
         height: 560
@@ -249,21 +362,23 @@ ipcMain.on('openSetupDialog', function (event, arg) {
         protocol: 'file:',
         slashes: true
     }));
-    setupDialog.once('ready-to-show', function() { setupDialog.show(); });
+    setupDialog.once('ready-to-show', function () {
+        setupDialog.show();
+    });
     console.log("done with openSetupDialog...");
-    setupDialog.on('closed', function() {
+    setupDialog.on('closed', function () {
         console.log("setupDialog was closed");
     });
 
 });
 
-ipcMain.on('closeSetupDialogCancel', function(event, arg) {
+ipcMain.on('closeSetupDialogCancel', function (event, arg) {
     if (setupDialog) {
         setupDialog.hide();
         console.log("closed setup DIALOG after cancel");
     }
 });
-ipcMain.on('closeSetupDialogOk', function(event, arg) {
+ipcMain.on('closeSetupDialogOk', function (event, arg) {
     if (setupDialog) {
         setupDialog.hide();
         token = arg.token;
@@ -274,11 +389,11 @@ ipcMain.on('closeSetupDialogOk', function(event, arg) {
         console.log("closed setup DIALOG after ok: " + token + " " + event + " " + current_url); // + " " + current_subject_json);
 
         // now populate the list with the instruments
-        updateInstrumentList( current_event );
+        updateInstrumentList(current_event);
     }
 });
 
-ipcMain.on('setupRemoveAnyText', function(event, arg) {
+ipcMain.on('setupRemoveAnyText', function (event, arg) {
     if (arg['value']) {
         removeAnyText = true;
     } else {
@@ -286,54 +401,60 @@ ipcMain.on('setupRemoveAnyText', function(event, arg) {
     }
 });
 
-ipcMain.on('openGetDateStringDialog', function ( event, arg) {
+ipcMain.on('openGetDateStringDialog', function (event, arg) {
     console.log("start openGetDateStringDialog... with argument: " + JSON.stringify(arg));
     var item = arg['item'];
     if (getDateStringDialog) {
         getDateStringDialog.show();
         var parse = store.get('parse-' + item);
         console.log("get value from store for " + 'parse-' + item + " IS: " + parse);
-        getDateStringDialog.send('changeParse', { parse: parse, item: arg['item'] });
+        getDateStringDialog.send('changeParse', {
+            parse: parse,
+            item: arg['item']
+        });
         return;
     }
-    getDateStringDialog = new BrowserWindow({ 
-        parent: win, 
-        modal: true, 
-        show: false, 
-        titleBarStyle: 'hidden', 
-        frame: false, 
+    getDateStringDialog = new BrowserWindow({
+        parent: win,
+        modal: true,
+        show: false,
+        titleBarStyle: 'hidden',
+        frame: false,
         useContentSize: true,
         width: 460,
-        height: 350  
+        height: 350
     });
     getDateStringDialog.loadURL(url.format({
         pathname: path.join(__dirname, 'getDateStringDialog.html'),
         protocol: 'file:',
         slashes: true
     }));
-    getDateStringDialog.once('ready-to-show', function() { 
+    getDateStringDialog.once('ready-to-show', function () {
         getDateStringDialog.show();
         var parse = store.get('parse-' + arg['item']);
-        getDateStringDialog.send('changeParse', { parse: parse, item: arg['item'] }); 
+        getDateStringDialog.send('changeParse', {
+            parse: parse,
+            item: arg['item']
+        });
     });
     console.log("done with getDateStringDialog...");
-    getDateStringDialog.on('closed', function() {
+    getDateStringDialog.on('closed', function () {
         console.log("getDateStringDialog was closed");
     });
 });
 
-ipcMain.on('closeGetDateStringDialogCancel', function(event, arg) {
+ipcMain.on('closeGetDateStringDialogCancel', function (event, arg) {
     if (getDateStringDialog) {
         getDateStringDialog.hide();
         console.log("closed setup DIALOG after cancel");
     }
 });
 
-ipcMain.on('closeGetDateStringDialogOk', function(event, arg) {
+ipcMain.on('closeGetDateStringDialogOk', function (event, arg) {
     if (getDateStringDialog) {
         getDateStringDialog.hide();
-        parse  = arg.parse;
-        item   = arg.item;
+        parse = arg.parse;
+        item = arg.item;
         console.log("closed setup DIALOG after ok: " + parse + " " + item + " save now: " + 'parse-' + item + " with value: " + parse);
         // we need to store the parse now
         store.set('parse-' + item, [parse]);
@@ -343,54 +464,60 @@ ipcMain.on('closeGetDateStringDialogOk', function(event, arg) {
 /////////////////////////////////////////////////////////////////////
 
 
-ipcMain.on('openGetImportAliasDialog', function ( event, arg) {
+ipcMain.on('openGetImportAliasDialog', function (event, arg) {
     console.log("start openImportAliasDialog... with argument: " + JSON.stringify(arg));
     var item = arg['item'];
     if (getImportAliasDialog) {
         getImportAliasDialog.show();
         var alias = store.get('alias-' + item);
         console.log("get value from store for " + 'alias-' + item + " IS: " + alias);
-        getImportAliasDialog.send('changeAlias', { alias: alias, item: arg['item'] });
+        getImportAliasDialog.send('changeAlias', {
+            alias: alias,
+            item: arg['item']
+        });
         return;
     }
-    getImportAliasDialog = new BrowserWindow({ 
-        parent: win, 
-        modal: true, 
-        show: false, 
-        titleBarStyle: 'hidden', 
-        frame: false, 
+    getImportAliasDialog = new BrowserWindow({
+        parent: win,
+        modal: true,
+        show: false,
+        titleBarStyle: 'hidden',
+        frame: false,
         useContentSize: true,
         width: 460,
-        height: 350  
+        height: 350
     });
     getImportAliasDialog.loadURL(url.format({
         pathname: path.join(__dirname, 'getImportAliasDialog.html'),
         protocol: 'file:',
         slashes: true
     }));
-    getImportAliasDialog.once('ready-to-show', function() { 
+    getImportAliasDialog.once('ready-to-show', function () {
         getImportAliasDialog.show();
         var alias = store.get('alias-' + arg['item']);
-        getImportAliasDialog.send('changeAlias', { alias: alias, item: arg['item'] }); 
+        getImportAliasDialog.send('changeAlias', {
+            alias: alias,
+            item: arg['item']
+        });
     });
     console.log("done with getImportAliasDialog...");
-    getImportAliasDialog.on('closed', function() {
+    getImportAliasDialog.on('closed', function () {
         console.log("getImportAliasDialog was closed");
     });
 });
 
-ipcMain.on('closeGetImportAliasDialogCancel', function(event, arg) {
+ipcMain.on('closeGetImportAliasDialogCancel', function (event, arg) {
     if (getImportAliasDialog) {
         getImportAliasDialog.hide();
         console.log("closed import alias DIALOG after cancel");
     }
 });
 
-ipcMain.on('closeGetImportAliasDialogOk', function(event, arg) {
+ipcMain.on('closeGetImportAliasDialogOk', function (event, arg) {
     if (getImportAliasDialog) {
         getImportAliasDialog.hide();
-        alias  = arg.alias;
-        item   = arg.item;
+        alias = arg.alias;
+        item = arg.item;
         console.log("closed import alias DIALOG after ok: " + alias + " " + item + " save now: " + 'parse-' + item + " with value: " + alias);
         // we need to store the parse now
         store.set('alias-' + item, [alias]);
@@ -407,7 +534,12 @@ ipcMain.on('openChangeLabelDialog', function (event, arg) {
     console.log("start openChangeLabelDialog... with argument: " + JSON.stringify(arg));
     if (changeLabelDialog) {
         changeLabelDialog.show();
-        changeLabelDialog.send('changeLabelCurrentName', { name: arg['name'], instrument: arg['instrument'], nda_name: arg['nda_name'], version: arg['version'] });         
+        changeLabelDialog.send('changeLabelCurrentName', {
+            name: arg['name'],
+            instrument: arg['instrument'],
+            nda_name: arg['nda_name'],
+            version: arg['version']
+        });
         return;
     }
     changeLabelDialog = new BrowserWindow({
@@ -425,12 +557,17 @@ ipcMain.on('openChangeLabelDialog', function (event, arg) {
         protocol: 'file:',
         slashes: true
     }));
-    changeLabelDialog.once('ready-to-show', function() { 
-        changeLabelDialog.show(); 
-        changeLabelDialog.send('changeLabelCurrentName', { name: arg['name'], instrument: arg['instrument'], nda_name: arg['nda_name'], version: arg['version'] }); 
+    changeLabelDialog.once('ready-to-show', function () {
+        changeLabelDialog.show();
+        changeLabelDialog.send('changeLabelCurrentName', {
+            name: arg['name'],
+            instrument: arg['instrument'],
+            nda_name: arg['nda_name'],
+            version: arg['version']
+        });
     });
     console.log("done with openChangeLabelDialog...");
-    changeLabelDialog.on('closed', function() {
+    changeLabelDialog.on('closed', function () {
         console.log("openChangeLabelDialog was closed");
     });
     // win.send('changeLabelCurrentName', arg);
@@ -438,7 +575,7 @@ ipcMain.on('openChangeLabelDialog', function (event, arg) {
 
 });
 
-ipcMain.on('closeChangeLabelDialogReset', function(event, arg) {
+ipcMain.on('closeChangeLabelDialogReset', function (event, arg) {
     if (changeLabelDialog) {
         changeLabelDialog.hide();
         var name = arg.name.trim();
@@ -451,19 +588,24 @@ ipcMain.on('closeChangeLabelDialogReset', function(event, arg) {
         name = instrumentLabels[instrument];
 
         // here we should delete the tag instead of setting it to the default
-        results = [ { 'tags': [ name, version, nda_name ], 'item': instrument, 'prefix': 'instrument-', 'additional-action': 'delete' } ];
+        results = [{
+            'tags': [name, version, nda_name],
+            'item': instrument,
+            'prefix': 'instrument-',
+            'additional-action': 'delete'
+        }];
         win.send('updateTagValues', results);
     }
 });
 
-ipcMain.on('closeChangeLabelDialogCancel', function(event, arg) {
+ipcMain.on('closeChangeLabelDialogCancel', function (event, arg) {
     if (changeLabelDialog) {
         changeLabelDialog.hide();
         console.log("closed setup DIALOG after cancel");
     }
 });
 
-ipcMain.on('closeChangeLabelDialogOk', function(event, arg) {
+ipcMain.on('closeChangeLabelDialogOk', function (event, arg) {
     if (changeLabelDialog) {
         changeLabelDialog.hide();
         name = arg.name.trim();
@@ -476,7 +618,11 @@ ipcMain.on('closeChangeLabelDialogOk', function(event, arg) {
         store.set('instrument-' + instrument, [name, version, nda_name]);
 
         // now update the interface with the new values
-        results = [ { 'tags': [ name, version, nda_name ], 'item': instrument, 'prefix': 'instrument-' } ];
+        results = [{
+            'tags': [name, version, nda_name],
+            'item': instrument,
+            'prefix': 'instrument-'
+        }];
         win.send('updateTagValues', results);
 
         // now populate the list with the instruments
@@ -485,13 +631,13 @@ ipcMain.on('closeChangeLabelDialogOk', function(event, arg) {
 });
 
 
-ipcMain.on('getEventsFromREDCap', function(event, arg) {
+ipcMain.on('getEventsFromREDCap', function (event, arg) {
     var token = arg;
     console.log("get event data from REDCap...");
 
-    getEvents( token );
-    getInstrumentEventMapping( token );
-    getDataDictionary( token );
+    getEvents(token);
+    getInstrumentEventMapping(token);
+    getDataDictionary(token);
 
     // send back to dialog
     //setupDialog.send('eventsFromREDCap', "DATA FROM REDCAP");
@@ -499,6 +645,7 @@ ipcMain.on('getEventsFromREDCap', function(event, arg) {
 
 ipcMain.on('getItemsForForm', function (event, form) {
     console.log("show items for form :" + form);
+    current_form = form;
     var items = [];
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
@@ -512,7 +659,7 @@ ipcMain.on('getItemsForForm', function (event, form) {
 });
 
 // save a list of tags for this item [ { 'item': "some_item", 'tags': [ "dont-save" ] } ]
-ipcMain.on('setTags', function(event, data) {
+ipcMain.on('setTags', function (event, data) {
     console.log("setTags with: " + JSON.stringify(data));
     // save the tags for this item as
     for (var i = 0; i < data.length; i++) {
@@ -543,7 +690,7 @@ ipcMain.on('setTags', function(event, data) {
 });
 
 // delete one tag per entry [ { 'item': "some_item", 'tag': "dont-save" } ]
-ipcMain.on('deleteTags', function(event, data) {
+ipcMain.on('deleteTags', function (event, data) {
     // save the tags for this item as
 
     for (var i = 0; i < data.length; i++) {
@@ -551,67 +698,74 @@ ipcMain.on('deleteTags', function(event, data) {
         if (typeof data[i]['prefix'] !== 'undefined') {
             tag_prefix = data[i]['prefix'];
         }
-        var item = data[i]['item']; 
+        var item = data[i]['item'];
         var current_tags = store.get(tag_prefix + item);
         var tags = [];
         if (typeof current_tags === 'undefined') {
-           //console.log("Error: there are no tags for item " + tag_prefix + " " + item + ", nothing is removed." + JSON.stringify(data));
-           return; // we are done, nothing to remove
+            //console.log("Error: there are no tags for item " + tag_prefix + " " + item + ", nothing is removed." + JSON.stringify(data));
+            return; // we are done, nothing to remove
         }
         if (tag_prefix == 'instrument-') { // delete all tags for this entry
-             store.delete(tag_prefix + item);
-             console.log("delete " + tag_prefix + " " + item + " from store");
+            store.delete(tag_prefix + item);
+            console.log("delete " + tag_prefix + " " + item + " from store");
         } else {
-           for (var j = 0; j < current_tags.length; j++) {
-               if (data[i]['tags'].indexOf(current_tags[j]) === -1) {
-                   tags.push(current_tags[j]);
-               }
-           }
-           if (tags.length == 0) {
-               // nothing to save again, remove this tag
-               store.delete(tag_prefix + item);
-           } else {
-               store.set(tag_prefix + item, tags); // store what is left after removing the tags that should be deleted
-           }
+            for (var j = 0; j < current_tags.length; j++) {
+                if (data[i]['tags'].indexOf(current_tags[j]) === -1) {
+                    tags.push(current_tags[j]);
+                }
+            }
+            if (tags.length == 0) {
+                // nothing to save again, remove this tag
+                store.delete(tag_prefix + item);
+            } else {
+                store.set(tag_prefix + item, tags); // store what is left after removing the tags that should be deleted
+            }
         }
     }
 });
 
 // returns tags for list of items [ { 'item': "some_item", 'some_other_key': "some other value" } ]
 // the input will also be part of the returned array of structures (key 'data')
-ipcMain.on('getTags', function(event,data) {
+ipcMain.on('getTags', function (event, data) {
     var results = [];
     for (var i = 0; i < data.length; i++) {
         //console.log("called getTags for this item: " + data[i]['item']);
         var tag_prefix = 'tag-';
         if (typeof data[i]['prefix'] !== 'undefined')
             tag_prefix = data[i]['prefix']
-        var tags = store.get( tag_prefix + data[i]['item'] );
+        var tags = store.get(tag_prefix + data[i]['item']);
         if (typeof tags !== 'undefined') {
-            results.push( { 'tags': tags, 'item': data[i]['item'], 'prefix': tag_prefix } );
+            results.push({
+                'tags': tags,
+                'item': data[i]['item'],
+                'prefix': tag_prefix
+            });
         }
     }
     //console.log("getTags: " + JSON.stringify(data) + " " + JSON.stringify(results));
     win.send('updateTagValues', results);
 });
 
-Array.prototype.chunk = function ( n ) {
-    if ( !this.length ) {
+Array.prototype.chunk = function (n) {
+    if (!this.length) {
         return [];
     }
     var newar = [];
     while (this.length > 0) {
-        newar.push(this.splice(0,n));
+        newar.push(this.splice(0, n));
     }
 
     return newar;
 };
 
-ipcMain.on('checkData', function(event, data) {
+ipcMain.on('checkData', function (event, data) {
     var form = data['form'];
     //console.log("check the data for this form: " + form);
     // assume that we have access to current_subject_json_data
-    var subject_json = current_subject_json_data.reduce(function(acc, a) { acc[a['pGUID']] = a; return acc; }, {});
+    var subject_json = current_subject_json_data.reduce(function (acc, a) {
+        acc[a['pGUID']] = a;
+        return acc;
+    }, {});
 
     // we cannot ask for all items at the same time, we don't have enough memory on the server to get those back
     // lets chunk the items in the form
@@ -625,7 +779,7 @@ ipcMain.on('checkData', function(event, data) {
     }
 
     var itemsForForm = [];
-    var queue = async.queue(function(chunk, callback) {    
+    var queue = async.queue(function (chunk, callback) {
         // get data for all item in this form
         var data = {
             'token': token,
@@ -645,14 +799,14 @@ ipcMain.on('checkData', function(event, data) {
             'returnFormat': 'json'
         }
         for (var i = 0; i < chunk.length; i++) {
-            data['fields[' +  i + ']'] = chunk[i];
+            data['fields[' + i + ']'] = chunk[i];
         }
         // restrict the check to participants that we will exported
         data['fields[' + chunk.length + ']'] = 'nda_year_1_inclusion';
-        
+
         var headers = {
-            'User-Agent':       'Super Agent/0.0.1',
-            'Content-Type':     'application/x-www-form-urlencoded'
+            'User-Agent': 'Super Agent/0.0.1',
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
         console.log("run request now...");
         var url = current_url;
@@ -662,11 +816,15 @@ ipcMain.on('checkData', function(event, data) {
             form: data,
             headers: headers,
             json: true
-        }, function( error, response, body) {
+        }, function (error, response, body) {
             if (error || response.statusCode !== 200) {
                 // error case
                 //process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
-                win.send('alert', JSON.stringify({ response: response, error: error, body: body}));
+                win.send('alert', JSON.stringify({
+                    response: response,
+                    error: error,
+                    body: body
+                }));
                 callback("error");
                 return;
             }
@@ -674,7 +832,7 @@ ipcMain.on('checkData', function(event, data) {
             win.send('message', "preparing data...");
             data = [];
             // only add data that will be exported
-            for(var i = 0; i < body.length; i++) {
+            for (var i = 0; i < body.length; i++) {
                 //if (body['nda_year_1_inclusion___1'] !== "1")
                 if (!(body['id_redcap'] in subject_json)) {
                     continue;
@@ -686,10 +844,16 @@ ipcMain.on('checkData', function(event, data) {
             for (var i = 0; i < datadictionary.length; i++) {
                 var d = datadictionary[i];
                 // only call checkItem for items that we have in the current body
-                if (d['form_name'] == form && chunk.indexOf(d['field_name']) !== -1)  {
-                    checkItem(d['field_name'], form, data, (function(i) {
-                        return function(result, status) {
-                            win.send('showItemCheck', { item: d['field_name'], form: form, result: result, status: status, order: i });
+                if (d['form_name'] == form && chunk.indexOf(d['field_name']) !== -1) {
+                    checkItem(d['field_name'], form, data, (function (i) {
+                        return function (result, status) {
+                            win.send('showItemCheck', {
+                                item: d['field_name'],
+                                form: form,
+                                result: result,
+                                status: status,
+                                order: i
+                            });
                         };
                     })(i));
                 }
@@ -699,7 +863,7 @@ ipcMain.on('checkData', function(event, data) {
     }, 2);
 
     var allChunksSend2 = false;
-    queue.drain = function() {
+    queue.drain = function () {
         process.stdout.write("finished getting data from redcap for checkData\n");
         if (allChunksSend2) {
             win.send('message', "done with checking...");
@@ -709,20 +873,20 @@ ipcMain.on('checkData', function(event, data) {
     var chunks = items.chunk(40); // get 20 items at the same time from REDCap
 
     for (var i = 0; i < chunks.length; i++) {
-        console.log('request chunk ' + i + " of " + (chunks.length-1));
-        queue.push([chunks[i]], 
-            (function(counter, maxCounter) {
-                return function(err) {
-                    console.log("finished getting data for chunk: " + counter + " with " + err );
+        console.log('request chunk ' + i + " of " + (chunks.length - 1));
+        queue.push([chunks[i]],
+            (function (counter, maxCounter) {
+                return function (err) {
+                    console.log("finished getting data for chunk: " + counter + " with " + err);
                     win.send('message', "got data for chunk " + counter + "/" + maxCounter);
                 };
             })(i, chunks.length)
         );
-    }    
+    }
     allChunksSend2 = true;
 });
 
-ipcMain.on('checkItem', function(event, data) {
+ipcMain.on('checkItem', function (event, data) {
     var item = data['item'];
     var form = data['form'];
     // get data for that item
@@ -739,34 +903,101 @@ ipcMain.on('checkItem', function(event, data) {
         'exportDataAccessGroups': false,
         'returnFormat': 'json'
     }
-    
+
     var headers = {
-        'User-Agent':       'Super Agent/0.0.1',
-        'Content-Type':     'application/x-www-form-urlencoded'
+        'User-Agent': 'Super Agent/0.0.1',
+        'Content-Type': 'application/x-www-form-urlencoded'
     }
-    
-    var url = current_url; 
+
+    var url = current_url;
     request({
         method: 'POST',
         url: url,
         form: data,
         headers: headers,
         json: true
-    }, function( error, response, body) {
+    }, function (error, response, body) {
         if (error || response.statusCode !== 200) {
             // error case
             process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
             win.send('alert', "Error: no response from REDCap");
             return;
         }
-        checkItem( item, form, data, function(result, status) {
-            win.send('showItemCheck', { item: item, form: form, result: result, status: status });
+        checkItem(item, form, data, function (result, status) {
+            win.send('showItemCheck', {
+                item: item,
+                form: form,
+                result: result,
+                status: status
+            });
         });
     });
 
 });
 
-function checkEntryLength( item, l, data, callback ) {
+// Check the form form_name (REDCap) against the nda form, list all the variables that could not be exported
+// but should be. 
+function verify(form_name, nda) {
+    var redcap = [];
+    var nda = nda['dataElements'];
+    for (var i = 0; i < datadictionary.length; i++) {
+        var d = datadictionary[i];
+        if (d['form_name'] == form_name) {
+            // only elements that should be exported are in datadictionary (@HIDDEN and @SHARED are done on reading)
+
+            // only check if it should be exported - is it a descriptive item? - Also superfluous as datadictionary only contains non-descriptive items
+            if (d['field_type'] == 'descriptive') {
+                console.log("remove " + d['field_name'] + " - descriptive");
+                continue;
+            }
+            if (d['field_type'] == 'notes') {
+                console.log("remove " + d['field_name'] + " - notes");
+                continue;
+            }
+
+            // this might actually do something
+            var flags = store.get('tag-' + d['field_name']);
+            if (typeof flags !== 'undefined') {
+                if (flags.indexOf('remove') !== -1) {
+                    console.log("remove " + d['field_name'] + " - remove tag");
+                    continue; // don't export this key
+                }
+            }
+            redcap.push(d);
+        }
+    }
+    console.log("found: " + redcap.length + " items in the redcap instrument that should be checked...");
+
+    var txt = "REDCap field_name,status\n";
+    // now check each item in redcap against the items in nda
+    for (var i = 0; i < redcap.length; i++) {
+        var d = redcap[i];
+        var found = false;
+        for (var j = 0; j < nda.length; j++) {
+            // can we actually find this variable - either in ElementName or in Aliases?
+            var t = nda[j]['name'];
+            var a = nda[j]['aliases'];
+            console.log("a : " + JSON.stringify(a));
+            if (typeof a !== 'undefined' && a.length > 0) { // test for string
+                a = a.split(" ");
+            } else {
+                a = [];
+            }
+
+            if (t == d['field_name'] || a.indexOf(d['field_name']) > -1) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            txt += d['field_name'] + ",missing\n";
+        }
+    }
+
+    return txt;
+}
+
+function checkEntryLength(item, l, data, callback) {
     var result = "";
     for (var i = 0; i < data.length; i++) {
         if (typeof data[i][item] !== 'undefined' && data[i][item].length > l) {
@@ -781,10 +1012,10 @@ function checkEntryLength( item, l, data, callback ) {
         result = "no data longer than " + l;
     }
 
-    (callback)( status + " " + result, status );
+    (callback)(status + " " + result, status);
 }
 
-function checkEntryDateConversion( item, parse_string, data, callback ) {
+function checkEntryDateConversion(item, parse_string, data, callback) {
     var result = "";
     for (var i = 0; i < data.length; i++) {
         if (typeof data[i][item] !== 'undefined' && data[i][item] !== "") {
@@ -801,15 +1032,15 @@ function checkEntryDateConversion( item, parse_string, data, callback ) {
         result = "data conversion ok";
     }
 
-    (callback)( status + " " + result, status );
+    (callback)(status + " " + result, status);
 }
 
 
-function checkEntryNumber( item, data, callback ) {
+function checkEntryNumber(item, data, callback) {
     var result = "";
     for (var i = 0; i < data.length; i++) {
         if (data[i][item].match(/[+-]?[0-9][.]?[0-9]/) === null) {
-             result = result + "is-number-validation at " + data[i][item].length + ",";
+            result = result + "is-number-validation at " + data[i][item].length + ",";
         }
     }
     status = "good";
@@ -819,14 +1050,14 @@ function checkEntryNumber( item, data, callback ) {
         result = "no number conversion error found";
     }
 
-    (callback)( status + " " + result, status );
+    (callback)(status + " " + result, status);
 }
 
-function checkEntryInteger( item, data, callback ) {
+function checkEntryInteger(item, data, callback) {
     var result = "";
     for (var i = 0; i < data.length; i++) {
         if (data[i][item].match(/[+-]?[0-9]/) === null) {
-             result = result + "is-integer-validation at " + data[i][item].length + ",";
+            result = result + "is-integer-validation at " + data[i][item].length + ",";
         }
     }
     status = "good";
@@ -836,11 +1067,11 @@ function checkEntryInteger( item, data, callback ) {
         result = "no integer conversion error found";
     }
 
-    (callback)( status + " " + result, status );
+    (callback)(status + " " + result, status);
 }
 
 
-function checkItem( item, form, data, callback ) {
+function checkItem(item, form, data, callback) {
     // ask REDCap for data and check
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
@@ -849,21 +1080,21 @@ function checkItem( item, form, data, callback ) {
             if (typeof flags !== 'undefined' && flags.indexOf('date') !== -1) { // only check date conversion if this flag is set, nothing else
                 // we have to ask
                 var convertString = store.get('parse-' + d['field_name']);
-                checkEntryDateConversion(item, convertString, data, function(result, status) {
+                checkEntryDateConversion(item, convertString, data, function (result, status) {
                     (callback)(result, status);
                     return;
                 });
                 return;
             }
             if (d['field_type'] == "text" && d['text_validation_type_or_show_slider_number'] == "number") {
-                checkEntryNumber(item, data, function(result, status) {
-                    (callback)( result, status );
+                checkEntryNumber(item, data, function (result, status) {
+                    (callback)(result, status);
                 });
                 return;
             }
             if (d['field_type'] == "text" && d['text_validation_type_or_show_slider_number'] == "integer") {
-                checkEntryInteger(item, data, function(result, status) {
-                    (callback)( result, status );
+                checkEntryInteger(item, data, function (result, status) {
+                    (callback)(result, status);
                 });
                 return;
             }
@@ -877,9 +1108,9 @@ function checkItem( item, form, data, callback ) {
                     if (flags.indexOf('huge') !== -1)
                         allowedLength = 200;
                 }
-                checkEntryLength(item, allowedLength, data, function(result, status) {
-                    (callback)( result, status );
-                    return;                    
+                checkEntryLength(item, allowedLength, data, function (result, status) {
+                    (callback)(result, status);
+                    return;
                 }); // default entry length
                 return;
             }
@@ -892,36 +1123,36 @@ function checkItem( item, form, data, callback ) {
                 var example = '';
                 for (var j = 0; j < data.length; j++) {
                     if (typeof data[j][item] !== 'undefined' && data[j][item].length > maxLength) {
-                        maxLength =  data[j][item].length;
+                        maxLength = data[j][item].length;
                         example = data[j][item];
                     }
                 }
                 if (maxLength > ma) {
                     status = "bad";
-                    result = result + "max-length validations " + maxLength + "/"+ ma + " [" + example + "], ";
+                    result = result + "max-length validations " + maxLength + "/" + ma + " [" + example + "], ";
                 }
-                for (var j = 0; j < data.length; j++) { 
+                for (var j = 0; j < data.length; j++) {
                     if (typeof data[j][item] !== 'undefined' && data[j][item] !== '' && (data[j][item] < mi || data[j][item] > ma)) {
                         status = "bad";
                         result = result + "range validation error \"" + data[j][item] + "\" [" + mi + "-" + ma + "],";
                     }
                 }
-                (callback) ( result, status );
+                (callback)(result, status);
                 return;
             }
             if (d['field_type'] == "notes") {
-                (callback)( "notes fields will not be exported", "info" );
+                (callback)("notes fields will not be exported", "info");
                 return;
             }
             if (d['field_type'] == "number") {
-                checkEntryNumber(item, data, function(result, status) {
-                    (callback)( result, status );
+                checkEntryNumber(item, data, function (result, status) {
+                    (callback)(result, status);
                 });
                 return;
             }
             if (d['field_type'] == "calc") {
-                checkEntryNumber(item, data, function(result, status) {
-                    (callback)( result, status );
+                checkEntryNumber(item, data, function (result, status) {
+                    (callback)(result, status);
                 });
                 return;
             }
@@ -929,11 +1160,11 @@ function checkItem( item, form, data, callback ) {
     }
 
 
-    (callback)( "good: everything is ok with " + item, "good" );
+    (callback)("good: everything is ok with " + item, "good");
     return;
 }
 
-ipcMain.on('openLoadJSONDialog', function(event,data) {
+ipcMain.on('openLoadJSONDialog', function (event, data) {
     if (typeof data['filename'] == 'undefined') {
         return;
     }
@@ -950,18 +1181,18 @@ ipcMain.on('openLoadJSONDialog', function(event,data) {
             sj = JSON.parse(fs.readFileSync(fileName, 'utf8'));
         } catch (e) {
             if (e instanceof SyntaxError) {
-              // Output expected SyntaxErrors.
-              console.log(e);
+                // Output expected SyntaxErrors.
+                console.log(e);
             } else {
-              // Output unexpected Errors.
-              console.log(e, false);
+                // Output unexpected Errors.
+                console.log(e, false);
             }
         }
         current_subject_json_data = sj;
     }
 });
 
-ipcMain.on('openLoadCSVDialog', function(event,data) {
+ipcMain.on('openLoadCSVDialog', function (event, data) {
     if (typeof data['filename'] == 'undefined') {
         return;
     }
@@ -975,26 +1206,26 @@ ipcMain.on('openLoadCSVDialog', function(event,data) {
     if (fs.existsSync(current_aliases_csv)) {
         var sj = [];
         try {
-            sj = csv().fromFile(current_aliases_csv).then( function(data) {
+            sj = csv().fromFile(current_aliases_csv).then(function (data) {
                 console.log("got data from csv: " + JSON.stringify(data));
                 /**
                  * [
                  * 	{a:"1", b:"2", c:"3"},
                  * 	{a:"4", b:"5". c:"6"}
                  * ]
-                 */ 
+                 */
                 // import into tags
                 if (data.length > 0) {
                     var keys = Object.keys(data[0]);
-                    if (! 'redcap' in keys) {
+                    if (!'redcap' in keys) {
                         console.log("Error: did not find column redcap in data");
                         return;
                     }
-                    if (! 'aliases' in keys) {
+                    if (!'aliases' in keys) {
                         console.log("Error: did not find column aliases in data");
                         return;
                     }
-                    for (var i = 0; i < data.length; i++) { 
+                    for (var i = 0; i < data.length; i++) {
                         var k = data[i]['redcap'];
                         var d = data[i]['aliases'];
                         // does the field name exist?
@@ -1017,7 +1248,10 @@ ipcMain.on('openLoadCSVDialog', function(event,data) {
                         }
                         var aliases = vv + " " + d;
                         // remove duplicates (twice import?)
-                        var s = new Set(aliases.trim().split(" ").filter(function(a) { if (a === "") return false; return true; }));
+                        var s = new Set(aliases.trim().split(" ").filter(function (a) {
+                            if (a === "") return false;
+                            return true;
+                        }));
                         aliases = [...s].join(" ").trim();
                         console.log("Import Aliases: set key " + k + " to: " + aliases);
                         store.set('alias-' + k, aliases);
@@ -1033,22 +1267,22 @@ ipcMain.on('openLoadCSVDialog', function(event,data) {
             });
         } catch (e) {
             if (e instanceof SyntaxError) {
-              // Output expected SyntaxErrors.
-              console.log(e);
+                // Output expected SyntaxErrors.
+                console.log(e);
             } else {
-              // Output unexpected Errors.
-              console.log(e, false);
+                // Output unexpected Errors.
+                console.log(e, false);
             }
         }
     }
 });
 
 
-ipcMain.on('exportData', function(event,data) {
+ipcMain.on('exportData', function (event, data) {
     var filename = data['filename'];
     var form = data['form'];
     console.log("start writing data to disk " + filename + " ...");
-    
+
     // lets also write a report to disk
     var report = data['filename'];
     report = path.join(path.dirname(report), path.basename(report, path.extname(report)) + "_report.txt");
@@ -1070,23 +1304,25 @@ ipcMain.on('exportData', function(event,data) {
     }
 
     // what are the events this instrument should be querried for
-    var master_list_events = [ "baseline_year_1_arm_1", "6_month_follow_up_arm_1", "1_year_follow_up_y_arm_1", "18_month_follow_up_arm_1"]
+    var master_list_events = ["baseline_year_1_arm_1", "6_month_follow_up_arm_1", "1_year_follow_up_y_arm_1", "18_month_follow_up_arm_1"]
     //console.log(JSON.stringify(instrumentEventMapping));
-    for(var i = 0; i < master_list_events.length; i++) {
+    for (var i = 0; i < master_list_events.length; i++) {
         var event = master_list_events[i];
         found = false;
         for (obj in instrumentEventMapping) {
             var v = instrumentEventMapping[obj];
-            if (v['unique_event_name'] == event && v['form'] == form ) {
-                found = true; 
+            if (v['unique_event_name'] == event && v['form'] == form) {
+                found = true;
             }
         }
-        if(!found) {
+        if (!found) {
             delete master_list_events[i];
         }
     }
     // filter out deleted events (Object.values())
-    master_list_events = Object.keys(master_list_events).map(function(a) { if (typeof master_list_events[a] !== 'undefined') return master_list_events[a]; });
+    master_list_events = Object.keys(master_list_events).map(function (a) {
+        if (typeof master_list_events[a] !== 'undefined') return master_list_events[a];
+    });
 
     var items = [];
     var dateConversions = {};
@@ -1099,9 +1335,9 @@ ipcMain.on('exportData', function(event,data) {
                 rstr = rstr + "Info: item " + d['field_name'] + " has @HIDDEN annotation (and no @SHARED annotation) and will not be exported\n";
                 continue;
             }
-            if (typeof d['field_type'] !== 'undefined'
-                && (d['field_type'] == 'descriptive' || d['field_type'] == 'notes')) {
-                rstr = rstr + "Info: item " + d['field_name'] + " is descriptive or notes type and will not be exported\n";          
+            if (typeof d['field_type'] !== 'undefined' &&
+                (d['field_type'] == 'descriptive' || d['field_type'] == 'notes')) {
+                rstr = rstr + "Info: item " + d['field_name'] + " is descriptive or notes type and will not be exported\n";
                 continue;
             }
             // ignore items that are not in the NDA version of this instrument
@@ -1110,7 +1346,7 @@ ipcMain.on('exportData', function(event,data) {
                 found = false;
                 var na = d['field_name'];
                 na = na.split('___')[0];
-                for ( var j = 0; j < restrictToNDADD['dataElements'].length; j++) {
+                for (var j = 0; j < restrictToNDADD['dataElements'].length; j++) {
                     // we could have underscores in there as well
                     var name = restrictToNDADD['dataElements'][j]['name'];
                     name = name.split('___')[0];
@@ -1189,7 +1425,7 @@ ipcMain.on('exportData', function(event,data) {
 
     //console.log("erstes Element is: " + items[0]);
     var itemsPerRecord = [];
-    var queue = async.queue(function(options, callback) {
+    var queue = async.queue(function (options, callback) {
         var chunk = options['chunk'][0];
         var current_events = options['events'];
         // do we have a BIOPORTAL chunk here?
@@ -1214,15 +1450,15 @@ ipcMain.on('exportData', function(event,data) {
             //'events[3]': "18_month_follow_up_arm_1",           
             'format': 'json',
             'type': 'flat',
-            'rawOrLabel': getLabel?'label':'raw',
+            'rawOrLabel': getLabel ? 'label' : 'raw',
             'rawOrLabelHeader': 'raw',
             'exportCheckboxLabel': 'false',
             'exportSurveyFields': 'false',
             'exportDataAccessGroups': false,
             'returnFormat': 'json'
         }
-        
-        if ( current_event != "ALL") {
+
+        if (current_event != "ALL") {
             // in this case we don't want to use current_events (master list of events for this form)
             // instead we use the current event only
             current_events = [current_event];
@@ -1232,7 +1468,7 @@ ipcMain.on('exportData', function(event,data) {
         for (var i = 0; i < current_events.length; i++) {
             data['events[' + i + ']'] = current_events[i];
         }
-        
+
 
         for (var i = 0; i < chunk.length; i++) {
             if (getLabel) {
@@ -1243,12 +1479,12 @@ ipcMain.on('exportData', function(event,data) {
             }
         }
         //console.log("got chunk of size " + chunk.length + " call: " + JSON.stringify(data));
-        console.log("ask for these scores from REDCap: " + JSON.stringify(data));      
+        console.log("ask for these scores from REDCap: " + JSON.stringify(data));
         var headers = {
-            'User-Agent':       'Super Agent/0.0.1',
-            'Content-Type':     'application/x-www-form-urlencoded'
+            'User-Agent': 'Super Agent/0.0.1',
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
-        
+
         var url = current_url;
         request({
             method: 'POST',
@@ -1256,7 +1492,7 @@ ipcMain.on('exportData', function(event,data) {
             form: data,
             headers: headers,
             json: true
-        }, function( error, response, body) {
+        }, function (error, response, body) {
             if (error || response.statusCode !== 200) {
                 // error case
                 process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
@@ -1276,9 +1512,9 @@ ipcMain.on('exportData', function(event,data) {
                     var dat2 = {};
                     var k2 = Object.keys(dat);
                     for (var j = 0; j < k2.length; j++) {
-                        if (k2[j] == 'asnt_timestamp' || 
-                            k2[j] == 'id_redcap' || 
-                            k2[j] == 'nda_year_1_inclusion___1' || 
+                        if (k2[j] == 'asnt_timestamp' ||
+                            k2[j] == 'id_redcap' ||
+                            k2[j] == 'nda_year_1_inclusion___1' ||
                             k2[j] == 'redcap_event_name') {
                             dat2['id_redcap'] = dat['id_redcap'];
                             // dat2['redcap_event_name'] = current_event;
@@ -1291,7 +1527,7 @@ ipcMain.on('exportData', function(event,data) {
                 var found = false;
                 for (var j = 0; j < itemsPerRecord.length; j++) {
                     var item = itemsPerRecord[j];
-                    if (item['id_redcap'] == data[i]['id_redcap'] && 
+                    if (item['id_redcap'] == data[i]['id_redcap'] &&
                         current_events.indexOf(item['redcap_event_name']) > -1) {
                         itemsPerRecord[j] = Object.assign({}, itemsPerRecord[j], dat); // copy the key/values from both into one
                         found = true;
@@ -1309,7 +1545,7 @@ ipcMain.on('exportData', function(event,data) {
 
     // could be called several times, should check if all chunks have been added
     var allChunksSend = false;
-    queue.drain = function() {
+    queue.drain = function () {
         console.log("drain called...");
         if (allChunksSend && anyErrorDownloading['numBad'] > 0) {
             win.send("message", "Error: there was a download error, we will not create the output files because there might be missing data.");
@@ -1320,21 +1556,21 @@ ipcMain.on('exportData', function(event,data) {
 
             // we need to add some standard columns at the beginning that identify the dataset on NDA
             // subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
-            
+
             // itemsPerRecord could have a mix of all the events in it, in that case we would end up with some data
             // from the screener in a different row as data from the baseline, we should merge them together into
             // a single row
             data = {}; // create a single event set
             for (var i = 0; i < itemsPerRecord.length; i++) {
-                if (0 === (i%10000)) {
+                if (0 === (i % 10000)) {
                     console.log("create event set: " + i + "/" + itemsPerRecord.length);
                 }
                 var d = itemsPerRecord[i];
-                if ( !(d['id_redcap'] in data)) {
+                if (!(d['id_redcap'] in data)) {
                     // lets do a deep copy here
                     data[d['id_redcap']] = {};
                 }
-                for ( var key in d ) {
+                for (var key in d) {
                     if (!(key in data[d['id_redcap']]) || d[key] !== "") {
                         data[d['id_redcap']][key] = d[key];
                     }
@@ -1350,7 +1586,7 @@ ipcMain.on('exportData', function(event,data) {
             }
             //console.log("make event name the current event...");
             //console.log(data)
-            data = Object.keys(data).map(function(key) {
+            data = Object.keys(data).map(function (key) {
                 //data[key]['redcap_event_name'] = current_event;
                 return data[key];
             })
@@ -1387,9 +1623,9 @@ ipcMain.on('exportData', function(event,data) {
                     sortedKeys.push(s)
                 }
             }*/
-            
+
             console.log("start sorting the keys...");
-            sortedKeys.sort(function(a,b) { // TODO FIX THIS; make sure it matches the datadicgtionary 
+            sortedKeys.sort(function (a, b) { // TODO FIX THIS; make sure it matches the datadicgtionary 
                 var idxA = -1;
                 var idxB = -1;
                 var astr = a;
@@ -1417,7 +1653,7 @@ ipcMain.on('exportData', function(event,data) {
                         break;
                     }
                 }
-                return (idxA > idxB)?1:((idxA < idxB)?-1:0);
+                return (idxA > idxB) ? 1 : ((idxA < idxB) ? -1 : 0);
             });
 
             // read in the additional subject information from the current_subject_json
@@ -1432,35 +1668,35 @@ ipcMain.on('exportData', function(event,data) {
                         sj = JSON.parse(fs.readFileSync(current_subject_json, 'utf8'));
                     } catch (e) {
                         if (e instanceof SyntaxError) {
-                          // Output expected SyntaxErrors.
-                          console.log(e);
+                            // Output expected SyntaxErrors.
+                            console.log(e);
                         } else {
-                          // Output unexpected Errors.
-                          console.log(e, false);
+                            // Output unexpected Errors.
+                            console.log(e, false);
                         }
                     }
                     // get the pGUID as key
-                    for(var j = 0; j < sj.length; j++) {
+                    for (var j = 0; j < sj.length; j++) {
                         subject_json[sj[j]['pGUID']] = sj[j];
                     }
                     // we expect some keys in this file, like pGUID, gender, and dob
                 } else {
                     console.log("Error: file does not exist " + current_subject_json);
-                }            
+                }
             }
 
             var skipkeys = [];
             var count = 0;
             console.log("Create csv file content...");
-            for ( var j = 0; j < sortedKeys.length; j++) {
+            for (var j = 0; j < sortedKeys.length; j++) {
                 var k = sortedKeys[j];
                 if (k == 'id_redcap') {
                     k = 'subjectkey,src_subject_id,interview_date,interview_age,gender,eventname';
                     // we need more: subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
                 }
-                if (k == 'redcap_event_name' || 
-                    k == "nda_year_1_inclusion___1" || 
-                    k == (form + "_complete") || 
+                if (k == 'redcap_event_name' ||
+                    k == "nda_year_1_inclusion___1" ||
+                    k == (form + "_complete") ||
                     k == 'asnt_timestamp')
                     continue; // don't export, is grouped with id_redcap
                 if (k.indexOf("___BIOPORTAL") > 0) {
@@ -1485,30 +1721,30 @@ ipcMain.on('exportData', function(event,data) {
             console.log("Write csv file header ...");
             try {
                 fs.writeFileSync(filename, str);
-            } catch(e) {
+            } catch (e) {
                 win.send('alert', 'Could not save to file: ' + filename);
             }
 
             var ds = {}; // a cache for data dictionary entries - gets filled during the first iteration
             var flags_cache = {}; // a cache for the flags
-            for ( var i = 0; i < data.length; i++) {
+            for (var i = 0; i < data.length; i++) {
                 // check instead if data[i]['id_redcap'] is in subjects_json as a key
                 // check if data[i]['redcap_event_name'] is in subjects_json[pGUID].interview_age + ""
                 //var interview_age_key = "interview_age_" + data[i]['redcap_event_name'];
                 interview_event = data[i]['redcap_event_name']
                 //console.log(interview_age_key)
-                if ( (data[i]['id_redcap'] in subject_json) && (data[i]['redcap_event_name'] in subject_json[data[i]['id_redcap']])) {
-                //if((data[i]['id_redcap'] in subject_json)) {
-                // if (data[i]['nda_year_1_inclusion___1'] == "1") {
+                if ((data[i]['id_redcap'] in subject_json) && (data[i]['redcap_event_name'] in subject_json[data[i]['id_redcap']])) {
+                    //if((data[i]['id_redcap'] in subject_json)) {
+                    // if (data[i]['nda_year_1_inclusion___1'] == "1") {
                     // export this participants data
                     str = "";
                     if (i % 100 == 0) {
                         console.log("create file line: " + i + "/" + data.length);
                     }
                     var keys = Object.keys(data[i]);
-                    for ( var j = 0; j < sortedKeys.length; j++) {
+                    for (var j = 0; j < sortedKeys.length; j++) {
                         var name = sortedKeys[j];
-                        if (name == "redcap_event_name" || 
+                        if (name == "redcap_event_name" ||
                             name == "nda_year_1_inclusion___1" ||
                             name == "asnt_timestamp" ||
                             name == (form + "_complete"))
@@ -1539,16 +1775,16 @@ ipcMain.on('exportData', function(event,data) {
                             } else { // store.get is expensive - only do this the first time
                                 flags = store.get(flag_name);
                                 flags_cache[flag_name] = flags;
-                            } 
+                            }
                             if (typeof flags !== 'undefined' && flags.indexOf('label') !== -1)
                                 label = mapValueToString(name, label);
 
                             //
                             // lets test if we should replace "0" with "" if the clearlabel flag is set
                             //
-                            if (typeof flags !== 'undefined' && 
-                                  name.split("___").length > 1 && 
-                                  flags.indexOf('clearcheckboxes') !== -1) {
+                            if (typeof flags !== 'undefined' &&
+                                name.split("___").length > 1 &&
+                                flags.indexOf('clearcheckboxes') !== -1) {
                                 // check if there is any value set to !0 for this name
                                 na = name.split("___")[0];
                                 foundOne = false;
@@ -1598,10 +1834,10 @@ ipcMain.on('exportData', function(event,data) {
                                 label = label + " " + data[i][nname];
                             }
                         }
-           
+
                         if (name == d['field_name'] &&
-                            (d['text_validation_min'] !== "" || 
-                             d['text_validation_max'] !== "")) {
+                            (d['text_validation_min'] !== "" ||
+                                d['text_validation_max'] !== "")) {
                             var mi = d['text_validation_min'];
                             var ma = d['text_validation_max'];
                             if (mi !== "") {
@@ -1674,19 +1910,19 @@ ipcMain.on('exportData', function(event,data) {
                                 // birthday must have been in relation to the visit date (real date).
                                 // For now lets clamp the interview_age to 108 ... 131.
                                 if (data[i]['redcap_event_name'] == 'baseline_year_1_arm_1' && interview_age < 108) {
-                                    rstr = rstr + "Warning: interview_age in month for " + pGUID + " is " + interview_age + " < 108. This could allow someone to guess the age by less than 30 days. Set age in month to 108.\n"; 
+                                    rstr = rstr + "Warning: interview_age in month for " + pGUID + " is " + interview_age + " < 108. This could allow someone to guess the age by less than 30 days. Set age in month to 108.\n";
                                     interview_age = 108;
                                 }
                                 if (data[i]['redcap_event_name'] == 'baseline_year_1_arm_1' && interview_age > 131) {
-                                    rstr = rstr + "Warning: interview_age in month for " + pGUID + " is " + interview_age + " > 131. This could allow someone to guess the age by less than 30 days. Set age in month to 131.\n"; 
+                                    rstr = rstr + "Warning: interview_age in month for " + pGUID + " is " + interview_age + " > 131. This could allow someone to guess the age by less than 30 days. Set age in month to 131.\n";
                                     interview_age = 131;
                                 }
                             }
-                            str = str + data[i][name] + "," + 
-                                data[i][name] + "," + 
-                                interview_date + "," + 
-                                interview_age + "," + 
-                                gender + "," + 
+                            str = str + data[i][name] + "," +
+                                data[i][name] + "," +
+                                interview_date + "," +
+                                interview_age + "," +
+                                gender + "," +
                                 data[i]['redcap_event_name'];
                             count = count + 1;
                         } else {
@@ -1707,27 +1943,34 @@ ipcMain.on('exportData', function(event,data) {
             }
             console.log("Write out report...");
             try {
-                fs.writeFile(report, rstr, function(err) {
+                fs.writeFile(report, rstr, function (err) {
                     if (err) {
                         return console.log(err);
                     }
                     console.log("The report file was saved...");
                 });
-            } catch(e) {
+            } catch (e) {
                 win.send('alert', 'Could not save to report file: ' + report);
             }
             win.send('message', "done with save...");
         }
     };
     // initialize the download error tracker
-    anyErrorDownloading = { 'errors': [], 'numOk': 0, 'numBad': 0 }
+    anyErrorDownloading = {
+        'errors': [],
+        'numOk': 0,
+        'numBad': 0
+    }
     // todo on drain we should display the errors --- or refuse to drain!
 
     var chunks = items.chunk(20); // get 20 items at the same time from REDCap
     for (var i = 0; i < chunks.length; i++) {
-        queue.push({ 'chunk': [chunks[i]], "events": master_list_events },
-            (function(counter, maxCounter, anyErrorDownloading) {
-                return function(err) {
+        queue.push({
+                'chunk': [chunks[i]],
+                "events": master_list_events
+            },
+            (function (counter, maxCounter, anyErrorDownloading) {
+                return function (err) {
                     console.log("finished getting data for chunk: " + counter + " with " + err);
                     if (err == 'ok') {
                         anyErrorDownloading['numOk']++;
@@ -1745,24 +1988,27 @@ ipcMain.on('exportData', function(event,data) {
     if (bioportalVars.length > 0) { // don't do this now
         var chunks = bioportalVars.chunk(20);
         for (var i = 0; i < chunks.length; i++) {
-            queue.push({ 'chunk': [chunks[i]], "events": master_list_events },
+            queue.push({
+                    'chunk': [chunks[i]],
+                    "events": master_list_events
+                },
                 (function (counter, maxCounter) {
                     return function (err) {
                         console.log("finished getting data for BIOPORTAL chunk: " + counter + " with " + err);
                         if (err == "ok") {
                             anyErrorDownloading['numOk']++;
-                           win.send('message', "got data for BIOPORTAL chunk " + counter + "/" + maxCounter);
+                            win.send('message', "got data for BIOPORTAL chunk " + counter + "/" + maxCounter);
                         } else {
                             anyErrorDownloading['numBad']++;
                             anyErrorDownloading['errors'].push(err);
-                           win.send('message', "Error getting BIOPORTAL chunk " + counter + "/" + maxCounter);
+                            win.send('message', "Error getting BIOPORTAL chunk " + counter + "/" + maxCounter);
                         }
                     };
                 })(i, chunks.length, anyErrorDownloading)
             );
         }
     }
-    allChunksSend = true;   
+    allChunksSend = true;
 });
 
 // lookup an items code and return the string that represents the value
@@ -1792,7 +2038,7 @@ function mapValueToString(item, value) {
     return ret;
 }
 
-function unHTML( str ) {
+function unHTML(str) {
     var s = str;
     if (typeof str === 'undefined') {
         return "";
@@ -1805,19 +2051,19 @@ function unHTML( str ) {
 
     // we could have our own html-ish tags here, try to remove those as well
     var regex = /(##en##)/ig
-    str = str.replace(regex,"");
+    str = str.replace(regex, "");
     var regex = /(##es##)/ig
-    str = str.replace(regex,"");
+    str = str.replace(regex, "");
     var regex = /(##\/en##)/ig
-    str = str.replace(regex," ");
+    str = str.replace(regex, " ");
     var regex = /(##\/es##)/ig
-    str = str.replace(regex," ");
+    str = str.replace(regex, " ");
 
     //console.log("before: \"" + s + "\" after :\"" + str + "\"")
     return str;
 }
 
-ipcMain.on('exportForm', function(event, data) {
+ipcMain.on('exportForm', function (event, data) {
     console.log("save now form : " + data['form'] + " " + data['filename']);
     var filename = data['filename'];
     var form = data['form'];
@@ -1862,7 +2108,7 @@ ipcMain.on('exportForm', function(event, data) {
                 found = false;
                 var na = d['field_name'];
                 na = na.split('___')[0];
-                for ( var j = 0; j < restrictToNDADD['dataElements'].length; j++) {
+                for (var j = 0; j < restrictToNDADD['dataElements'].length; j++) {
                     // we could have underscores in there as well
                     var name = restrictToNDADD['dataElements'][j]['name'];
                     name = name.split('___')[0];
@@ -1871,7 +2117,7 @@ ipcMain.on('exportForm', function(event, data) {
                         break;
                     }
                     // check for translations as well
-                    for ( var k = 0; k < restrictToNDADD['dataElements'][j]['aliases'].length; k++) {
+                    for (var k = 0; k < restrictToNDADD['dataElements'][j]['aliases'].length; k++) {
                         var naa = restrictToNDADD['dataElements'][j]['aliases'][k];
                         naa = naa.split('___')[0];
                         if (naa == na) {
@@ -1896,9 +2142,9 @@ ipcMain.on('exportForm', function(event, data) {
             var type = "String";
             var range = "";
             var notes = "";
-            notes = notes + (d['field_note'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_note']):"");
-            notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
-            
+            notes = notes + (d['field_note'].length > 0 ? (notes.length > 0 ? " | " : "") + unHTML(d['field_note']) : "");
+            notes = notes + (d['field_annotation'].length > 0 ? (notes.length > 0 ? " | " : "") + unHTML(d['field_annotation']) : "");
+
             var condition = ''
             if (typeof d['branching_logic'] !== 'undefined' && d['branching_logic'] !== '') {
                 condition = d['branching_logic']
@@ -1967,13 +2213,13 @@ ipcMain.on('exportForm', function(event, data) {
                         notes = notes + bla[0].trim() + " = " + unHTML(bla[1]);
                     }
                     range = range + bla[0].trim();
-                    if (j < choices.length-1) {
+                    if (j < choices.length - 1) {
                         notes = notes + "; ";
                         range = range + " ; ";
                     }
                 }
-                notes = notes + (d['field_note'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_note']):"");
-                notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
+                notes = notes + (d['field_note'].length > 0 ? (notes.length > 0 ? " | " : "") + unHTML(d['field_note']) : "");
+                notes = notes + (d['field_annotation'].length > 0 ? (notes.length > 0 ? " | " : "") + unHTML(d['field_annotation']) : "");
             }
             if (d['field_type'] == "number") {
                 type = "Float";
@@ -1983,16 +2229,16 @@ ipcMain.on('exportForm', function(event, data) {
                 type = "Float";
                 size = "";
                 notes = "Calculation: " + d['select_choices_or_calculations'];
-                notes = notes + (d['field_note'].length>0?" | " + unHTML(d['field_note']):"");
-                notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
+                notes = notes + (d['field_note'].length > 0 ? " | " + unHTML(d['field_note']) : "");
+                notes = notes + (d['field_annotation'].length > 0 ? (notes.length > 0 ? " | " : "") + unHTML(d['field_annotation']) : "");
             }
             if (d['field_type'] == "yesno") {
                 range = "\"0 ; 1\"";
                 notes = "1 = Yes; 0 = No"
                 type = "Integer";
                 size = "";
-                notes = notes + (d['field_note'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_note']):"");
-                notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
+                notes = notes + (d['field_note'].length > 0 ? (notes.length > 0 ? " | " : "") + unHTML(d['field_note']) : "");
+                notes = notes + (d['field_annotation'].length > 0 ? (notes.length > 0 ? " | " : "") + unHTML(d['field_annotation']) : "");
             }
             if (d['field_type'] == "text" && !foundIntegerRange) {
                 type = "String";
@@ -2000,24 +2246,24 @@ ipcMain.on('exportForm', function(event, data) {
             if (d['field_type'] == "descriptive") {
                 type = "String";
                 notes = "Descriptive field";
-                notes = notes + (d['field_note'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_note']):"");
-                notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
+                notes = notes + (d['field_note'].length > 0 ? (notes.length > 0 ? " | " : "") + unHTML(d['field_note']) : "");
+                notes = notes + (d['field_annotation'].length > 0 ? (notes.length > 0 ? " | " : "") + unHTML(d['field_annotation']) : "");
                 var label = d['field_label'];
                 label = unHTML(label);
                 label = label.replace(/\"/g, "\"\"");
-                label = label.replace(/\r\n/g, "\n");                    
+                label = label.replace(/\r\n/g, "\n");
                 if (label.trim() !== '')
                     lastGoodLabel = label;
                 // NDA will not take any descriptive fields - only data can be exported
                 continue;
             }
-            if (d['field_type'] == "notes" ) {
+            if (d['field_type'] == "notes") {
                 type = "String";
                 size = "400";
                 var label = d['field_label'];
                 label = unHTML(label);
                 label = label.replace(/\"/g, "\"\"");
-                label = label.replace(/\r\n/g, "\n");                    
+                label = label.replace(/\r\n/g, "\n");
                 if (label.trim() !== '')
                     lastGoodLabel = label;
                 continue; // don't export
@@ -2064,7 +2310,7 @@ ipcMain.on('exportForm', function(event, data) {
                         aliases = (aliases + " " + vv).trim();
                     }
                 }
-            }   
+            }
             if (flag_date) { // if we should parse a date we also need the parse string (stored in the parse- variable)
                 var vv = store.get('parse-' + d['field_name']); // do we have a date field here instead of a string?            
                 if (typeof vv !== 'undefined') { // conversion to date requested
@@ -2093,7 +2339,7 @@ ipcMain.on('exportForm', function(event, data) {
             condition = condition.replace(/\"/g, "\"\"");
             condition = condition.replace(/\r\n/g, "\n");
             condition = condition.replace(/\r/g, "");
-            
+
             // if the description field is empty we should look at the previous items and 
             // copy its description over to this entry. The descriptions are likely to be
             // shared.
@@ -2114,8 +2360,8 @@ ipcMain.on('exportForm', function(event, data) {
                 var choices = d['select_choices_or_calculations'].split("|");
                 range = "0 ; 1";
                 notes = "0 = No; 1 = Yes";
-                notes = notes + (d['field_note'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_note']):"");
-                notes = notes + (d['field_annotation'].length>0?(notes.length>0?" | ":"") + unHTML(d['field_annotation']):"");
+                notes = notes + (d['field_note'].length > 0 ? (notes.length > 0 ? " | " : "") + unHTML(d['field_note']) : "");
+                notes = notes + (d['field_annotation'].length > 0 ? (notes.length > 0 ? " | " : "") + unHTML(d['field_annotation']) : "");
                 type = "Integer";
                 size = '';
                 for (var j = 0; j < choices.length; j++) {
@@ -2123,36 +2369,36 @@ ipcMain.on('exportForm', function(event, data) {
                     parts[0] = parts[0].trim();
                     parts[1] = parts.slice(1).join(", ");
                     var sanitized_choice = parts[0] + ", " + unHTML(parts[1]);
-                    str = str + d['field_name'] + "___" + (parts[0]) + "," + 
-                        type + "," + 
-                        size + "," + 
-                        ((condition !== '' && !flag_recommended)?"Conditional":"Recommended") + "," +
-                        condition + "," +  
-                        "\"" + label + " (" + sanitized_choice + ")\"," + 
-                        range + "," + 
-                        "\"" + notes + "\"," + 
-                        aliases + "\n";    
-                } 
+                    str = str + d['field_name'] + "___" + (parts[0]) + "," +
+                        type + "," +
+                        size + "," +
+                        ((condition !== '' && !flag_recommended) ? "Conditional" : "Recommended") + "," +
+                        condition + "," +
+                        "\"" + label + " (" + sanitized_choice + ")\"," +
+                        range + "," +
+                        "\"" + notes + "\"," +
+                        aliases + "\n";
+                }
             } else {
                 if (range == "0 :: 1") {
                     console.log("0::1: with " + type + d['field_type']);
                 }
-                str = str + d['field_name'] + "," + 
-                   type + "," + 
-                   size + "," + 
-                   ((condition !== '' && !flag_recommended)?"Conditional":"Recommended") + "," + 
-                   condition + "," +  
-                   "\"" + label + "\"," + 
-                   range + "," + 
-                   "\"" + notes + "\"," + 
-                   aliases + "\n";
+                str = str + d['field_name'] + "," +
+                    type + "," +
+                    size + "," +
+                    ((condition !== '' && !flag_recommended) ? "Conditional" : "Recommended") + "," +
+                    condition + "," +
+                    "\"" + label + "\"," +
+                    range + "," +
+                    "\"" + notes + "\"," +
+                    aliases + "\n";
             }
         }
     }
     if (restrictToNDA.length != 0)
-        console.log("Total number of missing items in NDA dictionary: " + missingItems.length );
+        console.log("Total number of missing items in NDA dictionary: " + missingItems.length);
 
-    fs.writeFile(filename, str, function(err) {
+    fs.writeFile(filename, str, function (err) {
         if (err) {
             return console.log(err);
         }
@@ -2160,9 +2406,11 @@ ipcMain.on('exportForm', function(event, data) {
     });
 });
 
-function updateInstrumentList( event ) {
+function updateInstrumentList(event) {
     if (typeof instrumentLabels === 'undefined') {
-        setTimeout(function() { updateInstrumentList( event ); }, 2000);
+        setTimeout(function () {
+            updateInstrumentList(event);
+        }, 2000);
         return; // do nothing
     }
 
@@ -2180,31 +2428,31 @@ function updateInstrumentList( event ) {
             }
             var found = false;
             for (var j = 0; j < instruments.length; j++) {
-                if ( instruments[j][0] == instrument ) {
+                if (instruments[j][0] == instrument) {
                     found = true;
                 }
             }
             if (!found)
-               instruments.push([ instrument, name ]);
+                instruments.push([instrument, name]);
         }
     }
 
     win.send('updateInstrumentList', instruments);
 }
 
-function getEvents( token ) {
+function getEvents(token) {
     var data = {
         'token': token,
         'content': 'event',
         'format': 'json',
         'returnFormat': 'json'
     }
-    
+
     var headers = {
-        'User-Agent':       'Super Agent/0.0.1',
-        'Content-Type':     'application/x-www-form-urlencoded'
+        'User-Agent': 'Super Agent/0.0.1',
+        'Content-Type': 'application/x-www-form-urlencoded'
     }
-    
+
     var url = current_url;
     request({
         method: 'POST',
@@ -2212,17 +2460,19 @@ function getEvents( token ) {
         form: data,
         headers: headers,
         json: true
-    }, function( error, response, body) {
+    }, function (error, response, body) {
         if (error || response.statusCode !== 200) {
             // error case
             process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
             return;
         }
-        setTimeout( function() { setupDialog.send('eventsFromREDCap', body); }, 1000);// we might not have all the data here yet... 
-    });    
+        setTimeout(function () {
+            setupDialog.send('eventsFromREDCap', body);
+        }, 1000); // we might not have all the data here yet... 
+    });
 }
 
-function getInstrumentEventMapping( token ) {
+function getInstrumentEventMapping(token) {
     instrumentEventMapping = {};
     var data = {
         'token': token,
@@ -2230,12 +2480,12 @@ function getInstrumentEventMapping( token ) {
         'format': 'json',
         'returnFormat': 'json'
     }
-    
+
     var headers = {
-        'User-Agent':       'Super Agent/0.0.1',
-        'Content-Type':     'application/x-www-form-urlencoded'
+        'User-Agent': 'Super Agent/0.0.1',
+        'Content-Type': 'application/x-www-form-urlencoded'
     }
-    
+
     var url = current_url;
     request({
         method: 'POST',
@@ -2243,7 +2493,7 @@ function getInstrumentEventMapping( token ) {
         form: data,
         headers: headers,
         json: true
-    }, function( error, response, body) {
+    }, function (error, response, body) {
         if (error || response.statusCode !== 200) {
             // error case
             process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
@@ -2253,19 +2503,19 @@ function getInstrumentEventMapping( token ) {
     });
 }
 
-function getDataDictionary( token ) {
+function getDataDictionary(token) {
     var data = {
         'token': token,
         'content': 'metadata',
         'format': 'json',
         'returnFormat': 'json'
     }
-    
+
     var headers = {
-        'User-Agent':       'Super Agent/0.0.1',
-        'Content-Type':     'application/x-www-form-urlencoded'
+        'User-Agent': 'Super Agent/0.0.1',
+        'Content-Type': 'application/x-www-form-urlencoded'
     }
-    
+
     var url = "https://abcd-rc.ucsd.edu/redcap/api/";
     request({
         method: 'POST',
@@ -2273,17 +2523,17 @@ function getDataDictionary( token ) {
         form: data,
         headers: headers,
         json: true
-    }, function( error, response, body) {
+    }, function (error, response, body) {
         if (error || response.statusCode !== 200) {
             // error case
             process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
             return;
         }
-        
+
         datadictionary = [];
         // we should remove entries in the data dictionary that are HIDDEN
         // field_annotation == @HIDDEN
-        for(var e in body) {
+        for (var e in body) {
             entry = body[e];
             // skip values that are hidden
             if (typeof entry['field_annotation'] !== 'undefined' && entry['field_annotation'].indexOf("@HIDDEN") !== -1 && entry['field_annotation'].indexOf("@SHARED") === -1) {
@@ -2325,18 +2575,18 @@ function getDataDictionary( token ) {
             }
             if (typeof instruments[datadictionary[entry]['form_name']] == 'undefined')
                 instruments[datadictionary[entry]['form_name']] = [];
-            instruments[datadictionary[entry]['form_name']].push([ datadictionary[entry]['field_name'],
-                                                                   datadictionary[entry]['branching_logic'],
-                                                                   numChoices,
-                                                                   matches!==null?matches[1] + "-" + matches[2] + "-" + matches[3]:null
-                                                                 ]);
+            instruments[datadictionary[entry]['form_name']].push([datadictionary[entry]['field_name'],
+                datadictionary[entry]['branching_logic'],
+                numChoices,
+                matches !== null ? matches[1] + "-" + matches[2] + "-" + matches[3] : null
+            ]);
         }
         getNamesForInstrument(token);
         //process.stdout.write("Done with getting data dictionary...\n" + JSON.stringify(instruments));
-    });    
+    });
 }
 
-function getNamesForInstrument( token ) {
+function getNamesForInstrument(token) {
     instrumentLabels = {};
 
     var data = {
@@ -2345,12 +2595,12 @@ function getNamesForInstrument( token ) {
         'format': 'json',
         'returnFormat': 'json'
     }
-    
+
     var headers = {
-        'User-Agent':       'Super Agent/0.0.1',
-        'Content-Type':     'application/x-www-form-urlencoded'
+        'User-Agent': 'Super Agent/0.0.1',
+        'Content-Type': 'application/x-www-form-urlencoded'
     }
-    
+
     var url = "https://abcd-rc.ucsd.edu/redcap/api/";
     request({
         method: 'POST',
@@ -2358,7 +2608,7 @@ function getNamesForInstrument( token ) {
         form: data,
         headers: headers,
         json: true
-    }, function( error, response, body) {
+    }, function (error, response, body) {
         if (error || response.statusCode !== 200) {
             // error case
             process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
@@ -2366,7 +2616,7 @@ function getNamesForInstrument( token ) {
         }
         var data = body;
         for (var entry in data) {
-            instrumentLabels[data[entry]['instrument_name']] = data[entry]['instrument_label'];     
+            instrumentLabels[data[entry]['instrument_name']] = data[entry]['instrument_label'];
         }
         console.log("found " + Object.keys(instrumentLabels).length + " instruments");
         // filterDataDictionary( tokens ); // remove entries from instruments again that are not part of the baseline event
@@ -2375,7 +2625,7 @@ function getNamesForInstrument( token ) {
     });
 }
 
-function filterDataDictionary( token ) {
+function filterDataDictionary(token) {
 
     var data = {
         'token': token,
@@ -2383,12 +2633,12 @@ function filterDataDictionary( token ) {
         'format': 'json',
         'returnFormat': 'json'
     }
-    
+
     var headers = {
-        'User-Agent':       'Super Agent/0.0.1',
-        'Content-Type':     'application/x-www-form-urlencoded'
+        'User-Agent': 'Super Agent/0.0.1',
+        'Content-Type': 'application/x-www-form-urlencoded'
     }
-    
+
     var url = "https://abcd-rc.ucsd.edu/redcap/api/";
     request({
         method: 'POST',
@@ -2396,7 +2646,7 @@ function filterDataDictionary( token ) {
         form: data,
         headers: headers,
         json: true
-    }, function( error, response, body) {
+    }, function (error, response, body) {
         if (error || response.statusCode !== 200) {
             // error case
             process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
@@ -2404,12 +2654,12 @@ function filterDataDictionary( token ) {
         }
         data = body;
         console.log("number of instruments before filering: " + Object.keys(instruments).length);
-        
+
         // filter out instruments that are not in the baseline event
         var okforms = [];
-        for(var d in data) {
+        for (var d in data) {
             console.log("Check event name: " + data[d]['unique_event_name'] + " for: " + data[d]['form']);
-            if (data[d]['unique_event_name'] == timepoint /*'baseline_year_1_arm_1' */) {
+            if (data[d]['unique_event_name'] == timepoint /*'baseline_year_1_arm_1' */ ) {
                 okforms.push(data[d]['form']);
             }
         }
@@ -2426,4 +2676,3 @@ function filterDataDictionary( token ) {
         console.log("number of instruments left: " + Object.keys(instruments).length);
     });
 }
-

@@ -27,6 +27,11 @@ jQuery(document).ready(function() {
         ipcRenderer.send('closeNDASelectDialogOk', { 'shortName': current_item } );
         return false;
     });
+    jQuery('#nda-select-dialog-verify').on('click', function() {
+        // get the selected entry
+        ipcRenderer.send('closeNDASelectDialogVerify', { 'shortName': current_item } );
+        return false;
+    });
     jQuery('#nda-select-dialog-cancel').on('click', function() {
         ipcRenderer.send('closeNDASelectDialogCancel', "");
         return false;
