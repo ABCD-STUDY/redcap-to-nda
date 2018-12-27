@@ -967,7 +967,7 @@ function verify(form_name, nda) {
         }
     }
     console.log("found: " + redcap.length + " items in the redcap instrument that should be checked...");
-
+    var stats = { 'found': 0, 'missing': 0 };
     var txt = "REDCap field_name,status\n";
     // now check each item in redcap against the items in nda
     for (var i = 0; i < redcap.length; i++) {
@@ -976,6 +976,7 @@ function verify(form_name, nda) {
         for (var j = 0; j < nda.length; j++) {
             // can we actually find this variable - either in ElementName or in Aliases?
             var t = nda[j]['name'];
+            t = t.split('___')[0];
             var a = nda[j]['aliases'];
             //console.log("a : " + JSON.stringify(a));
             if (typeof a !== 'undefined' && a.length > 0) { // test for string
@@ -984,15 +985,29 @@ function verify(form_name, nda) {
                 a = [];
             }
 
-            if (t == d['field_name'] || a.indexOf(d['field_name']) > -1) {
+            if (t == d['field_name']) {
                 found = true;
                 break;
             }
+            for (var k = 0; k < a.length; k++) {
+                var aa = a[k].split('___')[0];
+                if (aa == d['field_name']) {
+                    found = true;
+                    break;
+                }         
+                if (found)
+                    break;       
+            }
         }
         if (!found) {
-            txt += d['field_name'] + ",missing\n";
+            txt += d['field_name'] + ",missing on NDA\n";
+            stats['missing']++;
+        } else {
+            stats['found']++;
         }
     }
+
+    console.log(JSON.stringify(stats));
 
     return txt;
 }
