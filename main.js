@@ -284,7 +284,7 @@ ipcMain.on('closeNDASelectDialogVerify', function (event, arg) {
         win.send('message', "read data dictionary for " + restrictToNDA + " from NDA...");
         // now check against the selected instrument to verify 
         var txt = verify(current_form, body);
-        console.log("Verification: " + txt);
+        console.log("Verification: \n" + txt);
 
         // restrictToNDADD = body;
     });
