@@ -1269,7 +1269,7 @@ ipcMain.on('openLoadCSVDialog', function (event, data) {
                             return true;
                         }));
                         aliases = [...s].join(" ").trim();
-                        console.log("Import Aliases: set key " + k + " to: " + aliases);
+                        console.log("Import Aliases: set key " + k + " to: " + aliases + " [" + i + "/" + data.length + "]");
                         // store.set('alias-' + k, aliases);
                         store_items['alias-' + k] = aliases;
                         // and mark that we have an alias here
