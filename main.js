@@ -1993,7 +1993,7 @@ ipcMain.on('exportData', function (event, data) {
                     } else {
                         anyErrorDownloading['numBad']++;
                         anyErrorDownloading['errors'].push(err);
-                        win.send('message', "ERROR on download " + counter + "/" + maxCounter);
+                        win.send('error', "ERROR on download " + counter + "/" + maxCounter);
                     }
                 };
             })(i, chunks.length, anyErrorDownloading)

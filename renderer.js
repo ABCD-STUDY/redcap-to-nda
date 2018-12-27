@@ -43,6 +43,13 @@ ipcRenderer.on('updateInstrumentList', function(event, data) {
     }
 });
 
+
+/*
+ipcRenderer.on('message', function(event, data) {
+    alert(data);
+}); 
+*/
+
 ipcRenderer.on('updateItems', function(event, data) {
     // console.log("show these items:" + data);
     jQuery('#current-items-list').children().remove();
@@ -170,6 +177,10 @@ ipcRenderer.on('showItemCheck', function(event, data) {
 
 ipcRenderer.on('alert', function(event, data) {
     alert("Your request for checking form data failed. Most likely there is not enough memory in the server to request all the data for this form at once. Please test again using single items.\n\n\n" + data);
+});
+
+ipcRenderer.on('error', function(event, data) {
+    alert(data);
 });
 
 ipcRenderer.on('message', function(event, data) {
