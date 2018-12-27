@@ -1240,6 +1240,7 @@ ipcMain.on('openLoadCSVDialog', function (event, data) {
                         console.log("Error: did not find column aliases in data");
                         return;
                     }
+                    var store_items = {};
                     for (var i = 0; i < data.length; i++) {
                         var k = data[i]['redcap'];
                         var d = data[i]['aliases'];
@@ -1269,15 +1270,19 @@ ipcMain.on('openLoadCSVDialog', function (event, data) {
                         }));
                         aliases = [...s].join(" ").trim();
                         console.log("Import Aliases: set key " + k + " to: " + aliases);
-                        store.set('alias-' + k, aliases);
+                        // store.set('alias-' + k, aliases);
+                        store_items['alias-' + k] = aliases;
                         // and mark that we have an alias here
                         var vv = store.get('tag-' + k);
                         if (typeof vv !== 'undefined' && vv.indexOf('alias') == -1) {
-                            store.set('tag-' + k, vv + " alias");
+                            // store.set('tag-' + k, vv + " alias");
+                            store_items['tag-' + k] = vv + " alias";
                         } else {
-                            store.set('tag-' + k, "alias");
+                            // store.set('tag-' + k, "alias");
+                            store_items['tag-' + k] = "alias";
                         }
                     }
+                    store.set(store_items);
                 }
             });
         } catch (e) {
