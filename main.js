@@ -977,7 +977,7 @@ function verify(form_name, nda) {
             // can we actually find this variable - either in ElementName or in Aliases?
             var t = nda[j]['name'];
             var a = nda[j]['aliases'];
-            console.log("a : " + JSON.stringify(a));
+            //console.log("a : " + JSON.stringify(a));
             if (typeof a !== 'undefined' && a.length > 0) { // test for string
                 a = a.split(" ");
             } else {
