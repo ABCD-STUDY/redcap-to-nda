@@ -129,6 +129,8 @@ ipcRenderer.on('updateTagValues', function(event, data) {
             //console.log("need to update the tag for " + data[i]['item'] + " tag: " + data[i]['tags'] );
             var itemEntry = jQuery('#current-items-list').find('[value="' + data[i]['item'] + '"]');
             //console.log("found itemEntry with :" + jQuery(itemEntry).text());
+            if (typeof data[i]['tags'] === 'string') // if by chance this tag is a string, convert to array before check
+                data[i]['tags'] = [ data[i]['tags'] ];
             for (var j = 0; j < data[i]['tags'].length; j++) {
                jQuery(itemEntry).find('[value="' + data[i]['tags'][j] + '"]').removeClass("btn-default").addClass('btn-primary');
             }

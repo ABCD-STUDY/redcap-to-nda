@@ -32,6 +32,7 @@ let ndaSelectDialog
 let changeLabelDialog
 let getDateStringDialog
 let getImportAliasDialog
+let tagstore
 let datadicationary
 let instrumentLabels
 let token
@@ -59,6 +60,9 @@ function createWindow() {
             devTools: true
         }
     });
+
+    // a read only version of the tags at the beginning of the program (speed up tag lockup)
+    tagstore = store.store;
 
     // and load the index.html of the app.
     win.loadURL(url.format({
@@ -470,6 +474,9 @@ ipcMain.on('openGetImportAliasDialog', function (event, arg) {
     if (getImportAliasDialog) {
         getImportAliasDialog.show();
         var alias = store.get('alias-' + item);
+        if (Array.isArray(alias)) {
+            alias = alias.join(" "); // convert to string
+        }
         console.log("get value from store for " + 'alias-' + item + " IS: " + alias);
         getImportAliasDialog.send('changeAlias', {
             alias: alias,
@@ -495,6 +502,9 @@ ipcMain.on('openGetImportAliasDialog', function (event, arg) {
     getImportAliasDialog.once('ready-to-show', function () {
         getImportAliasDialog.show();
         var alias = store.get('alias-' + arg['item']);
+        if (Array.isArray(alias)) {
+            alias = alias.join(' ');
+        }
         getImportAliasDialog.send('changeAlias', {
             alias: alias,
             item: arg['item']
@@ -516,11 +526,12 @@ ipcMain.on('closeGetImportAliasDialogCancel', function (event, arg) {
 ipcMain.on('closeGetImportAliasDialogOk', function (event, arg) {
     if (getImportAliasDialog) {
         getImportAliasDialog.hide();
+        // we are getting a string back here...
         alias = arg.alias;
         item = arg.item;
         console.log("closed import alias DIALOG after ok: " + alias + " " + item + " save now: " + 'parse-' + item + " with value: " + alias);
         // we need to store the parse now
-        store.set('alias-' + item, [alias]);
+        store.set('alias-' + item, alias.split(" "));
     }
 });
 
@@ -672,6 +683,13 @@ ipcMain.on('setTags', function (event, data) {
         if (typeof tags === 'undefined') {
             tags = [];
         }
+        if (typeof tags === 'string') // convert to array if its not already an array
+            tags = [ tags ];
+        if (typeof data[i]['tags'] === 'string') {
+            // this is done on error, we should convert back to array here
+            // assume that space is separator
+            data[i]['tags'] = data[i]['tags'].split(" ");
+        }
         for (var j = 0; j < data[i]['tags'].length; j++) {
             var found = false;
             for (var k = 0; k < tags.length; k++) {
@@ -728,12 +746,15 @@ ipcMain.on('deleteTags', function (event, data) {
 // the input will also be part of the returned array of structures (key 'data')
 ipcMain.on('getTags', function (event, data) {
     var results = [];
+    //var sto = store.store;
     for (var i = 0; i < data.length; i++) {
         //console.log("called getTags for this item: " + data[i]['item']);
         var tag_prefix = 'tag-';
         if (typeof data[i]['prefix'] !== 'undefined')
             tag_prefix = data[i]['prefix']
-        var tags = store.get(tag_prefix + data[i]['item']);
+        var tags;
+        if (typeof tagstore[tag_prefix + data[i]['item']] !== 'undefined')
+            tags = tagstore[tag_prefix + data[i]['item']];
         if (typeof tags !== 'undefined') {
             results.push({
                 'tags': tags,
@@ -766,6 +787,9 @@ ipcMain.on('checkData', function (event, data) {
         acc[a['pGUID']] = a;
         return acc;
     }, {});
+
+    // refresh the tag store
+    tagstore = store.store;
 
     // we cannot ask for all items at the same time, we don't have enough memory on the server to get those back
     // lets chunk the items in the form
@@ -1091,10 +1115,16 @@ function checkItem(item, form, data, callback) {
     for (var i = 0; i < datadictionary.length; i++) {
         var d = datadictionary[i];
         if (item == d['field_name']) {
-            var flags = store.get('tag-' + d['field_name']);
+            //var flags = store.get('tag-' + d['field_name']);
+            var flags;
+            if (typeof tagstore['tag-' + d['field_name']] !== 'undefined')
+                flags = tagstore['tag-' + d['field_name']]
             if (typeof flags !== 'undefined' && flags.indexOf('date') !== -1) { // only check date conversion if this flag is set, nothing else
                 // we have to ask
-                var convertString = store.get('parse-' + d['field_name']);
+                var convertString; // = store.get('parse-' + d['field_name']);
+                if (typeof tagstore['parse-' + d['field_name']] !== 'undefined')
+                    convertString = tagstore['parse-' + d['field_name']];
+
                 checkEntryDateConversion(item, convertString, data, function (result, status) {
                     (callback)(result, status);
                     return;
@@ -1260,26 +1290,32 @@ ipcMain.on('openLoadCSVDialog', function (event, data) {
                         // don't import if it does not exist
                         var vv = store.get('alias-' + k); // do we have a date field here instead of a string?            
                         if (typeof vv === 'undefined') { // add an alias to the data dictionary
-                            vv = "";
+                            vv = [];
                         }
-                        var aliases = vv + " " + d;
+                        vv.push(d);
+                        var aliases = vv;
                         // remove duplicates (twice import?)
-                        var s = new Set(aliases.trim().split(" ").filter(function (a) {
-                            if (a === "") return false;
+                        var s = new Set(aliases.filter(function (a) {
+                            if (a === "") 
+                                return false;
                             return true;
                         }));
-                        aliases = [...s].join(" ").trim();
+                        aliases = [...s]; // store as array
+                        // aliases = [...s].join(" ").trim();
                         console.log("Import Aliases: set key " + k + " to: " + aliases + " [" + i + "/" + data.length + "]");
                         // store.set('alias-' + k, aliases);
                         store_items['alias-' + k] = aliases;
                         // and mark that we have an alias here
                         var vv = store.get('tag-' + k);
-                        if (typeof vv !== 'undefined' && vv.indexOf('alias') == -1) {
+                        if (typeof vv !== 'undefined' && typeof vv === 'string')
+                            vv = vv.split(" "); // convert back to an array 
+                        if (typeof vv !== 'undefined' && vv.indexOf('alias') === -1) {
                             // store.set('tag-' + k, vv + " alias");
-                            store_items['tag-' + k] = vv + " alias";
+                            vv.push("alias");
+                            store_items['tag-' + k] = vv;
                         } else {
                             // store.set('tag-' + k, "alias");
-                            store_items['tag-' + k] = "alias";
+                            store_items['tag-' + k] = [ "alias" ];
                         }
                     }
                     store.set(store_items);
@@ -1302,6 +1338,8 @@ ipcMain.on('exportData', function (event, data) {
     var filename = data['filename'];
     var form = data['form'];
     console.log("start writing data to disk " + filename + " ...");
+
+    tagstore = store.store; // update tag store for speed up of lookup below
 
     // lets also write a report to disk
     var report = data['filename'];
@@ -1403,7 +1441,9 @@ ipcMain.on('exportData', function (event, data) {
                     continue;
                 }
             }
-            var flags = store.get('tag-' + d['field_name']);
+            var flags; // = store.get('tag-' + d['field_name']);
+            if (typeof tagstore['tag-' + d['field_name']] !== 'undefined')
+                flags = tagstore['tag-' + d['field_name']];
             if (typeof flags !== 'undefined') {
                 if (flags.indexOf('remove') !== -1) {
                     rstr = rstr + "Info: item " + d['field_name'] + " is marked as 'remove' and will not be exported.\n";
@@ -1416,7 +1456,9 @@ ipcMain.on('exportData', function (event, data) {
             // each item could have a parse_string assigned to it
             if (typeof flags !== 'undefined') {
                 if (flags.indexOf('date') !== -1) {
-                    var parse_string = store.get('parse-' + d['field_name']);
+                    var parse_string; // = store.get('parse-' + d['field_name']);
+                    if (typeof tagstore['parse-' + d['field_name']] !== 'undefined')
+                        parse_string = tagstore['parse-' + d['field_name']];
                     if (typeof parse_string !== 'undefined') {
                         dateConversions[d['field_name']] = parse_string;
                         rstr = rstr + "Info: Parse string \"" + parse_string + "\" found for: " + d['field_name'] + "\n";
@@ -2097,6 +2139,8 @@ ipcMain.on('exportForm', function (event, data) {
         form_name = v;
     }
 
+    tagstore = store.store; // update the tagstore for the next operation
+
     // if we have a restrictToNDADD defined we should export only stuff that fits with this data dictionary (remove columns that are wrong)
     if (restrictToNDA.length > 0) {
         // use the short name for the data dictionary
@@ -2297,7 +2341,9 @@ ipcMain.on('exportForm', function (event, data) {
                 size = "30"; // default value
             }
             // check if we have a longer flag for this field_name
-            var flags = store.get('tag-' + d['field_name']);
+            var flags; // = store.get('tag-' + d['field_name']);
+            if (typeof tagstore['tag-' + d['field_name']] !== 'undefined')
+                flags = tagstore['tag-' + d['field_name']];
             var flag_date = false; // do we have a date to parse?
             var flag_recommended = false; // should this field be recommended instead of conditional?
             if (typeof flags !== 'undefined') {
@@ -2326,13 +2372,18 @@ ipcMain.on('exportForm', function (event, data) {
                 }
                 if (flags.indexOf('alias') !== -1) { // copy the conditional logic to the notes section
                     var vv = store.get('alias-' + d['field_name']); // do we have a date field here instead of a string?            
+                    // make sure we have an array here
+                    if (typeof vv === 'string')
+                        vv = vv.split(" ");
                     if (typeof vv !== 'undefined') { // add an alias to the data dictionary
-                        aliases = (aliases + " " + vv).trim();
+                        aliases = (aliases + " " + vv.join(" ")).trim();
                     }
                 }
             }
             if (flag_date) { // if we should parse a date we also need the parse string (stored in the parse- variable)
-                var vv = store.get('parse-' + d['field_name']); // do we have a date field here instead of a string?            
+                var vv; // = store.get('parse-' + d['field_name']); // do we have a date field here instead of a string?            
+                if (typeof tagstore['parse-' + d['field_name']] !== 'undefined')
+                    vv = tagstore['parse-' + d['field_name']];
                 if (typeof vv !== 'undefined') { // conversion to date requested
                     type = "Date";
                     size = "";
