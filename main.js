@@ -752,7 +752,7 @@ ipcMain.on('getTags', function (event, data) {
         var tag_prefix = 'tag-';
         if (typeof data[i]['prefix'] !== 'undefined')
             tag_prefix = data[i]['prefix']
-        var tags;
+        var tags = undefined;
         if (typeof tagstore[tag_prefix + data[i]['item']] !== 'undefined')
             tags = tagstore[tag_prefix + data[i]['item']];
         if (typeof tags !== 'undefined') {
@@ -1116,12 +1116,12 @@ function checkItem(item, form, data, callback) {
         var d = datadictionary[i];
         if (item == d['field_name']) {
             //var flags = store.get('tag-' + d['field_name']);
-            var flags;
+            var flags = undefined;
             if (typeof tagstore['tag-' + d['field_name']] !== 'undefined')
                 flags = tagstore['tag-' + d['field_name']]
             if (typeof flags !== 'undefined' && flags.indexOf('date') !== -1) { // only check date conversion if this flag is set, nothing else
                 // we have to ask
-                var convertString; // = store.get('parse-' + d['field_name']);
+                var convertString = undefined; // = store.get('parse-' + d['field_name']);
                 if (typeof tagstore['parse-' + d['field_name']] !== 'undefined')
                     convertString = tagstore['parse-' + d['field_name']];
 
@@ -1441,7 +1441,7 @@ ipcMain.on('exportData', function (event, data) {
                     continue;
                 }
             }
-            var flags; // = store.get('tag-' + d['field_name']);
+            var flags = undefined; // = store.get('tag-' + d['field_name']);
             if (typeof tagstore['tag-' + d['field_name']] !== 'undefined')
                 flags = tagstore['tag-' + d['field_name']];
             if (typeof flags !== 'undefined') {
@@ -1456,7 +1456,7 @@ ipcMain.on('exportData', function (event, data) {
             // each item could have a parse_string assigned to it
             if (typeof flags !== 'undefined') {
                 if (flags.indexOf('date') !== -1) {
-                    var parse_string; // = store.get('parse-' + d['field_name']);
+                    var parse_string = undefined; // = store.get('parse-' + d['field_name']);
                     if (typeof tagstore['parse-' + d['field_name']] !== 'undefined')
                         parse_string = tagstore['parse-' + d['field_name']];
                     if (typeof parse_string !== 'undefined') {
@@ -2341,7 +2341,7 @@ ipcMain.on('exportForm', function (event, data) {
                 size = "30"; // default value
             }
             // check if we have a longer flag for this field_name
-            var flags; // = store.get('tag-' + d['field_name']);
+            var flags = undefined; // = store.get('tag-' + d['field_name']);
             if (typeof tagstore['tag-' + d['field_name']] !== 'undefined')
                 flags = tagstore['tag-' + d['field_name']];
             var flag_date = false; // do we have a date to parse?
@@ -2371,7 +2371,7 @@ ipcMain.on('exportForm', function (event, data) {
                     condition = "";
                 }
                 if (flags.indexOf('alias') !== -1) { // copy the conditional logic to the notes section
-                    var vv; // = store.get('alias-' + d['field_name']); // do we have a date field here instead of a string?            
+                    var vv = undefined; // = store.get('alias-' + d['field_name']); // do we have a date field here instead of a string?            
                     if (typeof tagstore['alias-' + d['field_name']] !== 'undefined')
                         vv = tagstore['alias-' + d['field_name']]
                     // make sure we have an array here
@@ -2383,7 +2383,7 @@ ipcMain.on('exportForm', function (event, data) {
                 }
             }
             if (flag_date) { // if we should parse a date we also need the parse string (stored in the parse- variable)
-                var vv; // = store.get('parse-' + d['field_name']); // do we have a date field here instead of a string?            
+                var vv = undefined; // = store.get('parse-' + d['field_name']); // do we have a date field here instead of a string?            
                 if (typeof tagstore['parse-' + d['field_name']] !== 'undefined')
                     vv = tagstore['parse-' + d['field_name']];
                 if (typeof vv !== 'undefined') { // conversion to date requested
