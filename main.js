@@ -2371,7 +2371,9 @@ ipcMain.on('exportForm', function (event, data) {
                     condition = "";
                 }
                 if (flags.indexOf('alias') !== -1) { // copy the conditional logic to the notes section
-                    var vv = store.get('alias-' + d['field_name']); // do we have a date field here instead of a string?            
+                    var vv; // = store.get('alias-' + d['field_name']); // do we have a date field here instead of a string?            
+                    if (typeof tagstore['alias-' + d['field_name']] !== 'undefined')
+                        vv = tagstore['alias-' + d['field_name']]
                     // make sure we have an array here
                     if (typeof vv === 'string')
                         vv = vv.split(" ");
