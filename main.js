@@ -549,7 +549,8 @@ ipcMain.on('openChangeLabelDialog', function (event, arg) {
             name: arg['name'],
             instrument: arg['instrument'],
             nda_name: arg['nda_name'],
-            version: arg['version']
+            version: arg['version'],
+            guard_name: arg['guard_name']
         });
         return;
     }
@@ -561,7 +562,7 @@ ipcMain.on('openChangeLabelDialog', function (event, arg) {
         frame: false,
         useContentSize: true,
         width: 460,
-        height: 420
+        height: 600
     });
     changeLabelDialog.loadURL(url.format({
         pathname: path.join(__dirname, 'changeLabelDialog.html'),
@@ -574,7 +575,8 @@ ipcMain.on('openChangeLabelDialog', function (event, arg) {
             name: arg['name'],
             instrument: arg['instrument'],
             nda_name: arg['nda_name'],
-            version: arg['version']
+            version: arg['version'],
+            guard_name: arg['guard_name']
         });
     });
     console.log("done with openChangeLabelDialog...");
@@ -593,6 +595,7 @@ ipcMain.on('closeChangeLabelDialogReset', function (event, arg) {
         var instrument = arg.instrument;
         var version = arg.version;
         var nda_name = arg.nda_name;
+        // var guard_name = arg.guard_name;
 
         console.log("closed setup DIALOG after reset");
         // what is the default value?
@@ -623,16 +626,19 @@ ipcMain.on('closeChangeLabelDialogOk', function (event, arg) {
         instrument = arg.instrument;
         version = arg.version.trim();
         nda_name = arg.nda_name.trim();
-        console.log("closed setup DIALOG after ok, new name is: " + name + " for instrument: " + instrument + " version: " + version + " nda_name: " + nda_name);
+        guard_name = arg.guard_name.trim();
+        console.log("closed setup DIALOG after ok, new name is: " + name + " for instrument: " + instrument + " version: " + version + " nda_name: " + nda_name + " guard_name: " + guard_name);
 
         console.log("Store now: " + instrument + " with value: " + name);
         store.set('instrument-' + instrument, [name, version, nda_name]);
+        store.set('guard-' + instrument, [guard_name]);
 
         // now update the interface with the new values
         results = [{
             'tags': [name, version, nda_name],
             'item': instrument,
-            'prefix': 'instrument-'
+            'prefix': 'instrument-',
+            'guard_name': guard_name
         }];
         win.send('updateTagValues', results);
 
@@ -751,7 +757,7 @@ ipcMain.on('getTags', function (event, data) {
         //console.log("called getTags for this item: " + data[i]['item']);
         var tag_prefix = 'tag-';
         if (typeof data[i]['prefix'] !== 'undefined')
-            tag_prefix = data[i]['prefix']
+            tag_prefix = data[i]['prefix'];
         var tags = undefined;
         if (typeof tagstore[tag_prefix + data[i]['item']] !== 'undefined')
             tags = tagstore[tag_prefix + data[i]['item']];
@@ -1360,6 +1366,12 @@ ipcMain.on('exportData', function (event, data) {
         if (typeof v[2] !== 'undefined')
             form_nda_name = v[2];
     }
+    var v2 = store.get('guard-' + form);
+    var guard_variable = "";
+    if (typeof v2 !== 'undefined') {
+        guard_variable = v2[0];
+        console.log("guard variable exists for this instrument " + guard_variable);
+    }
 
     // what are the events this instrument should be querried for
     var master_list_events = ["baseline_year_1_arm_1", "6_month_follow_up_arm_1", "1_year_follow_up_y_arm_1", "18_month_follow_up_arm_1"]
@@ -1589,8 +1601,8 @@ ipcMain.on('exportData', function (event, data) {
                 var found = false;
                 for (var j = 0; j < itemsPerRecord.length; j++) {
                     var item = itemsPerRecord[j];
-                    if (item['id_redcap'] == data[i]['id_redcap'] &&
-                        current_events.indexOf(item['redcap_event_name']) > -1) {
+                    if (item['id_redcap'] == data[i]['id_redcap'] && item['redcap_event_name'] == data[i]['redcap_event_name']) {
+                         // current_events.indexOf(item['redcap_event_name']) > -1) {
                         itemsPerRecord[j] = Object.assign({}, itemsPerRecord[j], dat); // copy the key/values from both into one
                         found = true;
                         break;
@@ -1599,7 +1611,7 @@ ipcMain.on('exportData', function (event, data) {
                 if (!found) {
                     itemsPerRecord.push(dat);
                 }
-                itemsPerRecord.push(dat); // will be merged below
+                // itemsPerRecord.push(dat); // will be merged below
             }
             callback("ok");
         });
@@ -1628,13 +1640,14 @@ ipcMain.on('exportData', function (event, data) {
                     console.log("create event set: " + i + "/" + itemsPerRecord.length);
                 }
                 var d = itemsPerRecord[i];
-                if (!(d['id_redcap'] in data)) {
+                var id = d['id_redcap']+d['redcap_event_name'];
+                if (!(id in data)) {
                     // lets do a deep copy here
-                    data[d['id_redcap']] = {};
+                    data[id] = {};
                 }
                 for (var key in d) {
-                    if (!(key in data[d['id_redcap']]) || d[key] !== "") {
-                        data[d['id_redcap']][key] = d[key];
+                    if (!(key in data[id]) || d[key] !== "") {
+                        data[id][key] = d[key];
                     }
                 }
                 //} else { // this should not be needed anymore, the pull already merges using Object.assign
@@ -1765,7 +1778,9 @@ ipcMain.on('exportData', function (event, data) {
                     skipkeys.push(k);
                     continue;
                 }
-                var flags = store.get('tag-' + k);
+                var flags = undefined; // = store.get('tag-' + k);
+                if (typeof tagstore['tag-' + k] !== 'undefined')
+                    flags = tagstore['tag-' + k];
                 if (typeof flags !== 'undefined') {
                     if (flags.indexOf('remove') !== -1) {
                         skipkeys.push(k);
@@ -1789,217 +1804,225 @@ ipcMain.on('exportData', function (event, data) {
 
             var ds = {}; // a cache for data dictionary entries - gets filled during the first iteration
             var flags_cache = {}; // a cache for the flags
-            for (var i = 0; i < data.length; i++) {
-                // check instead if data[i]['id_redcap'] is in subjects_json as a key
-                // check if data[i]['redcap_event_name'] is in subjects_json[pGUID].interview_age + ""
-                //var interview_age_key = "interview_age_" + data[i]['redcap_event_name'];
-                interview_event = data[i]['redcap_event_name']
-                //console.log(interview_age_key)
-                if ((data[i]['id_redcap'] in subject_json) && (data[i]['redcap_event_name'] in subject_json[data[i]['id_redcap']])) {
-                    //if((data[i]['id_redcap'] in subject_json)) {
-                    // if (data[i]['nda_year_1_inclusion___1'] == "1") {
-                    // export this participants data
-                    str = "";
-                    if (i % 100 == 0) {
-                        console.log("create file line: " + i + "/" + data.length);
-                    }
-                    var keys = Object.keys(data[i]);
-                    for (var j = 0; j < sortedKeys.length; j++) {
-                        var name = sortedKeys[j];
-                        if (name == "redcap_event_name" ||
-                            name == "nda_year_1_inclusion___1" ||
-                            name == "asnt_timestamp" ||
-                            name == (form + "_complete"))
-                            continue; // skip, is exported next to id_redcap
+            // write out sorted by event - just to make this easier to read
+            var line = 0;
+            for (var ev = 0; ev < master_list_events.length; ev++) {
+                for (var i = 0; i < data.length; i++) {
+                    // check instead if data[i]['id_redcap'] is in subjects_json as a key
+                    // check if data[i]['redcap_event_name'] is in subjects_json[pGUID].interview_age + ""
+                    //var interview_age_key = "interview_age_" + data[i]['redcap_event_name'];
+                    interview_event = data[i]['redcap_event_name']
+                    if (interview_event !== master_list_events[ev])
+                        continue;
 
-                        // skip entries if they are from BIOPORTAL (is added automatically to raw item)
-                        if (name.indexOf('___BIOPORTAL') > 0) {
-                            continue;
+                    //console.log(interview_age_key)
+                    if ((data[i]['id_redcap'] in subject_json) && (data[i]['redcap_event_name'] in subject_json[data[i]['id_redcap']])) {
+                        //if((data[i]['id_redcap'] in subject_json)) {
+                        // if (data[i]['nda_year_1_inclusion___1'] == "1") {
+                        // export this participants data
+                        str = "";
+                        if (line % 100 == 0) {
+                            console.log("create file line: " + line + "/" + data.length);
                         }
+                        line++;
+                        var keys = Object.keys(data[i]);
+                        for (var j = 0; j < sortedKeys.length; j++) {
+                            var name = sortedKeys[j];
+                            if (name == "redcap_event_name" ||
+                                name == "nda_year_1_inclusion___1" ||
+                                name == "asnt_timestamp" ||
+                                name == (form + "_complete"))
+                                continue; // skip, is exported next to id_redcap
 
-                        // skip this key if its not needed
-                        if (skipkeys.indexOf(name) !== -1) {
-                            continue; // don't export this key
-                        }
-
-                        var label = '';
-                        if (typeof data[i][name] !== 'undefined') { // a key we have not seen before
-                            // we could have a key here that contains '___'    
-                            label = data[i][name];
-                            var na = name;
-                            if (name.split("___").length > 1) {
-                                na = name.split("___")[0];
+                            // skip entries if they are from BIOPORTAL (is added automatically to raw item)
+                            if (name.indexOf('___BIOPORTAL') > 0) {
+                                continue;
                             }
-                            var flags = [];
-                            var flag_name = 'tag-' + na;
-                            if (flag_name in flags_cache) {
-                                flags = flags_cache[flag_name];
-                            } else { // store.get is expensive - only do this the first time
-                                flags = store.get(flag_name);
-                                flags_cache[flag_name] = flags;
-                            }
-                            if (typeof flags !== 'undefined' && flags.indexOf('label') !== -1)
-                                label = mapValueToString(name, label);
 
-                            //
-                            // lets test if we should replace "0" with "" if the clearlabel flag is set
-                            //
-                            if (typeof flags !== 'undefined' &&
-                                name.split("___").length > 1 &&
-                                flags.indexOf('clearcheckboxes') !== -1) {
-                                // check if there is any value set to !0 for this name
-                                na = name.split("___")[0];
-                                foundOne = false;
-                                for (var k = 0; k < keys.length; k++) {
-                                    if (keys[k].indexOf(na + "___") === 0) {
-                                        if (data[i][keys[k]] !== "0") {
-                                            foundOne = true;
-                                            break;
+                            // skip this key if its not needed
+                            if (skipkeys.indexOf(name) !== -1) {
+                                continue; // don't export this key
+                            }
+
+                            var label = '';
+                            if (typeof data[i][name] !== 'undefined') { // a key we have not seen before
+                                // we could have a key here that contains '___'    
+                                label = data[i][name];
+                                var na = name;
+                                if (name.split("___").length > 1) {
+                                    na = name.split("___")[0];
+                                }
+                                var flags = [];
+                                var flag_name = 'tag-' + na;
+                                if (flag_name in flags_cache) {
+                                    flags = flags_cache[flag_name];
+                                } else { // store.get is expensive - only do this the first time
+                                    flags = store.get(flag_name);
+                                    flags_cache[flag_name] = flags;
+                                }
+                                if (typeof flags !== 'undefined' && flags.indexOf('label') !== -1)
+                                    label = mapValueToString(name, label);
+
+                                //
+                                // lets test if we should replace "0" with "" if the clearlabel flag is set
+                                //
+                                if (typeof flags !== 'undefined' &&
+                                    name.split("___").length > 1 &&
+                                    flags.indexOf('clearcheckboxes') !== -1) {
+                                    // check if there is any value set to !0 for this name
+                                    na = name.split("___")[0];
+                                    foundOne = false;
+                                    for (var k = 0; k < keys.length; k++) {
+                                        if (keys[k].indexOf(na + "___") === 0) {
+                                            if (data[i][keys[k]] !== "0") {
+                                                foundOne = true;
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-                                if (!foundOne) {
-                                    // set this label to empty (no other checkbox is set, all are "0")
-                                    label = "";
-                                }
-                            }
-                        }
-                        // do we have to perform a date conversion?
-                        if (label !== '' && typeof dateConversions[name] !== 'undefined') {
-                            // convert this value given the parse information to the NDA date format
-                            label = moment(label, dateConversions[name]).format("MM/DD/YYYY");
-                        }
-                        // build the cache for data dictionary entries
-                        var d = []; // current entry in data dictionary - find once and keep
-                        if (name in ds) {
-                            d = ds[name];
-                        } else {
-                            var na = name;
-                            if (name.split("___").length > 1) {
-                                na = name.split("___")[0];
-                            }
-                            for (var k = 0; k < datadictionary.length; k++) {
-                                if (na == datadictionary[k]['field_name']) {
-                                    d = datadictionary[k];
-                                    ds[name] = datadictionary[k];
-                                    break;
+                                    if (!foundOne) {
+                                        // set this label to empty (no other checkbox is set, all are "0")
+                                        label = "";
+                                    }
                                 }
                             }
-                        }
-                        if (d == []) {
-                            console.log("Error: Could not find data dictionary entry for " + name);
-                        }
-                        if (d['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
-                            // lookup the label variable
-                            var nname = name + '___BIOPORTAL';
-                            if (sortedKeys.indexOf(nname) >= 0 && data[i][nname].length > 0) {
-                                label = label + " " + data[i][nname];
+                            // do we have to perform a date conversion?
+                            if (label !== '' && typeof dateConversions[name] !== 'undefined') {
+                                // convert this value given the parse information to the NDA date format
+                                label = moment(label, dateConversions[name]).format("MM/DD/YYYY");
                             }
-                        }
-
-                        if (name == d['field_name'] &&
-                            (d['text_validation_min'] !== "" ||
-                                d['text_validation_max'] !== "")) {
-                            var mi = d['text_validation_min'];
-                            var ma = d['text_validation_max'];
-                            if (mi !== "") {
-                                if (parseFloat(label) < mi) {
-                                    rstr = rstr + "Warning: value for " + name + " " + label + " < " + mi + " for " + data[i]['id_redcap'] + ". Value will be deleted!\n";
-                                    label = "";
-                                }
-                            }
-                            if (ma !== "") {
-                                if (parseFloat(label) > ma) {
-                                    rstr = rstr + "Warning: value for " + name + " " + label + " > " + ma + " for " + data[i]['id_redcap'] + ". Value will be deleted!\n";
-                                    label = "";
-                                }
-                            }
-                        }
-
-                        if (name == d['field_name'] &&
-                            d['text_validation_type_or_show_slider_number'] == "integer") {
-                            if (label.match(/^[0-9+-]*$/) === null) {
-                                rstr = rstr + "Warning: measure not integer valued in item " + name + " \"" + label + "\" for " + data[i]['id_redcap'] + ". Consider changing this value, it will be deleted.\n";
-                                label = "";
-                            }
-                        }
-                        if (name == d['field_name'] &&
-                            d['text_validation_type_or_show_slider_number'] == "number") {
-                            if (label.match(/^-?\d*\.?\d*$/) === null) {
-                                rstr = rstr + "Warning: measure not floating point valued in item " + name + " \"" + label + "\" for " + data[i]['id_redcap'] + ". Consider changing this value, it will be deleted.\n";
-                                label = "";
-                            }
-                        }
-
-                        label = label.replace(/\"/g, "\"\"\"");
-                        if (name == "id_redcap") {
-                            // we need more: subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
-                            //interview_date = data[i]['asnt_timestamp']; // TODO FIX THIS; update to use values in release2.0json
-                            interview_age = ""; // in month
-                            gender = "";
-                            found = false;
-                            // find the missing information in the subject_json structure loaded from outside file
-                            pGUID = data[i][name];
-                            if (typeof subject_json[pGUID] === 'undefined') {
-                                rstr = rstr + "Error: could not find subject " + pGUID + " in subject JSON file " + current_subject_json + ".\n";
-                                // still convert the interview_date
-                                interview_date = visit.format('MM/DD/YYYY');
+                            // build the cache for data dictionary entries
+                            var d = []; // current entry in data dictionary - find once and keep
+                            if (name in ds) {
+                                d = ds[name];
                             } else {
-                                gender = subject_json[pGUID]['gender'];
-                                var dob = moment(subject_json[pGUID]['dob'], 'YYYY-MM-DD');
-                                var visit = moment(data[i]['asnt_timestamp'], 'YYYY-MM-DD HH:mm');
-                                if (typeof dob == 'undefined') {
-                                    rstr = rstr + "Error: date of birth (dob) for " + pGUID + " cannot be read (" + subject_json[pGUID]['dob'] + ") as YYY-MM-DD.";
-                                    dob = '';
+                                var na = name;
+                                if (name.split("___").length > 1) {
+                                    na = name.split("___")[0];
                                 }
-                                if (typeof interview_age == 'undefined') {
-                                    rstr = rstr + "Error: interview_age for " + pGUID + " cannot be read (" + subject_json[pGUID]['asnt_timestamp'] + ") as YYY-MM-DD HH:mm.";
-                                    interview_age = '';
-                                }
-                                interview_date = subject_json[pGUID][interview_event]["interview_date"];
-                                // use the interview age from this entry
-                                interview_age = subject_json[pGUID][interview_event]["interview_age"];
-                                //console.log(interview_age_key)
-                                //console.log(interview_age)
-                                if (typeof interview_age === 'undefined') {
-                                    rstr = rstr + "Error: no interview_age value " + interview_event + " for participant " + pGUID + "\n";
-                                }
-                                //interview_age = visit.diff(dob, 'month', false); // use the dob and the asnt_timestamp
-
-                                // We have to fix the ages here because kids are included into the study
-                                // based on a real date but the dob is given to us at the 15th of the month only.
-                                // So if a kid is in the study and has interview_age of 107 we know that their 
-                                // birthday must have been in relation to the visit date (real date).
-                                // For now lets clamp the interview_age to 108 ... 131.
-                                if (data[i]['redcap_event_name'] == 'baseline_year_1_arm_1' && interview_age < 108) {
-                                    rstr = rstr + "Warning: interview_age in month for " + pGUID + " is " + interview_age + " < 108. This could allow someone to guess the age by less than 30 days. Set age in month to 108.\n";
-                                    interview_age = 108;
-                                }
-                                if (data[i]['redcap_event_name'] == 'baseline_year_1_arm_1' && interview_age > 131) {
-                                    rstr = rstr + "Warning: interview_age in month for " + pGUID + " is " + interview_age + " > 131. This could allow someone to guess the age by less than 30 days. Set age in month to 131.\n";
-                                    interview_age = 131;
+                                for (var k = 0; k < datadictionary.length; k++) {
+                                    if (na == datadictionary[k]['field_name']) {
+                                        d = datadictionary[k];
+                                        ds[name] = datadictionary[k];
+                                        break;
+                                    }
                                 }
                             }
-                            str = str + data[i][name] + "," +
-                                data[i][name] + "," +
-                                interview_date + "," +
-                                interview_age + "," +
-                                gender + "," +
-                                data[i]['redcap_event_name'];
-                            count = count + 1;
-                        } else {
-                            if (count > 0)
-                                str = str + ",\"" + label + "\"";
-                            else
-                                str = str + "\"" + label + "\"";
-                            count = count + 1;
+                            if (d == []) {
+                                console.log("Error: Could not find data dictionary entry for " + name);
+                            }
+                            if (d['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
+                                // lookup the label variable
+                                var nname = name + '___BIOPORTAL';
+                                if (sortedKeys.indexOf(nname) >= 0 && data[i][nname].length > 0) {
+                                    label = label + " " + data[i][nname];
+                                }
+                            }
+
+                            if (name == d['field_name'] &&
+                                (d['text_validation_min'] !== "" ||
+                                    d['text_validation_max'] !== "")) {
+                                var mi = d['text_validation_min'];
+                                var ma = d['text_validation_max'];
+                                if (mi !== "") {
+                                    if (parseFloat(label) < mi) {
+                                        rstr = rstr + "Warning: value for " + name + " " + label + " < " + mi + " for " + data[i]['id_redcap'] + ". Value will be deleted!\n";
+                                        label = "";
+                                    }
+                                }
+                                if (ma !== "") {
+                                    if (parseFloat(label) > ma) {
+                                        rstr = rstr + "Warning: value for " + name + " " + label + " > " + ma + " for " + data[i]['id_redcap'] + ". Value will be deleted!\n";
+                                        label = "";
+                                    }
+                                }
+                            }
+
+                            if (name == d['field_name'] &&
+                                d['text_validation_type_or_show_slider_number'] == "integer") {
+                                if (label.match(/^[0-9+-]*$/) === null) {
+                                    rstr = rstr + "Warning: measure not integer valued in item " + name + " \"" + label + "\" for " + data[i]['id_redcap'] + ". Consider changing this value, it will be deleted.\n";
+                                    label = "";
+                                }
+                            }
+                            if (name == d['field_name'] &&
+                                d['text_validation_type_or_show_slider_number'] == "number") {
+                                if (label.match(/^-?\d*\.?\d*$/) === null) {
+                                    rstr = rstr + "Warning: measure not floating point valued in item " + name + " \"" + label + "\" for " + data[i]['id_redcap'] + ". Consider changing this value, it will be deleted.\n";
+                                    label = "";
+                                }
+                            }
+
+                            label = label.replace(/\"/g, "\"\"\"");
+                            if (name == "id_redcap") {
+                                // we need more: subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
+                                //interview_date = data[i]['asnt_timestamp']; // TODO FIX THIS; update to use values in release2.0json
+                                interview_age = ""; // in month
+                                gender = "";
+                                found = false;
+                                // find the missing information in the subject_json structure loaded from outside file
+                                pGUID = data[i][name];
+                                if (typeof subject_json[pGUID] === 'undefined') {
+                                    rstr = rstr + "Error: could not find subject " + pGUID + " in subject JSON file " + current_subject_json + ".\n";
+                                    // still convert the interview_date
+                                    interview_date = visit.format('MM/DD/YYYY');
+                                } else {
+                                    gender = subject_json[pGUID]['gender'];
+                                    var dob = moment(subject_json[pGUID]['dob'], 'YYYY-MM-DD');
+                                    var visit = moment(data[i]['asnt_timestamp'], 'YYYY-MM-DD HH:mm');
+                                    if (typeof dob == 'undefined') {
+                                        rstr = rstr + "Error: date of birth (dob) for " + pGUID + " cannot be read (" + subject_json[pGUID]['dob'] + ") as YYY-MM-DD.";
+                                        dob = '';
+                                    }
+                                    if (typeof interview_age == 'undefined') {
+                                        rstr = rstr + "Error: interview_age for " + pGUID + " cannot be read (" + subject_json[pGUID]['asnt_timestamp'] + ") as YYY-MM-DD HH:mm.";
+                                        interview_age = '';
+                                    }
+                                    interview_date = subject_json[pGUID][interview_event]["interview_date"];
+                                    // use the interview age from this entry
+                                    interview_age = subject_json[pGUID][interview_event]["interview_age"];
+                                    //console.log(interview_age_key)
+                                    //console.log(interview_age)
+                                    if (typeof interview_age === 'undefined') {
+                                        rstr = rstr + "Error: no interview_age value " + interview_event + " for participant " + pGUID + "\n";
+                                    }
+                                    //interview_age = visit.diff(dob, 'month', false); // use the dob and the asnt_timestamp
+
+                                    // We have to fix the ages here because kids are included into the study
+                                    // based on a real date but the dob is given to us at the 15th of the month only.
+                                    // So if a kid is in the study and has interview_age of 107 we know that their 
+                                    // birthday must have been in relation to the visit date (real date).
+                                    // For now lets clamp the interview_age to 108 ... 131.
+                                    if (data[i]['redcap_event_name'] == 'baseline_year_1_arm_1' && interview_age < 108) {
+                                        rstr = rstr + "Warning: interview_age in month for " + pGUID + " is " + interview_age + " < 108. This could allow someone to guess the age by less than 30 days. Set age in month to 108.\n";
+                                        interview_age = 108;
+                                    }
+                                    if (data[i]['redcap_event_name'] == 'baseline_year_1_arm_1' && interview_age > 131) {
+                                        rstr = rstr + "Warning: interview_age in month for " + pGUID + " is " + interview_age + " > 131. This could allow someone to guess the age by less than 30 days. Set age in month to 131.\n";
+                                        interview_age = 131;
+                                    }
+                                }
+                                str = str + data[i][name] + "," +
+                                    data[i][name] + "," +
+                                    interview_date + "," +
+                                    interview_age + "," +
+                                    gender + "," +
+                                    data[i]['redcap_event_name'];
+                                count = count + 1;
+                            } else {
+                                if (count > 0)
+                                    str = str + ",\"" + label + "\"";
+                                else
+                                    str = str + "\"" + label + "\"";
+                                count = count + 1;
+                            }
                         }
-                    }
-                    str = str + "\n";
-                    try {
-                        fs.appendFileSync(filename, str);
-                    } catch (e) {
-                        win.send('alert', 'Could not append to file: ' + filename);
+                        str = str + "\n";
+                        try {
+                            fs.appendFileSync(filename, str);
+                        } catch (e) {
+                            win.send('alert', 'Could not append to file: ' + filename);
+                        }
                     }
                 }
             }

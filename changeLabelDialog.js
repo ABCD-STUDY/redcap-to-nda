@@ -25,6 +25,11 @@ ipcRenderer.on('changeLabelCurrentName', function(event, data) {
     } else {
         jQuery('#change-label-dialog-version').val(data['version']);
     }
+    if (typeof data['guard_name'] === 'undefined' || data['guard_name'] == null) {
+        jQuery('#change-label-guard-name').val("");        
+    } else {
+        jQuery('#change-label-guard-name').val(data['guard_name']);
+    }
 
     jQuery('#change-label-dialog-name').attr('instrument', data['instrument']);
 });
@@ -36,8 +41,9 @@ jQuery(document).ready(function() {
         var nda_name = jQuery('#change-label-dialog-nda-name').val();
         var version = jQuery('#change-label-dialog-version').val();
         var instrument = jQuery('#change-label-dialog-name').attr('instrument');
+        var guard_name = jQuery('#change-label-guard-name').val();
 
-        ipcRenderer.send('closeChangeLabelDialogOk', { name: name, instrument: instrument, nda_name: nda_name, version: version } );
+        ipcRenderer.send('closeChangeLabelDialogOk', { name: name, instrument: instrument, nda_name: nda_name, version: version, guard_name: guard_name } );
         return false;
     });
     jQuery('#change-label-dialog-cancel').on('click', function() {
@@ -49,8 +55,9 @@ jQuery(document).ready(function() {
         var nda_name = jQuery('#change-label-dialog-nda-name').val();
         var version = jQuery('#change-label-dialog-version').val();
         var instrument = jQuery('#change-label-dialog-name').attr('instrument');
+        var guard_name = jQuery('#change-label-guard-name').val();
 
-        ipcRenderer.send('closeChangeLabelDialogReset', { name: name, instrument: instrument, nda_name: nda_name, version: version });
+        ipcRenderer.send('closeChangeLabelDialogReset', { name: name, instrument: instrument, nda_name: nda_name, version: version, guard_name: guard_name });
         return false;
     });
 });

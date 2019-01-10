@@ -22,6 +22,7 @@ ipcRenderer.on('updateInstrumentList', function(event, data) {
             return true;
         jQuery(this).remove();
     });
+    console.log("Add instrument names");
     for (var i = 0; i < data.length; i++) {
         /*<li class="list-group-item">
          <img class="img-circle media-object pull-left" src="/assets/img/avatar2.png" width="32" height="32">
@@ -31,7 +32,7 @@ ipcRenderer.on('updateInstrumentList', function(event, data) {
         </div>
         </li> */
         // lets check if we have an alternative name for this instrument
-        ipcRenderer.send('getTags', [ { 'item': data[i][0], 'prefix': 'instrument-' } ]);
+        ipcRenderer.send('getTags', [ { 'item': data[i][0], 'prefix': 'instrument-' }, { 'item': data[i][0], 'prefix': 'guard-' } ]);
         //console.log("for " + data[i][0] + " we have : " + data[i][1] + " in updateInstrumentList");
         jQuery('#current-instrument-list').append(
             '<li class="list-group-item" value='+ data[i][0] +'>' + 
@@ -39,6 +40,7 @@ ipcRenderer.on('updateInstrumentList', function(event, data) {
             '<div class="media-body">' +  
             '  <strong>' + data[i][0] + '</strong>' + 
             '  <div><button class="btn btn-default edit"><span class="icon icon-feather"></span></button> <span class="description">' + data[i][1] + '</span></div>' +
+            '  <div class="guard-group"><span class="guard_name"></span></div>' +
             '</div></li>' );
     }
 });
@@ -100,7 +102,7 @@ ipcRenderer.on('ndaSelectButtonTextChange', function(event,data) {
 
 ipcRenderer.on('updateTagValues', function(event, data) {
     // if the prefix in data is not 'tag-'
-    
+    console.log("updateTagValues with :" + JSON.stringify(data));
     // 'tags': store.get( 'tag-' + data[i]['item'] ), 'data': data
     for (var i = 0; i < data.length; i++) {
         if (typeof data[i]['prefix'] !== 'undefined' && data[i]['prefix'] == 'instrument-') {
@@ -111,6 +113,11 @@ ipcRenderer.on('updateTagValues', function(event, data) {
                     //console.log("in updateTagValues: " + JSON.stringify(data[i]));
                     jQuery(this).attr('version', data[i]['tags'][1]);
                     jQuery(this).attr('nda_name', data[i]['tags'][2]);
+                    console.log("set guard name to: " + data[i]['guard_name']);
+                    if (typeof data[i]['guard_name'] !== 'undefined') {
+                        jQuery(this).attr('guard_name', data[i]['guard_name']);
+                        jQuery(this).find('span.guard_name').text(" GUARDED by " + data[i]['guard_name']);
+                    }
                     jQuery(this).find('.description').text(" " + data[i]['tags'][0]);
                     jQuery(this).find('.edit span').addClass('from-store');
                 }
@@ -125,6 +132,17 @@ ipcRenderer.on('updateTagValues', function(event, data) {
                     }
                 });
             }
+        } else if (typeof data[i]['prefix'] !== 'undefined' && data[i]['prefix'] == 'guard-') { 
+            var instr = data[i]['item'];
+            // ok, update the name of that instrument, not the tags on an item
+            jQuery('#current-instrument-list li').each(function() {
+                if (jQuery(this).attr('value') == instr) {
+                    if (typeof data[i]['tags'] !== 'undefined' && data[i]['tags'].length > 0) {
+                        jQuery(this).attr('guard_name', data[i]['tags'][0]);
+                        jQuery(this).find('span.guard_name').text(" GUARDED by " + data[i]['tags'][0]);
+                    }
+                }
+            });
         } else {
             //console.log("need to update the tag for " + data[i]['item'] + " tag: " + data[i]['tags'] );
             var itemEntry = jQuery('#current-items-list').find('[value="' + data[i]['item'] + '"]');
@@ -309,11 +327,12 @@ jQuery(document).ready(function() {
         var instrument = jQuery(this).parent().parent().parent().attr('value'); // unique name of this instrument
         var version = jQuery(this).parent().parent().parent().attr('version');
         var nda_name = jQuery(this).parent().parent().parent().attr('nda_name');
+        var guard_name = jQuery(this).parent().parent().parent().attr('guard_name');
         // maybe we have a value for this instrument as a tag?
         // no, we will only show descriptions that are current (default or tag value)
         //console.log("Open change label dialog with: " + default_text + " " + instrument);
-        ipcRenderer.send('openChangeLabelDialog', { 'name': default_text, 'instrument': instrument, 'version': version, 'nda_name': nda_name });
-        console.log("open another dialog finished");
+        ipcRenderer.send('openChangeLabelDialog', { 'name': default_text, 'instrument': instrument, 'version': version, 'nda_name': nda_name, 'guard_name': guard_name });
+        console.log("open another dialog finished with " + JSON.stringify({ 'name': default_text, 'instrument': instrument, 'version': version, 'nda_name': nda_name, 'guard_name': guard_name }));
         return false;
     });
 

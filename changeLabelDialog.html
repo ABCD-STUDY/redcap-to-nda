@@ -27,6 +27,15 @@
                             <input type="text" class="form-control" id="change-label-dialog-version" placeholder="Version">
                         </div>
                         <hr>
+                        <p>In general any data present for a participant and visit will be exported. You can prevent exporting data for 
+                           the current instrument by specifying a guard variable that needs
+                           to have a value for the current event. If the variable does not have a value, the program will not export 
+                           the data for this participant and event.</p>
+                        <div class="form-group">
+                            <label>Guard item</label>
+                            <input type="text" class="form-control" id="change-label-guard-name" placeholder="">
+                        </div>
+                        <hr>
                         <div class="form-actions">
                             <button class="btn btn-form btn-default" id="change-label-dialog-cancel">Cancel</button>
                             <button class="btn btn-form btn-default" id="change-label-dialog-reset">Reset</button>
