@@ -1821,10 +1821,6 @@ ipcMain.on('exportData', function (event, data) {
                         // if (data[i]['nda_year_1_inclusion___1'] == "1") {
                         // export this participants data
                         str = "";
-                        if (line % 100 == 0) {
-                            console.log("create file line: " + line + "/" + data.length);
-                        }
-                        line++;
                         var keys = Object.keys(data[i]);
                         for (var j = 0; j < sortedKeys.length; j++) {
                             var name = sortedKeys[j];
@@ -2018,6 +2014,11 @@ ipcMain.on('exportData', function (event, data) {
                             }
                         }
                         str = str + "\n";
+                        if (line % 100 == 0) {
+                            console.log("create file line: " + line + "/" + data.length);
+                        }
+                        line++;        
+
                         try {
                             fs.appendFileSync(filename, str);
                         } catch (e) {
@@ -2370,8 +2371,10 @@ ipcMain.on('exportForm', function (event, data) {
             var flag_date = false; // do we have a date to parse?
             var flag_recommended = false; // should this field be recommended instead of conditional?
             if (typeof flags !== 'undefined') {
-                if (flags.indexOf('remove') !== -1)
+                if (flags.indexOf('remove') !== -1) {
+                    console.log("Remove column for item " + d['field_name']);
                     continue; // ignore this entry in the data dictionary
+                }
                 if (flags.indexOf('recommended') !== -1)
                     flag_recommended = true; // maybe we don't want to have a condition mentioned here, make those recommended
                 if (flags.indexOf('long') !== -1)
