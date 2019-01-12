@@ -207,6 +207,10 @@ ipcRenderer.on('message', function(event, data) {
     jQuery('footer h1').text(data); 
 });
 
+ipcRenderer.on('info', function(event, data) {
+    jQuery('#console').val(jQuery('#console').val() + data + "\n");
+});
+
 //
 jQuery(document).ready(function() {
 

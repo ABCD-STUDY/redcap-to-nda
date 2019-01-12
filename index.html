@@ -45,6 +45,9 @@
     div.guard-group {
       margin-top: -5px;
     }
+    #console {
+      font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+    }
   </style>
 </head>
 
@@ -127,8 +130,8 @@
     </div>
     <div class="window-content console" style="max-height: 100px;">
         <div class="pane-group">
-          <div class="pane">
-            <textarea style="height: 100%; width: 100%;"></textarea>
+          <div class="pane" style="overflow: hidden;">
+            <textarea id="console" style="height: 100%; width: 100%;"></textarea>
           </div>
         </div>
     </div>

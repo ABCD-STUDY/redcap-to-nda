@@ -141,6 +141,7 @@ function createWindow() {
 
     // show some information about the program location for the local file:
     console.log("store location for local file: " + app.getPath('userData'));
+    win.send('info', "store location for local file: " + app.getPath('userData'));
 }
 
 // This method will be called when Electron has finished
@@ -237,6 +238,7 @@ ipcMain.on('closeNDASelectDialogOk', function (event, arg) {
             }
             //console.log(JSON.stringify(body));
             win.send('message', "read data dictionary for " + restrictToNDA + " from NDA...");
+            writeLog("read data dictionary for " + restrictToNDA + " from NDA...");
             restrictToNDADD = body;
         });
     }
@@ -286,9 +288,10 @@ ipcMain.on('closeNDASelectDialogVerify', function (event, arg) {
         }
         //console.log(JSON.stringify(body));
         win.send('message', "read data dictionary for " + restrictToNDA + " from NDA...");
+        writeLog("read data dictionary for " + restrictToNDA + " from NDA...");
         // now check against the selected instrument to verify 
         var txt = verify(current_form, body);
-        console.log("Verification: \n" + txt);
+        writeLog("Verification: \n" + txt);
 
         // restrictToNDADD = body;
     });
@@ -299,7 +302,7 @@ ipcMain.on('closeNDASelectDialogVerify', function (event, arg) {
 
 
 ipcMain.on('ndaDDFromREDCap', function (event, arg) {
-    console.log("ask NDA for the list of data dictionaries...");
+    writeLog("ask NDA for the list of data dictionaries...");
     // curl -X GET --header 'Accept: application/json' 'https://ndar.nih.gov/api/datadictionary/v2/datastructure'
     var headers = {
         'User-Agent': 'Super Agent/0.0.1',
@@ -650,7 +653,7 @@ ipcMain.on('closeChangeLabelDialogOk', function (event, arg) {
 
 ipcMain.on('getEventsFromREDCap', function (event, arg) {
     var token = arg;
-    console.log("get event data from REDCap...");
+    writeLog("get event data from REDCap...");
 
     getEvents(token);
     getInstrumentEventMapping(token);
@@ -838,7 +841,7 @@ ipcMain.on('checkData', function (event, data) {
             'User-Agent': 'Super Agent/0.0.1',
             'Content-Type': 'application/x-www-form-urlencoded'
         }
-        console.log("run request now...");
+        writeLog("run request now...");
         var url = current_url;
         request({
             method: 'POST',
@@ -870,7 +873,7 @@ ipcMain.on('checkData', function (event, data) {
                 data.push(body[i]);
             }
 
-            console.log("check form: " + form);
+            writeLog("check form: " + form);
             for (var i = 0; i < datadictionary.length; i++) {
                 var d = datadictionary[i];
                 // only call checkItem for items that we have in the current body
@@ -897,17 +900,18 @@ ipcMain.on('checkData', function (event, data) {
         process.stdout.write("finished getting data from redcap for checkData\n");
         if (allChunksSend2) {
             win.send('message', "done with checking...");
+            writeLog("done with checking...");
         }
         // findProblems( tokens );
     };
     var chunks = items.chunk(40); // get 20 items at the same time from REDCap
 
     for (var i = 0; i < chunks.length; i++) {
-        console.log('request chunk ' + i + " of " + (chunks.length - 1));
+        writeLog('request chunk ' + i + " of " + (chunks.length - 1));
         queue.push([chunks[i]],
             (function (counter, maxCounter) {
                 return function (err) {
-                    console.log("finished getting data for chunk: " + counter + " with " + err);
+                    writeLog("finished getting data for chunk: " + counter + " with " + err);
                     win.send('message', "got data for chunk " + counter + "/" + maxCounter);
                 };
             })(i, chunks.length)
@@ -951,6 +955,7 @@ ipcMain.on('checkItem', function (event, data) {
             // error case
             process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
             win.send('alert', "Error: no response from REDCap");
+            writeLog("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response));
             return;
         }
         checkItem(item, form, data, function (result, status) {
@@ -977,11 +982,11 @@ function verify(form_name, nda) {
 
             // only check if it should be exported - is it a descriptive item? - Also superfluous as datadictionary only contains non-descriptive items
             if (d['field_type'] == 'descriptive') {
-                console.log("remove " + d['field_name'] + " - descriptive");
+                writeLog("remove " + d['field_name'] + " - descriptive");
                 continue;
             }
             if (d['field_type'] == 'notes') {
-                console.log("remove " + d['field_name'] + " - notes");
+                writeLog("remove " + d['field_name'] + " - notes");
                 continue;
             }
 
@@ -989,14 +994,14 @@ function verify(form_name, nda) {
             var flags = store.get('tag-' + d['field_name']);
             if (typeof flags !== 'undefined') {
                 if (flags.indexOf('remove') !== -1) {
-                    console.log("remove " + d['field_name'] + " - remove tag");
+                    writeLog("remove " + d['field_name'] + " - remove tag");
                     continue; // don't export this key
                 }
             }
             redcap.push(d);
         }
     }
-    console.log("found: " + redcap.length + " items in the redcap instrument that should be checked...");
+    writeLog("found: " + redcap.length + " items in the redcap instrument that should be checked...");
     var stats = { 'found': 0, 'missing': 0 };
     var txt = "REDCap field_name,status\n";
     // now check each item in redcap against the items in nda
@@ -1037,7 +1042,7 @@ function verify(form_name, nda) {
         }
     }
 
-    console.log(JSON.stringify(stats));
+    writeLog(JSON.stringify(stats));
 
     return txt;
 }
@@ -1046,7 +1051,7 @@ function checkEntryLength(item, l, data, callback) {
     var result = "";
     for (var i = 0; i < data.length; i++) {
         if (typeof data[i][item] !== 'undefined' && data[i][item].length > l) {
-            console.log("  max-length-validation error for item " + item + " in row " + i + ": \"" + data[i][item] + "\" Length: " + data[i][item].length);
+            writeLog("  max-length-validation error for item " + item + " in row " + i + ": \"" + data[i][item] + "\" Length: " + data[i][item].length);
             result = result + "max-length-validation [" + data[i][item].length + "/" + l + "], ";
         }
     }
@@ -1233,10 +1238,10 @@ ipcMain.on('openLoadJSONDialog', function (event, data) {
         } catch (e) {
             if (e instanceof SyntaxError) {
                 // Output expected SyntaxErrors.
-                console.log(e);
+                writeLog(e);
             } else {
                 // Output unexpected Errors.
-                console.log(e, false);
+                writeLog(e, false);
             }
         }
         current_subject_json_data = sj;
@@ -1269,11 +1274,11 @@ ipcMain.on('openLoadCSVDialog', function (event, data) {
                 if (data.length > 0) {
                     var keys = Object.keys(data[0]);
                     if (!'redcap' in keys) {
-                        console.log("Error: did not find column redcap in data");
+                        writeLog("Error: did not find column redcap in data");
                         return;
                     }
                     if (!'aliases' in keys) {
-                        console.log("Error: did not find column aliases in data");
+                        writeLog("Error: did not find column aliases in data");
                         return;
                     }
                     var store_items = {};
@@ -1290,7 +1295,7 @@ ipcMain.on('openLoadCSVDialog', function (event, data) {
                             }
                         }
                         if (!found) {
-                            console.log("Error: alias for item: " + d + " cannot be set. Field is not in data dictionary.");
+                            writeLog("Error: alias for item: " + d + " cannot be set. Field is not in data dictionary.");
                             continue;
                         }
                         // don't import if it does not exist
@@ -1308,7 +1313,7 @@ ipcMain.on('openLoadCSVDialog', function (event, data) {
                         }));
                         aliases = [...s]; // store as array
                         // aliases = [...s].join(" ").trim();
-                        console.log("Import Aliases: set key " + k + " to: " + aliases + " [" + i + "/" + data.length + "]");
+                        writeLog("Import Aliases: set key " + k + " to: " + aliases + " [" + i + "/" + data.length + "]");
                         // store.set('alias-' + k, aliases);
                         store_items['alias-' + k] = aliases;
                         // and mark that we have an alias here
@@ -1330,20 +1335,24 @@ ipcMain.on('openLoadCSVDialog', function (event, data) {
         } catch (e) {
             if (e instanceof SyntaxError) {
                 // Output expected SyntaxErrors.
-                console.log(e);
+                writeLog(e);
             } else {
                 // Output unexpected Errors.
-                console.log(e, false);
+                writeLog(e, false);
             }
         }
     }
 });
 
+function writeLog(t) {
+    console.log(t);
+    win.send('info',t);
+}
 
 ipcMain.on('exportData', function (event, data) {
     var filename = data['filename'];
     var form = data['form'];
-    console.log("start writing data to disk " + filename + " ...");
+    writeLog("start writing data to disk " + filename + " ...");
 
     tagstore = store.store; // update tag store for speed up of lookup below
 
@@ -1370,7 +1379,7 @@ ipcMain.on('exportData', function (event, data) {
     var guard_variable = "";
     if (typeof v2 !== 'undefined') {
         guard_variable = v2[0];
-        console.log("guard variable exists for this instrument " + guard_variable);
+        writeLog("guard variable exists for this instrument " + guard_variable);
     }
 
     // what are the events this instrument should be querried for
@@ -1479,9 +1488,9 @@ ipcMain.on('exportData', function (event, data) {
             }
         }
     }
-    console.log("total number of items to pull from REDCap: " + items.length);
+    writeLog("total number of items to pull from REDCap: " + items.length);
     if (restrictToNDA.length > 0) {
-        console.log(" missing items on NDA (removed from export): " + missingItems.length);
+        writeLog(" missing items on NDA (removed from export): " + missingItems.length);
     }
 
     // do we need to get label data for BIOPORTAL entries as well?
@@ -1493,7 +1502,7 @@ ipcMain.on('exportData', function (event, data) {
         }
     }
     if (bioportalVars.length > 0) {
-        console.log("Warning: need to pull labels for BIOPORTAL entries as well...");
+        writeLog("Warning: need to pull labels for BIOPORTAL entries as well...");
         rstr = rstr + "Info: BIOPORTAL variables detected: [ " + bioportalVars.join(", ") + " ]\n";
     }
 
@@ -1553,7 +1562,7 @@ ipcMain.on('exportData', function (event, data) {
             }
         }
         //console.log("got chunk of size " + chunk.length + " call: " + JSON.stringify(data));
-        console.log("ask for these scores from REDCap: " + JSON.stringify(data));
+        writeLog("ask for these scores from REDCap: " + JSON.stringify(data));
         var headers = {
             'User-Agent': 'Super Agent/0.0.1',
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -1571,6 +1580,7 @@ ipcMain.on('exportData', function (event, data) {
                 // error case
                 process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
                 win.send('alert', JSON.stringify(response));
+                win.send('info', JSON.stringify(response));
                 callback("error");
                 return;
             }
@@ -1623,9 +1633,10 @@ ipcMain.on('exportData', function (event, data) {
         console.log("drain called...");
         if (allChunksSend && anyErrorDownloading['numBad'] > 0) {
             win.send("message", "Error: there was a download error, we will not create the output files because there might be missing data.");
+            win.send('info', "Error: there was a download error, we will not create the output files because there might be missing data.");
         }
         if (allChunksSend && anyErrorDownloading['numBad'] == 0) {
-            console.log("finished getting data from redcap at this point, save itemsPerRecord to file: " + filename);
+            writeLog("finished getting data from redcap at this point, save itemsPerRecord to file: " + filename);
             var rxnorm_cache = {};
 
             // we need to add some standard columns at the beginning that identify the dataset on NDA
@@ -1637,7 +1648,7 @@ ipcMain.on('exportData', function (event, data) {
             data = {}; // create a single event set
             for (var i = 0; i < itemsPerRecord.length; i++) {
                 if (0 === (i % 10000)) {
-                    console.log("create event set: " + i + "/" + itemsPerRecord.length);
+                    writeLog("create event set: " + i + "/" + itemsPerRecord.length);
                 }
                 var d = itemsPerRecord[i];
                 var id = d['id_redcap']+d['redcap_event_name'];
@@ -1733,9 +1744,9 @@ ipcMain.on('exportData', function (event, data) {
 
             // read in the additional subject information from the current_subject_json
             subject_json = {};
-            console.log("read subject information...");
+            writeLog("read subject information...");
             if (current_subject_json == "") {
-                console.log("Error: no current_subject_json file specified");
+                writeLog("Error: no current_subject_json file specified");
             } else {
                 if (fs.existsSync(current_subject_json)) {
                     var sj = [];
@@ -1744,10 +1755,10 @@ ipcMain.on('exportData', function (event, data) {
                     } catch (e) {
                         if (e instanceof SyntaxError) {
                             // Output expected SyntaxErrors.
-                            console.log(e);
+                            writeLog(e);
                         } else {
                             // Output unexpected Errors.
-                            console.log(e, false);
+                            writeLog(e, false);
                         }
                     }
                     // get the pGUID as key
@@ -1756,13 +1767,13 @@ ipcMain.on('exportData', function (event, data) {
                     }
                     // we expect some keys in this file, like pGUID, gender, and dob
                 } else {
-                    console.log("Error: file does not exist " + current_subject_json);
+                    writeLog("Error: file does not exist " + current_subject_json);
                 }
             }
 
             var skipkeys = [];
             var count = 0;
-            console.log("Create csv file content...");
+            writeLog("Create csv file content...");
             for (var j = 0; j < sortedKeys.length; j++) {
                 var k = sortedKeys[j];
                 if (k == 'id_redcap') {
@@ -1800,6 +1811,7 @@ ipcMain.on('exportData', function (event, data) {
                 fs.writeFileSync(filename, str);
             } catch (e) {
                 win.send('alert', 'Could not save to file: ' + filename);
+                writeLog('Could not save to file: ' + filename);
             }
 
             var ds = {}; // a cache for data dictionary entries - gets filled during the first iteration
@@ -1905,7 +1917,7 @@ ipcMain.on('exportData', function (event, data) {
                                 }
                             }
                             if (d == []) {
-                                console.log("Error: Could not find data dictionary entry for " + name);
+                                writeLog("Error: Could not find data dictionary entry for " + name);
                             }
                             if (d['select_choices_or_calculations'] == "BIOPORTAL:RXNORM") {
                                 // lookup the label variable
@@ -2015,7 +2027,7 @@ ipcMain.on('exportData', function (event, data) {
                         }
                         str = str + "\n";
                         if (line % 100 == 0) {
-                            console.log("create file line: " + line + "/" + data.length);
+                            writeLog("create file line: " + line + "/" + data.length);
                         }
                         line++;        
 
@@ -2027,18 +2039,21 @@ ipcMain.on('exportData', function (event, data) {
                     }
                 }
             }
-            console.log("Write out report...");
+            writeLog("Write out report...");
             try {
                 fs.writeFile(report, rstr, function (err) {
                     if (err) {
-                        return console.log(err);
+                        return writeLog(err);
+                    } else {
+                        writeLog("The report file was saved...");
                     }
-                    console.log("The report file was saved...");
                 });
             } catch (e) {
                 win.send('alert', 'Could not save to report file: ' + report);
+                writeLog('Could not save to report file: ' + report);
             }
             win.send('message', "done with save...");
+            writeLog("done with save...");
         }
     };
     // initialize the download error tracker
@@ -2057,14 +2072,16 @@ ipcMain.on('exportData', function (event, data) {
             },
             (function (counter, maxCounter, anyErrorDownloading) {
                 return function (err) {
-                    console.log("finished getting data for chunk: " + counter + " with " + err);
+                    writeLog("finished getting data for chunk: " + counter + " with " + err);
                     if (err == 'ok') {
                         anyErrorDownloading['numOk']++;
                         win.send('message', "got data for chunk " + counter + "/" + maxCounter);
+                        writeLog("got data for chunk " + counter + "/" + maxCounter);
                     } else {
                         anyErrorDownloading['numBad']++;
                         anyErrorDownloading['errors'].push(err);
                         win.send('error', "ERROR on download " + counter + "/" + maxCounter);
+                        writeLog( "ERROR on download " + counter + "/" + maxCounter);
                     }
                 };
             })(i, chunks.length, anyErrorDownloading)
@@ -2080,14 +2097,16 @@ ipcMain.on('exportData', function (event, data) {
                 },
                 (function (counter, maxCounter) {
                     return function (err) {
-                        console.log("finished getting data for BIOPORTAL chunk: " + counter + " with " + err);
+                        writeLog("finished getting data for BIOPORTAL chunk: " + counter + " with " + err);
                         if (err == "ok") {
                             anyErrorDownloading['numOk']++;
                             win.send('message', "got data for BIOPORTAL chunk " + counter + "/" + maxCounter);
+                            writeLog("got data for BIOPORTAL chunk " + counter + "/" + maxCounter);
                         } else {
                             anyErrorDownloading['numBad']++;
                             anyErrorDownloading['errors'].push(err);
                             win.send('message', "Error getting BIOPORTAL chunk " + counter + "/" + maxCounter);
+                            writeLog("Error getting BIOPORTAL chunk " + counter + "/" + maxCounter);
                         }
                     };
                 })(i, chunks.length, anyErrorDownloading)
@@ -2150,7 +2169,7 @@ function unHTML(str) {
 }
 
 ipcMain.on('exportForm', function (event, data) {
-    console.log("save now form : " + data['form'] + " " + data['filename']);
+    writeLog("save now form : " + data['form'] + " " + data['filename']);
     var filename = data['filename'];
     var form = data['form'];
     if (typeof filename == 'undefined' || filename == '') {
@@ -2218,7 +2237,7 @@ ipcMain.on('exportForm', function (event, data) {
                 }
                 if (!found) {
                     if (missingItems.indexOf(d['field_name']) < 0) {
-                        console.log("Info: Missing item " + d['field_name'] + " in NDA data dictionary " + restrictToNDA + ". Item will not be exported.");
+                        writeLog("Info: Missing item " + d['field_name'] + " in NDA data dictionary " + restrictToNDA + ". Item will not be exported.");
                         missingItems.push(d['field_name']);
                     }
                     continue;
@@ -2343,6 +2362,7 @@ ipcMain.on('exportForm', function (event, data) {
                 if (label.trim() !== '')
                     lastGoodLabel = label;
                 // NDA will not take any descriptive fields - only data can be exported
+                writeLog("Remove column for item " + d['field_name'] + " (descriptive field).");
                 continue;
             }
             if (d['field_type'] == "notes") {
@@ -2372,7 +2392,7 @@ ipcMain.on('exportForm', function (event, data) {
             var flag_recommended = false; // should this field be recommended instead of conditional?
             if (typeof flags !== 'undefined') {
                 if (flags.indexOf('remove') !== -1) {
-                    console.log("Remove column for item " + d['field_name']);
+                    writeLog("Remove column for item " + d['field_name']);
                     continue; // ignore this entry in the data dictionary
                 }
                 if (flags.indexOf('recommended') !== -1)
@@ -2449,7 +2469,7 @@ ipcMain.on('exportForm', function (event, data) {
                 // this global flag indicates if normal text fields should be removed from the export
                 // a normal text field is a text field that is not a date/number/integer
                 if (d['field_type'] == "text" && d['text_validation_type_or_show_slider_number'] == '') {
-                    console.log("Warning: removed field " + d['field_name'] + " because its type text without validation.");
+                    writeLog("Warning: removed field " + d['field_name'] + " because its type text without validation.");
                     continue;
                 }
             }
@@ -2495,13 +2515,14 @@ ipcMain.on('exportForm', function (event, data) {
         }
     }
     if (restrictToNDA.length != 0)
-        console.log("Total number of missing items in NDA dictionary: " + missingItems.length);
+        writeLog("Total number of missing items in NDA dictionary: " + missingItems.length);
 
     fs.writeFile(filename, str, function (err) {
         if (err) {
-            return console.log(err);
+            writeLog(err);
+            return;
         }
-        console.log("The file was saved...");
+        writeLog("The file was saved...");
     });
 });
 
@@ -2563,6 +2584,7 @@ function getEvents(token) {
         if (error || response.statusCode !== 200) {
             // error case
             process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
+            writeLog("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response));
             return;
         }
         setTimeout(function () {
@@ -2596,6 +2618,7 @@ function getInstrumentEventMapping(token) {
         if (error || response.statusCode !== 200) {
             // error case
             process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
+            writeLog("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response));
             return;
         }
         instrumentEventMapping = body;
@@ -2626,6 +2649,7 @@ function getDataDictionary(token) {
         if (error || response.statusCode !== 200) {
             // error case
             process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
+            writeLog("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response));
             return;
         }
 
@@ -2717,7 +2741,7 @@ function getNamesForInstrument(token) {
         for (var entry in data) {
             instrumentLabels[data[entry]['instrument_name']] = data[entry]['instrument_label'];
         }
-        console.log("found " + Object.keys(instrumentLabels).length + " instruments");
+        writeLog("found " + Object.keys(instrumentLabels).length + " instruments");
         // filterDataDictionary( tokens ); // remove entries from instruments again that are not part of the baseline event
 
         //setupDialog.send('eventsFromREDCap', "DATA FROM REDCAP 1 ");        
@@ -2752,26 +2776,26 @@ function filterDataDictionary(token) {
             return;
         }
         data = body;
-        console.log("number of instruments before filering: " + Object.keys(instruments).length);
+        writeLog("number of instruments before filering: " + Object.keys(instruments).length);
 
         // filter out instruments that are not in the baseline event
         var okforms = [];
         for (var d in data) {
-            console.log("Check event name: " + data[d]['unique_event_name'] + " for: " + data[d]['form']);
+            writeLog("Check event name: " + data[d]['unique_event_name'] + " for: " + data[d]['form']);
             if (data[d]['unique_event_name'] == timepoint /*'baseline_year_1_arm_1' */ ) {
                 okforms.push(data[d]['form']);
             }
         }
-        console.log("instruments to keep are: " + okforms.length + "\n" + JSON.stringify(okforms));
+        writeLog("instruments to keep are: " + okforms.length + "\n" + JSON.stringify(okforms));
 
         for (var d in instruments) {
             if (okforms.indexOf(d) === -1) {
-                console.log("remove the form: " + d);
+                writeLog("remove the form: " + d);
                 delete instruments[d];
             } else {
-                console.log("Keep form: " + d);
+                writeLog("Keep form: " + d);
             }
         }
-        console.log("number of instruments left: " + Object.keys(instruments).length);
+        writeLog("number of instruments left: " + Object.keys(instruments).length);
     });
 }
