@@ -1404,6 +1404,9 @@ ipcMain.on('exportData', function (event, data) {
     });
 
     var items = [];
+    if (guard_variable !== "")
+        items.push(guard_variable);
+
     var dateConversions = {};
     var missingItems = []; // keep track of missing columns
     for (var i = 0; i < datadictionary.length; i++) {
@@ -1827,6 +1830,13 @@ ipcMain.on('exportData', function (event, data) {
                     if (interview_event !== master_list_events[ev])
                         continue;
 
+                    // can we skip because of the guard variable?
+                    if (guard_variable !== "" && typeof data[i][guard_variable] !== 'undefined') {
+                        if (data[i][guard_variable] === "") { // any value will do
+                            continue;
+                        }
+                    }
+
                     //console.log(interview_age_key)
                     if ((data[i]['id_redcap'] in subject_json) && (data[i]['redcap_event_name'] in subject_json[data[i]['id_redcap']])) {
                         //if((data[i]['id_redcap'] in subject_json)) {
@@ -2168,6 +2178,7 @@ function unHTML(str) {
     return str;
 }
 
+// todo: use the guard variable to check if the current record should be exported
 ipcMain.on('exportForm', function (event, data) {
     writeLog("save now form : " + data['form'] + " " + data['filename']);
     var filename = data['filename'];
