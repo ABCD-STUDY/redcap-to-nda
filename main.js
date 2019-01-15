@@ -1383,7 +1383,7 @@ ipcMain.on('exportData', function (event, data) {
     }
 
     // what are the events this instrument should be querried for
-    var master_list_events = ["baseline_year_1_arm_1", "6_month_follow_up_arm_1", "1_year_follow_up_y_arm_1", "18_month_follow_up_arm_1"]
+    var master_list_events = ["screener_arm_1", "baseline_year_1_arm_1", "6_month_follow_up_arm_1", "1_year_follow_up_y_arm_1", "18_month_follow_up_arm_1"]
     //console.log(JSON.stringify(instrumentEventMapping));
     for (var i = 0; i < master_list_events.length; i++) {
         var event = master_list_events[i];
@@ -1400,7 +1400,8 @@ ipcMain.on('exportData', function (event, data) {
     }
     // filter out deleted events (Object.values())
     master_list_events = Object.keys(master_list_events).map(function (a) {
-        if (typeof master_list_events[a] !== 'undefined') return master_list_events[a];
+        if (typeof master_list_events[a] !== 'undefined') 
+            return master_list_events[a];
     });
 
     var items = [];
@@ -1415,11 +1416,13 @@ ipcMain.on('exportData', function (event, data) {
             // ignore HIDDEN
             if (typeof d['field_annotation'] !== 'undefined' && d['field_annotation'].indexOf("@HIDDEN") !== -1 && d['field_annotation'].indexOf("@SHARED") === -1) {
                 rstr = rstr + "Info: item " + d['field_name'] + " has @HIDDEN annotation (and no @SHARED annotation) and will not be exported\n";
+                writeLog("Info: item " + d['field_name'] + " has @HIDDEN annotation (and no @SHARED annotation) and will not be exported");
                 continue;
             }
             if (typeof d['field_type'] !== 'undefined' &&
                 (d['field_type'] == 'descriptive' || d['field_type'] == 'notes')) {
                 rstr = rstr + "Info: item " + d['field_name'] + " is descriptive or notes type and will not be exported\n";
+                writeLog("Info: item " + d['field_name'] + " is descriptive or notes type and will not be exported");
                 continue;
             }
             // ignore items that are not in the NDA version of this instrument
@@ -1451,6 +1454,7 @@ ipcMain.on('exportData', function (event, data) {
                 if (!found) {
                     if (missingItems.indexOf(d['field_name']) < 0) {
                         rstr = rstr + "Info: Missing item " + d['field_name'] + " in NDA data dictionary " + restrictToNDA + ". Item will not be exported.";
+                        writeLog("Info: Missing item " + d['field_name'] + " in NDA data dictionary " + restrictToNDA + ". Item will not be exported.");
                         missingItems.push(d['field_name']);
                     }
                     continue;
@@ -1486,6 +1490,7 @@ ipcMain.on('exportData', function (event, data) {
                     if (typeof parse_string !== 'undefined') {
                         dateConversions[d['field_name']] = parse_string;
                         rstr = rstr + "Info: Parse string \"" + parse_string + "\" found for: " + d['field_name'] + "\n";
+                        writeLog("Info: Parse string \"" + parse_string + "\" found for: " + d['field_name']);
                     }
                 }
             }
@@ -1590,6 +1595,15 @@ ipcMain.on('exportData', function (event, data) {
             //console.log("getting data from REDCap done once");
             win.send('message', "preparing data for save...");
             data = body;
+
+            // this is the first time we see the values - a chance to make this work for the screener events as well
+            // We want to use screener event data as baseline data. Only baseline data has a checkbox for sharing,
+            // and only baseline data should appear in the output
+            for (var i = 0; i < data.length; i++) {
+                if (typeof data[i]['redcap_event_name'] !== 'undefined' && data[i]['redcap_event_name'] == "screener_arm_1")
+                    data[i]['redcap_event_name'] = "baseline_year_1_arm_1";
+            }
+
             // we have to merge these (items for each user) every time before we can export them
             for (var i = 0; i < data.length; i++) {
                 // find this participant and event in itemsPerRecord
@@ -1637,6 +1651,7 @@ ipcMain.on('exportData', function (event, data) {
         if (allChunksSend && anyErrorDownloading['numBad'] > 0) {
             win.send("message", "Error: there was a download error, we will not create the output files because there might be missing data.");
             win.send('info', "Error: there was a download error, we will not create the output files because there might be missing data.");
+            writeLog("Error: there was a download error, we will not create the output files because there might be missing data.");
         }
         if (allChunksSend && anyErrorDownloading['numBad'] == 0) {
             writeLog("finished getting data from redcap at this point, save itemsPerRecord to file: " + filename);
