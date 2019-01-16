@@ -1596,14 +1596,6 @@ ipcMain.on('exportData', function (event, data) {
             win.send('message', "preparing data for save...");
             data = body;
 
-            // this is the first time we see the values - a chance to make this work for the screener events as well
-            // We want to use screener event data as baseline data. Only baseline data has a checkbox for sharing,
-            // and only baseline data should appear in the output
-            for (var i = 0; i < data.length; i++) {
-                if (typeof data[i]['redcap_event_name'] !== 'undefined' && data[i]['redcap_event_name'] == "screener_arm_1")
-                    data[i]['redcap_event_name'] = "baseline_year_1_arm_1";
-            }
-
             // we have to merge these (items for each user) every time before we can export them
             for (var i = 0; i < data.length; i++) {
                 // find this participant and event in itemsPerRecord
@@ -1844,6 +1836,13 @@ ipcMain.on('exportData', function (event, data) {
                     interview_event = data[i]['redcap_event_name']
                     if (interview_event !== master_list_events[ev])
                         continue;
+
+                    // We want to use screener event data as baseline data. Only baseline data has a checkbox for sharing,
+                    // and only baseline data should appear in the output
+                    if (typeof data[i]['redcap_event_name'] !== 'undefined' && data[i]['redcap_event_name'] == "screener_arm_1") {
+                        data[i]['redcap_event_name'] = "baseline_year_1_arm_1";
+                        interview_event = data[i]['redcap_event_name']
+                    }
 
                     // can we skip because of the guard variable?
                     if (guard_variable !== "" && typeof data[i][guard_variable] !== 'undefined') {
