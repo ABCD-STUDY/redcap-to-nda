@@ -209,8 +209,6 @@ ipcRenderer.on('message', function(event, data) {
 
 ipcRenderer.on('info', function(event, data) {
     jQuery('#console').val(jQuery('#console').val() + data + "\n");
-    // scroll to the bottom
-    jQuery('#console').scrollTop( jQuery('#console')[0].scrollHeight );
 });
 
 //
@@ -227,12 +225,12 @@ jQuery(document).ready(function() {
     });
 
     jQuery('#setup-dialog-ok').on('click', function() {
-        console.log("OK button click!");
+        //console.log("OK button click!");
         ipcRenderer.sendSync('closeSetupDialog',"");
     });
 
     jQuery('#change-label-dialog-ok').on('click', function() {
-        console.log("OK button click!");
+        //console.log("OK button click!");
         ipcRenderer.sendSync('closeChangeLabelDialog',"");
     });
 

@@ -1985,6 +1985,16 @@ ipcMain.on('exportData', function (event, data) {
                                 }
                             }
 
+                            if (name == d['field_name'] &&
+                                d['select_choices_or_calculations'] !== "" && label !== "") {
+                                // check if the current value "label" is one of the approved choices in 'select_choices_or_calculations'
+                                var ch = d['select_choices_or_calculations'].split("|").map(function(a) { return a.split(",")[0].trim(); });
+                                if (ch.indexOf(label) == -1) {
+                                    writeLog("Error: invalid value for participant " + pGUID + " " + d['field_name'] + ": " + label + ". Set to missing.");
+                                    label = "";
+                                }
+                            }
+
                             label = label.replace(/\"/g, "\"\"\"");
                             if (name == "id_redcap") {
                                 // we need more: subjectkey	src_subject_id	interview_date	interview_age	gender	eventname
