@@ -674,6 +674,7 @@ ipcMain.on('getItemsForForm', function (event, form) {
             items.push(d);
         }
     }
+    tagstore = store.store; // update the tagstore if we open up another instrument
 
     win.send('updateItems', items);
 });
@@ -692,8 +693,10 @@ ipcMain.on('setTags', function (event, data) {
         if (typeof tags === 'undefined') {
             tags = [];
         }
-        if (typeof tags === 'string') // convert to array if its not already an array
+        if (typeof tags === 'string') { // convert to array if its not already an array
+            console.log("found string -> convert to array " + JSON.stringify([ tags ]));
             tags = [ tags ];
+        }
         if (typeof data[i]['tags'] === 'string') {
             // this is done on error, we should convert back to array here
             // assume that space is separator
@@ -727,6 +730,10 @@ ipcMain.on('deleteTags', function (event, data) {
         }
         var item = data[i]['item'];
         var current_tags = store.get(tag_prefix + item);
+        if (typeof current_tags === 'string') {
+            current_tags = current_tags.split(" ");
+        }
+
         var tags = [];
         if (typeof current_tags === 'undefined') {
             //console.log("Error: there are no tags for item " + tag_prefix + " " + item + ", nothing is removed." + JSON.stringify(data));
@@ -745,8 +752,10 @@ ipcMain.on('deleteTags', function (event, data) {
                 // nothing to save again, remove this tag
                 store.delete(tag_prefix + item);
             } else {
-                store.set(tag_prefix + item, tags); // store what is left after removing the tags that should be deleted
+                store.set(tag_prefix + item, tags.join(" ")); // store what is left after removing the tags that should be deleted
             }
+            // changes the tags, reload
+            tagstore = store.store;
         }
     }
 });
