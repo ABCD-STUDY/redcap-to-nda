@@ -1972,7 +1972,7 @@ ipcMain.on('exportData', function (event, data) {
 
                             if (name == d['field_name'] &&
                                 d['text_validation_type_or_show_slider_number'] == "integer") {
-                                if (label.match(/^[0-9+-]*$/) === null) {
+                                if (label.match(/^[-+]?[0-9]*$/) === null) {
                                     rstr = rstr + "Warning: measure not integer valued in item " + name + " \"" + label + "\" for " + data[i]['id_redcap'] + ". Consider changing this value, it will be deleted.\n";
                                     label = "";
                                 }
@@ -1990,7 +1990,7 @@ ipcMain.on('exportData', function (event, data) {
                                 // check if the current value "label" is one of the approved choices in 'select_choices_or_calculations'
                                 var ch = d['select_choices_or_calculations'].split("|").map(function(a) { return a.split(",")[0].trim(); });
                                 if (ch.indexOf(label) == -1) {
-                                    writeLog("Error: invalid value for participant " + pGUID + " " + d['field_name'] + ": " + label + ". Set to missing.");
+                                    rstr = rstr + "Warning: invalid value for participant " + pGUID + " " + d['field_name'] + ": \"" + label + "\". Set to missing.";
                                     label = "";
                                 }
                             }
