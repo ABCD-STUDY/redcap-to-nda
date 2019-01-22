@@ -114,7 +114,7 @@ ipcRenderer.on('updateTagValues', function(event, data) {
                     jQuery(this).attr('version', data[i]['tags'][1]);
                     jQuery(this).attr('nda_name', data[i]['tags'][2]);
                     console.log("set guard name to: " + data[i]['guard_name']);
-                    if (typeof data[i]['guard_name'] !== 'undefined') {
+                    if (typeof data[i]['guard_name'] !== 'undefined' && data[i]['guard_name'] !== "") {
                         jQuery(this).attr('guard_name', data[i]['guard_name']);
                         jQuery(this).find('span.guard_name').text(" GUARDED by " + data[i]['guard_name']);
                     }
@@ -137,7 +137,7 @@ ipcRenderer.on('updateTagValues', function(event, data) {
             // ok, update the name of that instrument, not the tags on an item
             jQuery('#current-instrument-list li').each(function() {
                 if (jQuery(this).attr('value') == instr) {
-                    if (typeof data[i]['tags'] !== 'undefined' && data[i]['tags'].length > 0) {
+                    if (typeof data[i]['tags'] !== 'undefined' && data[i]['tags'].length > 0 && data[i]['tags'][0] !== "") {
                         jQuery(this).attr('guard_name', data[i]['tags'][0]);
                         jQuery(this).find('span.guard_name').text(" GUARDED by " + data[i]['tags'][0]);
                     }
