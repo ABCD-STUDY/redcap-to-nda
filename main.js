@@ -1700,6 +1700,12 @@ ipcMain.on('exportData', function (event, data) {
             //data = itemsPerRecord;
             if (restrictToNDA.length > 0) {
                 form_nda_name = restrictToNDA;
+                // try to get the version number seperate
+                var vals = null;
+                if ( (vals = form_nda_name.match(/(.*)(0[1-9])$/)) !== null) {
+                    form_nda_name = vals[1];
+                    form_version = parseInt(vals[2]);
+                }
             }
             str = "\"" + form_nda_name + "\"," + form_version + "\n"; // form name could contain commas 
             // add the header
