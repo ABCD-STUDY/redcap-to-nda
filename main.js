@@ -1811,7 +1811,7 @@ ipcMain.on('exportData', function (event, data) {
                 if (k == 'redcap_event_name' ||
                     k == "nda_year_1_inclusion___1" ||
                     k == (form + "_complete") ||
-                    k == guard_variable ||
+                    //k == guard_variable ||
                     k == 'asnt_timestamp')
                     continue; // don't export, is grouped with id_redcap
                 if (k.indexOf("___BIOPORTAL") > 0) {
@@ -1864,8 +1864,8 @@ ipcMain.on('exportData', function (event, data) {
                     }
 
                     // can we skip because of the guard variable?
-                    if (guard_variable !== "" && typeof data[i][guard_variable] !== 'undefined') {
-                        if (data[i][guard_variable] === "1") { // only 1 will do
+                    if (guard_variable !== "") {
+                        if (typeof data[i][guard_variable] === 'undefined' || data[i][guard_variable] !== "1") { // only 1 will do
                             continue;
                         }
                     }
@@ -1881,6 +1881,7 @@ ipcMain.on('exportData', function (event, data) {
                             var name = sortedKeys[j];
                             if (name == "redcap_event_name" ||
                                 name == "nda_year_1_inclusion___1" ||
+                                //name == guard_variable ||
                                 name == "asnt_timestamp" ||
                                 name == (form + "_complete"))
                                 continue; // skip, is exported next to id_redcap
