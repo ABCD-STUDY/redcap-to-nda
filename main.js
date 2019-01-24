@@ -1414,8 +1414,11 @@ ipcMain.on('exportData', function (event, data) {
     });
 
     var items = [];
-    if (guard_variable !== "")
-        items.push(guard_variable);
+    if (guard_variable !== "") {
+        // guard variable could be a checkbox, split and use the first part
+        gv = guard_variable.split("___")[0];
+        items.push(gv);
+    }
 
     var dateConversions = {};
     var missingItems = []; // keep track of missing columns
@@ -1808,6 +1811,7 @@ ipcMain.on('exportData', function (event, data) {
                 if (k == 'redcap_event_name' ||
                     k == "nda_year_1_inclusion___1" ||
                     k == (form + "_complete") ||
+                    k == guard_variable ||
                     k == 'asnt_timestamp')
                     continue; // don't export, is grouped with id_redcap
                 if (k.indexOf("___BIOPORTAL") > 0) {
