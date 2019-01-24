@@ -1861,7 +1861,7 @@ ipcMain.on('exportData', function (event, data) {
 
                     // can we skip because of the guard variable?
                     if (guard_variable !== "" && typeof data[i][guard_variable] !== 'undefined') {
-                        if (data[i][guard_variable] === "") { // any value will do
+                        if (data[i][guard_variable] === "1") { // only 1 will do
                             continue;
                         }
                     }
