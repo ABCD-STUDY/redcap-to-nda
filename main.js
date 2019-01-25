@@ -1629,10 +1629,26 @@ ipcMain.on('exportData', function (event, data) {
                     }
                     dat = dat2;
                 }
+                // find the unique_event_name (trivial for non BIOPORTAL, but for BIOPORTAL we have to check in allEvents to find the unique name)
+                var uniqueName = "";
+                if (getLabel) { // we will get the wrong name
+                    for (e in allEvents) {
+                        var entry = allEvents[e];
+                        if (entry['event_name'] == data[i]['redcap_event_name']) {
+                            uniqueName = entry['unique_event_name'];
+                            break;
+                        }
+                    }
+                    if (uniqueName == "") {
+                        console.log("Error: unknown event name " + data[i]['redcap_event_name']);
+                    }
+                } else {
+                    uniqueName = data[i]['redcap_event_name'];
+                }
                 var found = false;
                 for (var j = 0; j < itemsPerRecord.length; j++) {
                     var item = itemsPerRecord[j];
-                    if (item['id_redcap'] == data[i]['id_redcap'] && item['redcap_event_name'] == data[i]['redcap_event_name']) {
+                    if (item['id_redcap'] == data[i]['id_redcap'] && item['redcap_event_name'] == uniqueName) {
                          // current_events.indexOf(item['redcap_event_name']) > -1) {
                         itemsPerRecord[j] = Object.assign({}, itemsPerRecord[j], dat); // copy the key/values from both into one
                         found = true;
@@ -2006,11 +2022,11 @@ ipcMain.on('exportData', function (event, data) {
                             }
 
                             if (name == d['field_name'] &&
-                                d['select_choices_or_calculations'] !== "" && label !== "") {
+                                d['select_choices_or_calculations'] !== "" && label !== "" && d['select_choices_or_calculations'] !== 'BIOPORTAL:RXNORM') {
                                 // check if the current value "label" is one of the approved choices in 'select_choices_or_calculations'
                                 var ch = d['select_choices_or_calculations'].split("|").map(function(a) { return a.split(",")[0].trim(); });
                                 if (ch.indexOf(label) == -1) {
-                                    rstr = rstr + "Warning: invalid value for participant " + pGUID + " " + d['field_name'] + ": \"" + label + "\". Set to missing.";
+                                    rstr = rstr + "Warning: invalid value for participant " + pGUID + " " + d['field_name'] + ": \"" + label + "\". Set to missing.\n";
                                     label = "";
                                 }
                             }
@@ -2644,6 +2660,7 @@ function getEvents(token) {
         }
         setTimeout(function () {
             setupDialog.send('eventsFromREDCap', body);
+            allEvents = body;
         }, 1000); // we might not have all the data here yet... 
     });
 }
