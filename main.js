@@ -234,7 +234,7 @@ ipcMain.on('closeNDASelectDialogOk', function (event, arg) {
                     error: error,
                     body: body
                 }));
-                callback("error");
+                writeLog("error requesting datastructure from NDA for \"" + restrictToNDA + "\" not found? See: " + error + ", " + body );
                 return;
             }
             //console.log(JSON.stringify(body));
