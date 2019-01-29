@@ -32,7 +32,7 @@ Each instrument on NDA will have some columns that are duplicated between the in
 See if the provided executables in the dist/ directory are sufficient for you. Otherwise build the program by installing nodejs and git. Clone this repositories in a folder on your system and:
 
 ```
-npm install request async electron jquery electron-store striptags moment
+npm install request async electron jquery electron-store striptags moment csvtojson
 npm start
 ```
 
