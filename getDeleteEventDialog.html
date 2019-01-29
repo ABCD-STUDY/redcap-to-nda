@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Item Alias</title>
+    <link rel="stylesheet" href="css/photon.css">
+  </head>
+  <body>
+        <div class="window">
+            <header class="toolbar toolbar-header">
+                <h1 class="title">Don't export item for these events</h1>
+            </header>
+            <div class="window-content">
+                <div class="padded-more">
+                    <p>Specify the list of events that this item should not be exported for. The list contains all events, even once that the current instrument is not defined at.</p>
+                    <form>
+                        <div class="checkbox">
+                          <label><input type="checkbox" id="get-delete-event-dialog-delete-all"> Select all</label>
+                        </div> 
+                         <div id="delete-event-list"></div>
+    
+                <hr>
+                        <div class="form-actions" style="margin-bottom: 10px;">
+                            <button class="btn btn-form btn-default" id="get-delete-event-dialog-cancel">Cancel</button>
+                            <button class="btn btn-form btn-primary" id="get-delete-event-dialog-ok">OK</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+         <script>
+                // You can also require other files to run in this process
+                require('./getDeleteEventDialog.js')
+        </script>
+  </body>
+</html>

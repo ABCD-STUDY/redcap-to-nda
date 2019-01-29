@@ -74,7 +74,7 @@ ipcRenderer.on('updateItems', function(event, data) {
     jQuery('#clear-messages').prop('disabled','');
     jQuery('#export-current-form-data-button').prop('disabled','');
     jQuery('#current-items-list div.tag-group').append(
-        '<button class="btn btn-default tag" value="remove" title="Disable this item, do not export">D</button>' + 
+        '<button class="btn btn-default tag" value="remove" title="Disable this item, do not export. Use Alt-Click to open remove by event dialog.">D</button>' + 
         '<button class="btn btn-default tag" value="long" title="Increase max string length to 60">L</button>' +
         '<button class="btn btn-default tag" value="huge" title="Increase max string length to 200">H</button>' +
         '<button class="btn btn-default tag" value="date" title="Convert the given value to NDA date">T</button>' +        
@@ -295,7 +295,7 @@ jQuery(document).ready(function() {
         jQuery('#message-list').children().remove();
     });
 
-    jQuery('#current-items-list').on('click', '.tag', function() {
+    jQuery('#current-items-list').on('click', '.tag', function(evt) {
         if (jQuery(this).hasClass('btn-primary')) {
             jQuery(this).removeClass('btn-primary');
             jQuery(this).addClass('btn-default');
@@ -316,6 +316,9 @@ jQuery(document).ready(function() {
             }
             if (tag == 'alias') {
                 ipcRenderer.send('openGetImportAliasDialog', { 'item': item });
+            }
+            if (tag == 'remove' && evt.altKey) { // we only want to open if the user did a special click 
+                ipcRenderer.send('openDeleteEventDialog', { 'item': item });
             }
         }
 

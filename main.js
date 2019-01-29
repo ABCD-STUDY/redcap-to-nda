@@ -32,6 +32,7 @@ let ndaSelectDialog
 let changeLabelDialog
 let getDateStringDialog
 let getImportAliasDialog
+let getDeleteEventDialog
 let tagstore
 let datadicationary
 let instrumentLabels
@@ -541,6 +542,89 @@ ipcMain.on('closeGetImportAliasDialogOk', function (event, arg) {
 
 
 /////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////
+
+
+ipcMain.on('openDeleteEventDialog', function (event, arg) {
+    console.log("start openDeleteEventDialog... with argument: " + JSON.stringify(arg));
+    var item = arg['item'];
+    if (getDeleteEventDialog) {
+        getDeleteEventDialog.show();
+        var dele = store.get('remove-' + item);
+        if (Array.isArray(dele)) {
+            dele = alias.join(" "); // convert to string
+        }
+        console.log("get value from store for " + 'remove-' + item + " IS: " + dele);
+        getDeleteEventDialog.send('changeDelete', {
+            delete: dele,
+            item: arg['item']
+        });
+        return;
+    }
+    getDeleteEventDialog = new BrowserWindow({
+        parent: win,
+        modal: true,
+        show: false,
+        titleBarStyle: 'hidden',
+        frame: false,
+        useContentSize: true,
+        width: 460,
+        height: 450
+    });
+    getDeleteEventDialog.loadURL(url.format({
+        pathname: path.join(__dirname, 'getDeleteEventDialog.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+    getDeleteEventDialog.once('ready-to-show', function () {
+        getDeleteEventDialog.show();
+        // update the list of events in the interface
+        getDeleteEventDialog.send('getDeleteEventEventList', { item: item, events: allEvents.map(function(a) { return a['unique_event_name']; }) } );
+    });
+    console.log("done with getDeleteEventDialog...");
+    getDeleteEventDialog.on('closed', function () {
+        console.log("getDeleteEventDialog was closed");
+    });
+});
+
+ipcMain.on('updateDeleteEventCheckboxes', function(event, data) {
+    var dele = store.get('remove-' + data['item']);
+    if (Array.isArray(dele)) {
+        dele = dele.join(' ');
+    }
+    // this is too early, we don't have the dialog yet and the checkboxes don't exist yet
+    getDeleteEventDialog.send('changeDelete', {
+        delete: dele,
+        item: data['item']
+    });
+});
+
+ipcMain.on('closeGetDeleteEventDialogCancel', function (event, arg) {
+    if (getDeleteEventDialog) {
+        getDeleteEventDialog.hide();
+        console.log("closed delete event DIALOG after cancel");
+    }
+});
+
+ipcMain.on('closeGetDeleteEventDialogOk', function (event, arg) {
+    if (getDeleteEventDialog) {
+        getDeleteEventDialog.hide();
+        // we are getting a string back here...
+        dele = arg.delete;
+        item = arg.item;
+        console.log("closed delete event DIALOG after ok: " + JSON.stringify(dele) + " item: " + item + " save now: " + 'remove-' + item + " with value: " + JSON.stringify(dele));
+        // we need to store the parse now
+        store.set('remove-' + item, dele.join(" "));
+    }
+});
+
+
+
+/////////////////////////////////////////////////////////////////////
+
+
 
 
 
@@ -1465,7 +1549,7 @@ ipcMain.on('exportData', function (event, data) {
                 }
                 if (!found) {
                     if (missingItems.indexOf(d['field_name']) < 0) {
-                        rstr = rstr + "Info: Missing item " + d['field_name'] + " in NDA data dictionary " + restrictToNDA + ". Item will not be exported.";
+                        rstr = rstr + "Info: Missing item " + d['field_name'] + " in NDA data dictionary " + restrictToNDA + ". Item will not be exported.\n";
                         writeLog("Info: Missing item " + d['field_name'] + " in NDA data dictionary " + restrictToNDA + ". Item will not be exported.");
                         missingItems.push(d['field_name']);
                     }
@@ -1477,17 +1561,27 @@ ipcMain.on('exportData', function (event, data) {
                 // this global flag indicates if normal text fields should be removed from the export
                 // a normal text field is a text field that is not a date/number/integer
                 if (d['field_type'] == "text" && d['text_validation_type_or_show_slider_number'] == '') {
-                    rstr = rstr + "Info: item " + d['field_name'] + " is type text without validation and will not be exported.";
+                    rstr = rstr + "Info: item " + d['field_name'] + " is type text without validation and will not be exported.\n";
+                    writeLog("Info: item " + d['field_name'] + " is type text without validation and will not be exported.");
                     continue;
                 }
             }
             var flags = undefined; // = store.get('tag-' + d['field_name']);
             if (typeof tagstore['tag-' + d['field_name']] !== 'undefined')
                 flags = tagstore['tag-' + d['field_name']];
+            var removeDetails = undefined;
+            if (typeof tagstore['remove-' + d['field_name']] !== 'undefined')
+                removeDetails = tagstore['remove-' + d['field_name']];
             if (typeof flags !== 'undefined') {
                 if (flags.indexOf('remove') !== -1) {
-                    rstr = rstr + "Info: item " + d['field_name'] + " is marked as 'remove' and will not be exported.\n";
-                    continue;
+                    if (removeDetails !== undefined && removeDetails !== "") {
+                        rstr = rstr + "Info: item " + d['field_name'] + " is marked as 'remove' but only for events " + removeDetails + ". Export is disabled for these events.\n";
+                        writeLog("Info: item " + d['field_name'] + " is marked as 'remove' but only for events " + removeDetails + ". Export is disabled for these events.");
+                    } else {
+                        rstr = rstr + "Info: item " + d['field_name'] + " is marked as 'remove' and will not be exported.\n";
+                        writeLog("Info: item " + d['field_name'] + " is marked as 'remove' and will not be exported.");
+                        continue;
+                    }
                 }
             }
 
@@ -1839,8 +1933,14 @@ ipcMain.on('exportData', function (event, data) {
                     flags = tagstore['tag-' + k];
                 if (typeof flags !== 'undefined') {
                     if (flags.indexOf('remove') !== -1) {
-                        skipkeys.push(k);
-                        continue; // don't export this key
+                        // we only remove here if there is no list of events - equals remove for all events
+                        var removeDetails = undefined;
+                        if (tagstore['remove-' + k] !== 'undefined' && tagstore['remove-' + k] !== "") {
+                            // keep this variable, it might be enabled for some events
+                        } else {
+                            skipkeys.push(k);
+                            continue; // don't export this key
+                        }
                     }
                 }
                 if (count > 0)
@@ -2024,12 +2124,26 @@ ipcMain.on('exportData', function (event, data) {
                             if (name == d['field_name'] &&
                                 d['select_choices_or_calculations'] !== "" && label !== "" && d['select_choices_or_calculations'] !== 'BIOPORTAL:RXNORM') {
                                 // check if the current value "label" is one of the approved choices in 'select_choices_or_calculations'
-                                var ch = d['select_choices_or_calculations'].split("|").map(function(a) { return a.split(",")[0].trim(); });
-                                if (ch.indexOf(label) == -1) {
-                                    rstr = rstr + "Warning: invalid value for participant " + pGUID + " " + d['field_name'] + ": \"" + label + "\". Set to missing.\n";
-                                    label = "";
+                                // do we have choices in here? Could be a calculation!! we need at least a comma value
+                                if (d['select_choices_or_calculations'].split(",").length > 1) {
+                                    var ch = d['select_choices_or_calculations'].split("|").map(function(a) { return a.split(",")[0].trim(); });
+                                    if (ch.indexOf(label) == -1) {
+                                        rstr = rstr + "Warning: invalid value for participant " + pGUID + " " + d['field_name'] + ": \"" + label + "\" (allowed values: "+ch.join(",")+"). Set to missing.\n";
+                                        label = "";
+                                    }
                                 }
                             }
+
+                            // if the current event is listed in the tag remove-<item> we don't want to export
+                            if (typeof tagstore['remove-'+d['field_name']] !== 'undefined') {
+                                if (tagstore['remove-'+d['field_name']].split(" ").indexOf(data[i]['redcap_event_name']) > -1) {
+                                    // we found this event with a remove checkbox enabled ... don't export the value here - set label to ""
+                                    rstr = rstr + "Warning: for this item and event the values are not exported (" + pGUID + ", " + d['field_name'] + "). Set to missing.\n";
+                                    label = "";
+                                    // but we might never get here if the 'D' is already checked above
+                                }
+                            }
+
 
                             label = label.replace(/\"/g, "\"\"\"");
                             if (name == "id_redcap") {
