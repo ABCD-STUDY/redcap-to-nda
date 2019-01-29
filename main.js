@@ -2138,7 +2138,7 @@ ipcMain.on('exportData', function (event, data) {
                             if (typeof tagstore['remove-'+d['field_name']] !== 'undefined') {
                                 if (tagstore['remove-'+d['field_name']].split(" ").indexOf(data[i]['redcap_event_name']) > -1) {
                                     // we found this event with a remove checkbox enabled ... don't export the value here - set label to ""
-                                    rstr = rstr + "Warning: for this item and event the values are not exported (" + pGUID + ", " + d['field_name'] + "). Set to missing.\n";
+                                    rstr = rstr + "Warning: for this item and event the values are not exported (" + pGUID + ", " + data[i]['redcap_event_name'] + ", " + d['field_name'] + "). Set to missing.\n";
                                     label = "";
                                     // but we might never get here if the 'D' is already checked above
                                 }
