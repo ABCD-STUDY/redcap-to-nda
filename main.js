@@ -2127,7 +2127,7 @@ ipcMain.on('exportData', function (event, data) {
                                 // do we have choices in here? Could be a calculation!! we need at least a comma value
                                 // we can have a comma in here, if there is a if we will find a comma!
                                 var part = d['select_choices_or_calculations'].split(",");
-                                if (part.length > 1 && part.indexOf('if') == -1) {
+                                if (part.length > 1 && part.toLowerCase().indexOf('if') == -1) {
                                     var ch = d['select_choices_or_calculations'].split("|").map(function(a) { return a.split(",")[0].trim(); });
                                     if (ch.indexOf(label) == -1) {
                                         rstr = rstr + "Warning: invalid value for participant " + pGUID + " " + d['field_name'] + ": \"" + label + "\" (allowed values: "+ch.join(",")+"). Set to missing.\n";
