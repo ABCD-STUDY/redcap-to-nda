@@ -2318,8 +2318,9 @@ ipcMain.on('exportData', function (event, data) {
         var chunks = bioportalVars.chunk(20);
         for (var i = 0; i < chunks.length; i++) {
             queue.push({
-                    'chunk': [chunks[i]],
-                    "events": master_list_events
+                'chunk': [chunks[i]],
+                "events": master_list_events,
+                "limitParticipants": limitParticipants
                 },
                 (function (counter, maxCounter) {
                     return function (err) {
