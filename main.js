@@ -1625,6 +1625,7 @@ ipcMain.on('exportData', function (event, data) {
     var queue = async.queue(function (options, callback) {
         var chunk = options['chunk'][0];
         var current_events = options['events'];
+        var limitParticipants = options['limitParticipants'];
         // do we have a BIOPORTAL chunk here?
         var getLabel = false;
         if (chunk[0].indexOf("___BIOPORTAL") > 0) {
@@ -1661,6 +1662,11 @@ ipcMain.on('exportData', function (event, data) {
             current_events = [current_event];
         }
 
+        if (limitParticipants.length > 0) {
+            for (var i = 0; i < limitParticipants.length; i++) {
+                data['records[' + i + ']'] = limitParticipants[i];
+            }
+        }
 
         for (var i = 0; i < current_events.length; i++) {
             data['events[' + i + ']'] = current_events[i];
@@ -2127,7 +2133,7 @@ ipcMain.on('exportData', function (event, data) {
                                 // do we have choices in here? Could be a calculation!! we need at least a comma value
                                 // we can have a comma in here, if there is a if we will find a comma!
                                 var part = d['select_choices_or_calculations'].split(",");
-                                if (part.length > 1 && part[0].toLowerCase().indexOf('(') == -1) {
+                                if (part.length > 1 && part[0].toLowerCase().indexOf('(') == -1) { // instead of removing "(" we should test the type of the variable
                                     var ch = d['select_choices_or_calculations'].split("|").map(function(a) { return a.split(",")[0].trim(); });
                                     if (ch.indexOf(label) == -1) {
                                         rstr = rstr + "Warning: invalid value for participant " + pGUID + " " + d['field_name'] + ": \"" + label + "\" (allowed values: "+ch.join(",")+"). Set to missing.\n";
@@ -2250,11 +2256,45 @@ ipcMain.on('exportData', function (event, data) {
     }
     // todo on drain we should display the errors --- or refuse to drain!
 
+    // we need to check how many participants we have to pull, if its less than 1000, name them in the call
+    subject_json = {};
+    writeLog("read subject information...");
+    if (current_subject_json == "") {
+        writeLog("Error: no current_subject_json file specified");
+    } else {
+        if (fs.existsSync(current_subject_json)) {
+            var sj = [];
+            try {
+                sj = JSON.parse(fs.readFileSync(current_subject_json, 'utf8'));
+            } catch (e) {
+                if (e instanceof SyntaxError) {
+                    // Output expected SyntaxErrors.
+                    writeLog(e);
+                } else {
+                    // Output unexpected Errors.
+                    writeLog(e, false);
+                }
+            }
+            // get the pGUID as key
+            for (var j = 0; j < sj.length; j++) {
+                subject_json[sj[j]['pGUID']] = sj[j];
+            }
+            // we expect some keys in this file, like pGUID, gender, and dob
+        } else {
+            writeLog("Error: file does not exist " + current_subject_json);
+        }
+    }
+    var limitParticipants = []; // don't limit by default, call data for all participants
+    if (Object.keys(subject_json).length < 1000) {
+        limitParticipants = Object.keys(subject_json);
+    }
+
     var chunks = items.chunk(20); // get 20 items at the same time from REDCap
     for (var i = 0; i < chunks.length; i++) {
         queue.push({
                 'chunk': [chunks[i]],
-                "events": master_list_events
+                "events": master_list_events,
+                "limitParticipants": limitParticipants
             },
             (function (counter, maxCounter, anyErrorDownloading) {
                 return function (err) {
