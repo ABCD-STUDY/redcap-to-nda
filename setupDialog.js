@@ -20,6 +20,15 @@ ipcRenderer.on('eventsFromREDCap', function(event, data) {
 
 jQuery(document).ready(function() {
 
+    jQuery('div.tab-item').click(function() {
+        // make this one visible all others invisible
+        jQuery('div.mytabs').hide();
+        jQuery('div.tab-item').removeClass('active');
+        jQuery(this).addClass('active');
+        var a = jQuery(this).attr('target');
+        jQuery('#' + a).show();
+    });
+
     jQuery('#setup-dialog-ok').on('click', function() {
         var token = jQuery('#redcap-access-token').val();
         var choice = jQuery('#setup-events-list').val();

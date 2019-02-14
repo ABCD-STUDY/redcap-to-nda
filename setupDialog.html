@@ -10,37 +10,60 @@
             <header class="toolbar toolbar-header">
                 <h1 class="title">Setup</h1>
             </header>
+            <div class="tab-group">
+                <div class="tab-item active" target="for-redcap">
+                    <span class="icon"></span>
+                    REDCap
+                </div>
+                <div class="tab-item"  target="for-filesystem">
+                    <span class="icon"></span>
+                    Filesystem
+                </div>
+                <div class="tab-item"  target="for-options">
+                    <span class="icon"></span>
+                    Options
+                </div>
+            </div>
             <div class="window-content">
                 <div class="padded-more">
-                    <form>
-                        <div class="form-group">
-                          <label>REDCap Access Token</label>
-                          <button class="btn btn-form btn-default pull-right" id="setup-dialog-update">Update</button>                                
-                          <input type="text" class="form-control" id="redcap-access-token" placeholder="REDCap Access Token">
-                        </div>
-                        <div class="form-group">
-                            <label>Events (use Update to populate)</label>
-                            <select class="form-control" id="setup-events-list"></select>
-                        </div>
-                        <div class="form-group">
-                            <label>REDCap API (default is ABCD)</label>
-                            <input type="text" class="form-control" id="redcap-api-url" placeholder="https://abcd-rc.ucsd.edu/redcap/api/">
-                        </div>
-                        <div class="form-group">
-                            <label title='[{"gender": "F", "pGUID": "NDAR_INVXXXXXXXX", "dob": "2007-07-15" }]'>NDA Subject Identifier File</label><br/>
-                            <button type="button" class="btn btn-form btn-primary form-control" id="nda-subject-json">Load File</button><br/>
-                            <span id="nda-subject-json-filename">no file selected</span>
-                        </div>
-                        <div class="form-group">
-                            <label title='redcap,aliases'>Import alias file (merge with database)</label><br/>
-                            <button type="button" class="btn btn-form btn-default form-control" id="nda-aliases">Load File</button><br/>
-                            <span id="nda-aliases-filename">no file selected</span>
-                        </div>
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="setup-dialog-remove-text">
-                            <label for="setup-dialog-remove-text" class="form-check-label">On export remove all non-numeric text</label>
-                        </div>
-                    </form>
+                    <div class="mytabs" id="for-redcap">
+                        <form>
+                            <div class="form-group">
+                            <label>REDCap Access Token</label>
+                            <button class="btn btn-form btn-default pull-right" id="setup-dialog-update">Update</button>                                
+                            <input type="text" class="form-control" id="redcap-access-token" placeholder="REDCap Access Token">
+                            </div>
+                            <div class="form-group">
+                                <label>Events (use Update to populate)</label>
+                                <select class="form-control" id="setup-events-list"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>REDCap API (default is ABCD)</label>
+                                <input type="text" class="form-control" id="redcap-api-url" placeholder="https://abcd-rc.ucsd.edu/redcap/api/">
+                            </div>
+                            <div class="form-group">
+                                <label title='[{"gender": "F", "pGUID": "NDAR_INVXXXXXXXX", "dob": "2007-07-15" }]'>NDA Subject Identifier File</label><br/>
+                                <button type="button" class="btn btn-form btn-primary form-control" id="nda-subject-json">Load File</button><br/>
+                                <span id="nda-subject-json-filename">no file selected</span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="mytabs" id="for-filesystem" style="display: none;">
+
+                    </div>
+                    <div class="mytabs" id="for-options"  style="display: none;">
+                        <form>
+                            <div class="form-group">
+                                    <label title='redcap,aliases'>Import alias file (merge with database)</label><br/>
+                                    <button type="button" class="btn btn-form btn-default form-control" id="nda-aliases">Load File</button><br/>
+                                    <span id="nda-aliases-filename">no file selected</span>
+                            </div>      
+                            <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="setup-dialog-remove-text">
+                                    <label for="setup-dialog-remove-text" class="form-check-label">On export remove all non-numeric text</label>
+                                </div>
+                            </form>
+                    </div>
                     <hr>
                     <div class="form-actions">
                         <button class="btn btn-form btn-default" id="setup-dialog-cancel">Cancel</button>
