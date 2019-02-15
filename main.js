@@ -356,11 +356,15 @@ ipcMain.on('ndaDDFromREDCap', function (event, arg) {
 });
 
 ipcMain.on('parseFilesystemData', function (event, arg) {
+    if (typeof arg['dirname'] == 'undefined')
+        return;
+
     // user selected no database, instead all information comes from a directory with CSV files
     // start fresh
     dataModeFilesystemData = [];
     var instruments = [];
     datadictionary = [];
+    instrumentLabels = {};
     for (var j = 0; j < arg['dirname'].length; j++) {  // array of directories
         var dataModeFilesystemDir = arg['dirname'][j]; // inside each look for csv files
         var files = fs.readdirSync(dataModeFilesystemDir).filter(fn => fn.endsWith('.csv'));
@@ -369,12 +373,12 @@ ipcMain.on('parseFilesystemData', function (event, arg) {
                 // lets add the entry to the interface as well
                 var instrumentName = path.basename(dataModeFilesystemDir + path.sep + files[i], '.csv'); 
                 instruments.push([instrumentName, instrumentName]);
-
+                instrumentLabels[instrumentName] = instrumentName;
                 var sj = [];
                 try { // read them asynchronously
                     (function(filename, instrumentName) {
                         sj = csv().fromFile(dataModeFilesystemDir + path.sep + filename).then(function (data) {
-                            console.log("read data from csv: " + dataModeFilesystemDir + path.sep + filename);
+                            //console.log("read data from csv: " + dataModeFilesystemDir + path.sep + filename);
                             if (data.length > 0) {
                                 var keys = Object.keys(data[0]);
                                 // add this to the data dictionary
@@ -391,8 +395,8 @@ ipcMain.on('parseFilesystemData', function (event, arg) {
                                         'text_validation_type_or_show_slider_number': ''
                                     });
                                 }
-                                console.log("file " + filename + " has " + keys.length + " columns and " + data.length + " rows.");
-                                dataModeFilesystemData[filename] = data; // store for later (can be very large!!!, ignore for now)
+                                writeLog("file " + filename + " has " + keys.length + " columns and " + data.length + " rows.");
+                                dataModeFilesystemData[instrumentName] = data; // store for later (can be very large!!!, ignore for now)
                             } else {
                                 console.log("Error: no rows found in " + dataModeFilesystemDir + path.sep + filename + ", ignore this file.");
                             }
@@ -961,6 +965,12 @@ Array.prototype.chunk = function (n) {
 
 ipcMain.on('checkData', function (event, data) {
     var form = data['form'];
+
+    if (dataMode == "filesystem") {
+        win.send('message', "Error: checking of data only supported for data from REDCap");
+        return;
+    }
+
     //console.log("check the data for this form: " + form);
     // assume that we have access to current_subject_json_data
     var subject_json = current_subject_json_data.reduce(function (acc, a) {
@@ -1565,7 +1575,7 @@ ipcMain.on('exportData', function (event, data) {
                 found = true;
             }
         }
-        if (!found) {
+        if (!found && dataMode == "REDCap") {
             delete master_list_events[i];
         }
     }
@@ -2367,55 +2377,67 @@ ipcMain.on('exportData', function (event, data) {
         limitParticipants = Object.keys(subject_json);
     }
 
-    var chunks = items.chunk(20); // get 20 items at the same time from REDCap
-    for (var i = 0; i < chunks.length; i++) {
-        queue.push({
-                'chunk': [chunks[i]],
-                "events": master_list_events,
-                "limitParticipants": limitParticipants
-            },
-            (function (counter, maxCounter, anyErrorDownloading) {
-                return function (err) {
-                    writeLog("finished getting data for chunk: " + counter + " with " + err);
-                    if (err == 'ok') {
-                        anyErrorDownloading['numOk']++;
-                        win.send('message', "got data for chunk " + counter + "/" + maxCounter);
-                        writeLog("got data for chunk " + counter + "/" + maxCounter);
-                    } else {
-                        anyErrorDownloading['numBad']++;
-                        anyErrorDownloading['errors'].push(err);
-                        win.send('error', "ERROR on download " + counter + "/" + maxCounter);
-                        writeLog( "ERROR on download " + counter + "/" + maxCounter);
-                    }
-                };
-            })(i, chunks.length, anyErrorDownloading)
-        );
-    }
-    // if we have bioportal code, ask for those values as well here
-    if (bioportalVars.length > 0) { // don't do this now
-        var chunks = bioportalVars.chunk(20);
+    // itemsPerRecord should be filled in if we are in filesystem mode
+    if (dataMode == "filesystem" && form in dataModeFilesystemData) {
+        itemsPerRecord = [];
+        // check if the participants are in there
+        for (var i = 0; i < dataModeFilesystemData[form].length; i++) {
+            var it = dataModeFilesystemData[form][i];
+            itemsPerRecord.push(it);
+        }
+        // ok now we need to save the data, call the drain
+        queue.drain();
+    } else if (dataMode == "REDCap") {
+        var chunks = items.chunk(20); // get 20 items at the same time from REDCap
         for (var i = 0; i < chunks.length; i++) {
             queue.push({
-                'chunk': [chunks[i]],
-                "events": master_list_events,
-                "limitParticipants": limitParticipants
+                    'chunk': [chunks[i]],
+                    "events": master_list_events,
+                    "limitParticipants": limitParticipants
                 },
-                (function (counter, maxCounter) {
+                (function (counter, maxCounter, anyErrorDownloading) {
                     return function (err) {
-                        writeLog("finished getting data for BIOPORTAL chunk: " + counter + " with " + err);
-                        if (err == "ok") {
+                        writeLog("finished getting data for chunk: " + counter + " with " + err);
+                        if (err == 'ok') {
                             anyErrorDownloading['numOk']++;
-                            win.send('message', "got data for BIOPORTAL chunk " + counter + "/" + maxCounter);
-                            writeLog("got data for BIOPORTAL chunk " + counter + "/" + maxCounter);
+                            win.send('message', "got data for chunk " + counter + "/" + maxCounter);
+                            writeLog("got data for chunk " + counter + "/" + maxCounter);
                         } else {
                             anyErrorDownloading['numBad']++;
                             anyErrorDownloading['errors'].push(err);
-                            win.send('message', "Error getting BIOPORTAL chunk " + counter + "/" + maxCounter);
-                            writeLog("Error getting BIOPORTAL chunk " + counter + "/" + maxCounter);
+                            win.send('error', "ERROR on download " + counter + "/" + maxCounter);
+                            writeLog( "ERROR on download " + counter + "/" + maxCounter);
                         }
                     };
                 })(i, chunks.length, anyErrorDownloading)
             );
+        }
+        // if we have bioportal code, ask for those values as well here
+        if (bioportalVars.length > 0) { // don't do this now
+            var chunks = bioportalVars.chunk(20);
+            for (var i = 0; i < chunks.length; i++) {
+                queue.push({
+                    'chunk': [chunks[i]],
+                    "events": master_list_events,
+                    "limitParticipants": limitParticipants
+                    },
+                    (function (counter, maxCounter) {
+                        return function (err) {
+                            writeLog("finished getting data for BIOPORTAL chunk: " + counter + " with " + err);
+                            if (err == "ok") {
+                                anyErrorDownloading['numOk']++;
+                                win.send('message', "got data for BIOPORTAL chunk " + counter + "/" + maxCounter);
+                                writeLog("got data for BIOPORTAL chunk " + counter + "/" + maxCounter);
+                            } else {
+                                anyErrorDownloading['numBad']++;
+                                anyErrorDownloading['errors'].push(err);
+                                win.send('message', "Error getting BIOPORTAL chunk " + counter + "/" + maxCounter);
+                                writeLog("Error getting BIOPORTAL chunk " + counter + "/" + maxCounter);
+                            }
+                        };
+                    })(i, chunks.length, anyErrorDownloading)
+                );
+            }
         }
     }
     allChunksSend = true;
@@ -2833,8 +2855,10 @@ ipcMain.on('exportForm', function (event, data) {
 });
 
 
-
 function updateInstrumentList(event) {
+    if (dataMode == "filesystem")
+        return; // done, nothing else to do
+
     if (typeof instrumentLabels === 'undefined') {
         setTimeout(function () {
             updateInstrumentList(event);

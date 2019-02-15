@@ -27,6 +27,7 @@
             <div class="window-content">
                 <div class="padded-more">
                     <div class="mytabs" id="for-redcap" mode="REDCap">
+                        <p>Connect to REDCap to be able to export data dictionaries and data spreadsheets in NDA format.</p>
                         <form>
                             <div class="form-group">
                             <label>REDCap Access Token</label>
@@ -43,8 +44,8 @@
                             </div>
                             <div class="form-group">
                                 <label title='[{"gender": "F", "pGUID": "NDAR_INVXXXXXXXX", "dob": "2007-07-15" }]'>NDA Subject Identifier File</label><br/>
-                                <button type="button" class="btn btn-form btn-primary form-control" id="nda-subject-json">Load File</button><br/>
-                                <span id="nda-subject-json-filename">no file selected</span>
+                                <button type="button" class="btn btn-form btn-primary form-control" id="nda-subject-json">Load File</br><span style="font-size: 9pt;" id="nda-subject-json-filename">no file selected</span></button><br/>
+                                
                             </div>
                         </form>
                     </div>
@@ -52,18 +53,15 @@
                         <p>The filesystem database backend uses a single directory with CSV spreadsheets as an input source 
                         and does not require a database connection. For simplicity the assumption is that the data dictionaries 
                         can be derived trivially from the header column names of the data spreadsheets. Exporting such an instruments
-                        data dictionary should be avoided as there are no variable descriptions. But data spreadsheets can still
-                        be exported for upload to NDA.</p>
+                        data dictionary should be avoided as there are no variable descriptions. Export the data spreadsheets for upload to NDA.</p>
                         <form>
                                 <div class="form-group">
                                     <label title='Specify data directory with CSV files'>Specify local directory with CSV data files</label><br/>
-                                    <button type="button" class="btn btn-form btn-default form-control" id="specify-datadir">Set Directory</button><br/>
-                                    <span id="datadir-filename">no directory selected</span>
+                                    <button type="button" class="btn btn-form btn-primary form-control" id="specify-datadir" style="line-height: 12pt;">Set Directory</br><span id="datadir-filename">no directory selected</span></button><br/>
                                 </div>      
                                 <div class="form-group">
                                         <label title='[{"gender": "F", "pGUID": "NDAR_INVXXXXXXXX", "dob": "2007-07-15" }]'>NDA Subject Identifier File</label><br/>
-                                        <button type="button" class="btn btn-form btn-primary form-control" id="nda-subject-json2">Load File</button><br/>
-                                        <span id="nda-subject-json-filename2">no file selected</span>
+                                        <button type="button" class="btn btn-form btn-primary form-control" id="nda-subject-json2" style="line-height: 12pt;">Load File</br><span id="nda-subject-json-filename2">no file selected</span></button><br/>
                                     </div>
                                 </form>
                     </div>
@@ -71,8 +69,7 @@
                         <form>
                             <div class="form-group">
                                     <label title='redcap,aliases'>Import alias file (merge with database)</label><br/>
-                                    <button type="button" class="btn btn-form btn-default form-control" id="nda-aliases">Load File</button><br/>
-                                    <span id="nda-aliases-filename">no file selected</span>
+                                    <button type="button" class="btn btn-form btn-default form-control" id="nda-aliases" style="line-height: 12pt;">Load File</br><span id="nda-aliases-filename">no file selected</span></button><br/>
                             </div>      
                             <div class="checkbox">
                                 <label for="setup-dialog-remove-text" class="form-check-label">
