@@ -39,6 +39,8 @@ let instrumentLabels
 let token
 let current_event
 let current_form
+let dataMode
+let dataModeFilesystemData = []
 let current_url = 'https://abcd-rc.ucsd.edu/redcap/api/';
 let current_subject_json = ''; // the name of an additional file that contains subject information (pGUID, 'gender')
 let current_subject_json_data = [] // the content of an additional file that contains subject information (pGUID, 'gender', 'dob', 'interview_age...')
@@ -251,6 +253,10 @@ ipcMain.on('closeNDASelectDialogCancel', function (event, arg) {
     if (ndaSelectDialog)
         ndaSelectDialog.hide();
 });
+ipcMain.on('setDataMode', function(event, arg) {
+    // set the data mode (either REDCap or filesystem)
+    dataMode = arg['mode'];
+});
 
 ipcMain.on('closeNDASelectDialogVerify', function (event, arg) {
     //console.log("got to set a new Value as :" + arg['shortName']);
@@ -349,6 +355,62 @@ ipcMain.on('ndaDDFromREDCap', function (event, arg) {
     });
 });
 
+ipcMain.on('parseFilesystemData', function (event, arg) {
+    // user selected no database, instead all information comes from a directory with CSV files
+    // start fresh
+    dataModeFilesystemData = [];
+    var instruments = [];
+    datadictionary = [];
+    for (var j = 0; j < arg['dirname'].length; j++) {  // array of directories
+        var dataModeFilesystemDir = arg['dirname'][j]; // inside each look for csv files
+        var files = fs.readdirSync(dataModeFilesystemDir).filter(fn => fn.endsWith('.csv'));
+        for (var i = 0; i < files.length; i++) {
+            if (fs.existsSync(dataModeFilesystemDir + path.sep + files[i])) {
+                // lets add the entry to the interface as well
+                var instrumentName = path.basename(dataModeFilesystemDir + path.sep + files[i], '.csv'); 
+                instruments.push([instrumentName, instrumentName]);
+
+                var sj = [];
+                try { // read them asynchronously
+                    (function(filename, instrumentName) {
+                        sj = csv().fromFile(dataModeFilesystemDir + path.sep + filename).then(function (data) {
+                            console.log("read data from csv: " + dataModeFilesystemDir + path.sep + filename);
+                            if (data.length > 0) {
+                                var keys = Object.keys(data[0]);
+                                // add this to the data dictionary
+                                for (var k = 0; k < keys.length; k++) { // create a fake data dictionary entry
+                                    datadictionary.push({ 
+                                        'field_name': keys[k], 
+                                        'form_name': instrumentName,
+                                        'field_type': 'text',
+                                        'field_label': 'unknown',
+                                        'select_choices_or_calculations': '',
+                                        'branching_logic': '',
+                                        'field_annotation': '',
+                                        'aliases': '',
+                                        'text_validation_type_or_show_slider_number': ''
+                                    });
+                                }
+                                console.log("file " + filename + " has " + keys.length + " columns and " + data.length + " rows.");
+                                dataModeFilesystemData[filename] = data; // store for later (can be very large!!!, ignore for now)
+                            } else {
+                                console.log("Error: no rows found in " + dataModeFilesystemDir + path.sep + filename + ", ignore this file.");
+                            }
+                        });
+                    })(files[i], instrumentName);
+                } catch (e) {
+                    if (e instanceof SyntaxError) {
+                        writeLog(e);
+                    } else {
+                        writeLog(e, false);
+                    }
+                }
+            }
+        }
+    }
+    win.send('updateInstrumentList', instruments);
+});
+
 ipcMain.on('openSetupDialog', function (event, arg) {
     console.log("start openSetupDialog...");
     if (setupDialog) {
@@ -400,6 +462,22 @@ ipcMain.on('closeSetupDialogOk', function (event, arg) {
         updateInstrumentList(current_event);
     }
 });
+ipcMain.on('closeSetupDialogFilesystemOk', function (event, arg) {
+    if (setupDialog) {
+        setupDialog.hide();
+        //token = arg.token;
+        current_event = arg.event;
+        // current_url = arg.url;
+        // the current_subject_json has already been set by the callback from the open dialog
+        //current_subject_json = arg.subject_json;
+        console.log("closed setup DIALOG after ok for filesystem type input: " + event + " "); // + " " + current_subject_json);
+
+        // now populate the list with the instruments (should hopefully look at dataMode)
+        updateInstrumentList(current_event);
+    }
+});
+
+
 
 ipcMain.on('setupRemoveAnyText', function (event, arg) {
     if (arg['value']) {
@@ -2753,6 +2831,8 @@ ipcMain.on('exportForm', function (event, data) {
         writeLog("The file was saved...");
     });
 });
+
+
 
 function updateInstrumentList(event) {
     if (typeof instrumentLabels === 'undefined') {

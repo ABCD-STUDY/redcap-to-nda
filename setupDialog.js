@@ -30,18 +30,37 @@ jQuery(document).ready(function() {
     });
 
     jQuery('#setup-dialog-ok').on('click', function() {
+        // ok we have two modes here, either REDCap or Filesystem. What is highlighted?
+        var mode = "REDCap";
+        jQuery('div.tab-item').each(function() {
+            if (jQuery(this).hasClass('active')) {
+                mode = jQuery(this).attr('mode');
+            }
+        });
+        if (typeof mode == 'undefined') {
+            alert("Error: please submit on either the REDCap or Filesystem page to enabled that data method.");
+            return false;
+        }
+        // set the input mode on the server
+        ipcRenderer.send('setDataMode', { mode: mode });
+
+
         var token = jQuery('#redcap-access-token').val();
         var choice = jQuery('#setup-events-list').val();
         var url    = jQuery('#redcap-api-url').val(); // if no value is provided use ABCD
         if (url.trim() === "") {
             url = "https://abcd-rc.ucsd.edu/redcap/api/";
         }
-        if (token == "" || choice == "" || choice == null || typeof choice == 'undefined') {
-            alert("Error: please enter a token, press Update and select an event");
-            return false;
+        if (mode == "REDCap") {
+            if (token == "" || choice == "" || choice == null || typeof choice == 'undefined') {
+                alert("Error: please enter a token, press Update and select an event");
+                return false;
+            }
+            ipcRenderer.send('closeSetupDialogOk', { token: token, event: choice, url: url, mode: mode } );
+        } else if (mode == "filesystem") {
+            // we ignore all events, just assume All
+            ipcRenderer.send('closeSetupDialogFilesystemOk', { event: "All", mode: mode } );
         }
-
-        ipcRenderer.send('closeSetupDialogOk', { token: token, event: choice, url: url } );
         return false;
     });
     jQuery('#nda-subject-json').on('click', function() {
@@ -51,6 +70,14 @@ jQuery(document).ready(function() {
         });        
         return false;
     });
+    jQuery('#nda-subject-json2').on('click', function() {
+        dialog.showOpenDialog({ properties: ['openFile'], extensions: ['json'], defaultPath: "subject_data.json" }, function (filename) {
+            ipcRenderer.send('openLoadJSONDialog', { filename: filename });
+            jQuery('#nda-subject-json-filename2').text(filename);
+        });        
+        return false;
+    });
+
     jQuery('#nda-aliases').on('click', function() {
         dialog.showOpenDialog({ properties: ['openFile'], extensions: ['csv'], defaultPath: "aliases.csv" }, function (filename) {
             ipcRenderer.send('openLoadCSVDialog', { filename: filename });
@@ -59,6 +86,13 @@ jQuery(document).ready(function() {
         return false;
     });
 
+    jQuery('#specify-datadir').on('click', function() {
+        dialog.showOpenDialog({ properties: ['openDirectory'], defaultPath: "~/" }, function (dirname) {
+            ipcRenderer.send('parseFilesystemData', { dirname: dirname });
+            jQuery('#datadir-filename').text(dirname);
+        });        
+        return false;
+    });
 
     jQuery('#setup-dialog-cancel').on('click', function() {
         ipcRenderer.send('closeSetupDialogCancel', "");
