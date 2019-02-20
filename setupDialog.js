@@ -100,7 +100,14 @@ jQuery(document).ready(function() {
     });
     jQuery('#setup-dialog-update').on('click', function() {
         var token = jQuery('#redcap-access-token').val();
-        ipcRenderer.send('getEventsFromREDCap', token);
+        var api = jQuery('#redcap-api-url').val();
+        if (api != "") {
+            console.log("found an non-default api-url: " + api);
+        } else {
+            api = "https://abcd-rc.ucsd.edu/redcap/api/";
+        }
+            
+        ipcRenderer.send('getEventsFromREDCap', { token: token, api: api });
 
         // don't submit dialog again
         return false;

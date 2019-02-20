@@ -818,8 +818,11 @@ ipcMain.on('closeChangeLabelDialogOk', function (event, arg) {
 
 
 ipcMain.on('getEventsFromREDCap', function (event, arg) {
-    var token = arg;
-    writeLog("get event data from REDCap...");
+    var token = arg['token'];
+    var api = arg['api'];
+    // check??
+    current_url = api;
+    writeLog("get event data from REDCap [" + current_url + "]...");
 
     getEvents(token);
     getInstrumentEventMapping(token);
