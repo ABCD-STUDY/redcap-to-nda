@@ -118,4 +118,16 @@ jQuery(document).ready(function() {
         ipcRenderer.send('setupRemoveAnyText', { 'value': v });
     });
 
+    jQuery('#create-participant-file').on('click', function() {
+        var pguid = jQuery('#pguid-field').val();
+        var dob = jQuery('#dob-field').val();
+        var sex = jQuery('#sex-field').val();
+        var interview_date = jQuery('#interview-date-field').val();
+        if (pguid == "") {
+            alert("Error: please provide at least a pGUID field from REDCap.");
+            return;
+        }
+        ipcRenderer.send("createParticipantFile", { pguid: pguid, dob: dob, sex: sex, interview_date: interview_date });
+    });
+
 });

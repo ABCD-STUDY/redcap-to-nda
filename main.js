@@ -818,7 +818,7 @@ ipcMain.on('closeChangeLabelDialogOk', function (event, arg) {
 
 
 ipcMain.on('getEventsFromREDCap', function (event, arg) {
-    var token = arg['token'];
+    token = arg['token'];
     var api = arg['api'];
     // check??
     current_url = api;
@@ -1403,6 +1403,106 @@ function checkItem(item, form, data, callback) {
     (callback)("good: everything is ok with " + item, "good");
     return;
 }
+
+ipcMain.on('createParticipantFile', function(event, data) {
+    // call redcap to get a list of the participants
+    var pGUID_field = data['pguid'];
+    var dob_field = data['dob'];
+    var sex_field = data['sex'];
+    var interview_date_field = data['interview_date'];
+    // get a list of all participants from redcap
+
+    var data = {
+        'token': token,
+        'content': 'record',
+        'fields[0]': pGUID_field,
+        'fields[1]': 'redcap_event_name',
+        'fields[2]': dob_field,
+        'fields[3]': sex_field,
+        'fields[4]': interview_date_field,
+        'format': 'json',
+        'type': 'flat',
+        'rawOrLabel': 'raw',
+        'rawOrLabelHeader': 'raw',
+        'exportCheckboxLabel': 'false',
+        'exportSurveyFields': 'false',
+        'exportDataAccessGroups': false,
+        'returnFormat': 'json'
+    }
+
+    var headers = {
+        'User-Agent': 'Super Agent/0.0.1',
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+
+    var url = current_url;
+    request({
+        method: 'POST',
+        url: url,
+        form: data,
+        headers: headers,
+        json: true
+    }, function (error, response, body) {
+        if (error || response.statusCode !== 200) {
+            // error case
+            process.stdout.write("ERROR: could not get a response back from redcap " + error + " " + JSON.stringify(response) + "\n");
+            win.send('alert', JSON.stringify(response));
+            win.send('info', JSON.stringify(response));
+            return;
+        }
+        win.send('message', "got participant information from REDCap...");
+
+        // hopefully we have a list of events already
+        var data = {}; // keep the participants in a dictionary
+        for(i in body) {
+            var u = body[i];
+            var pGUID = u[pGUID_field];
+            var event = u['redcap_event_name'];
+            var sex = "";
+            if (typeof u[sex_field] !== 'undefined' && u[sex_field] !== "") {
+                sex = u[sex_field];
+            }
+            var dob = "";
+            if (typeof u[dob_field] !== 'undefined' && u[dob_field] !== "") {
+                dob = u[dob_field];
+            }
+            var interview_date = "";
+            if (typeof u[interview_date_field] !== 'undefined' && u[interview_date_field] !== "") {
+                interview_date = u[interview_date_field];
+            }
+            var age = "";
+            if (dob !== "" && interview_date !== "") {
+                // we can calculate the interview_age
+                var d = moment(dob);
+                var i = moment(interview_date);
+                age = i.diff(d, 'month');
+            }
+            if (dob !== "") {
+                dob = moment(dob).format("MM/DD/YYYY");
+            }
+            if (interview_date !== "") {
+                interview_date = moment(interview_date).format("MM/DD/YYYY");
+            }
+
+            if (typeof data[pGUID] === 'undefined') {
+                data[pGUID] = { pGUID: pGUID };
+            }
+            data[pGUID]["gender"] = sex;
+            data[pGUID]["dob"] = dob;
+            data[pGUID]["pGUID"] = pGUID;
+            data[pGUID][event] = { interview_age: age, interview_date: interview_date };
+        }
+        const values = Object.keys(data).map(k => data[k]);
+        // save to file
+        writeLog("Write the participants info file to: " + process.cwd() + "/participants_info.json");
+        fs.writeFile('participant_info.json', JSON.stringify(values, null, 2), 'utf8', function(err) {
+            if (err) {
+                writeLog("Error: could not write file " + err);
+            }
+            writeLog("File has been saved");
+        });
+    });
+});
 
 ipcMain.on('openLoadJSONDialog', function (event, data) {
     if (typeof data['filename'] == 'undefined') {
