@@ -75,7 +75,23 @@
                                 <label for="setup-dialog-remove-text" class="form-check-label">
                                 <input type="checkbox" class="form-check-input" id="setup-dialog-remove-text"> On export remove all non-numeric text</label>
                             </div>
-                            </form>
+                        </form>
+                        <hr>
+                        <p>In order to export data you need to specify a control file that contains the participants that you want to download. 
+                           This file contains the events, date of birth and sex at birth information.</p>
+                        <form>
+                            <div class="form-group">
+                                <label title="pGUID field for this project">Participant identifier field for REDCap</label><br/>
+                                <input type="text" class="form-control" id="pguid-field" placeholder="id_redcap">
+                            </div>
+                            <div class="form-group">
+                                <label title="Date of birth field for this project">Date of birth field</label><br/>
+                                <input type="text" class="form-control" id="dob-field" placeholder="dob">
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-form btn-defaulf form-control" id="create-participant-file" style="line-height: 12pt;">Create control file</button>
+                            </div>
+                        </form>
                     </div>
                     <hr>
                     <div class="form-actions">
