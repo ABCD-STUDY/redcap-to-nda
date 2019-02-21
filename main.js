@@ -2974,7 +2974,7 @@ function getDataDictionary(token) {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 
-    var url = "https://abcd-rc.ucsd.edu/redcap/api/";
+    var url = current_url;
     request({
         method: 'POST',
         url: url,
@@ -3060,7 +3060,7 @@ function getNamesForInstrument(token) {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 
-    var url = "https://abcd-rc.ucsd.edu/redcap/api/";
+    var url = current_url; // "https://abcd-rc.ucsd.edu/redcap/api/";
     request({
         method: 'POST',
         url: url,
@@ -3098,7 +3098,7 @@ function filterDataDictionary(token) {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
 
-    var url = "https://abcd-rc.ucsd.edu/redcap/api/";
+    var url = current_url; // "https://abcd-rc.ucsd.edu/redcap/api/";
     request({
         method: 'POST',
         url: url,
