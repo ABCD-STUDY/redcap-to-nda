@@ -12,7 +12,7 @@
   "author": "Hauke Bartsch",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^1.8.8",
+    "electron": "^9.1.0",
     "electron-builder": "^22.7.0"
   },
   "build": {
